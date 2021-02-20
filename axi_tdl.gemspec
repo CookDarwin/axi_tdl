@@ -11,8 +11,8 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Axi is a light weight axi library. Tdl is a hardware Construction language}
   spec.description   = %q{tdl is a hardware Construction language, it like chisel, but more intresting. It is a DSL and base on ruby. Finally, it convert to systemverilog. }
-  # spec.homepage      = "https://www.github.com/CookDarwin/axi_tdl"
-  spec.homepage      = "https://rubygems.org/gems/axi_tdl"
+  spec.homepage      = "https://www.github.com/CookDarwin/axi_tdl"
+  # spec.homepage      = "https://rubygems.org/gems/axi_tdl"
   spec.license       = "LGPL-2.1"
   spec.files         = Dir['lib/**/*']
   spec.require_paths = ["lib"]
