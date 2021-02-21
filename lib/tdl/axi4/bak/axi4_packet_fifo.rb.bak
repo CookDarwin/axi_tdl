@@ -1,0 +1,75 @@
+require_relative ".././axi4"
+require_relative ".././axi_stream"
+# require_relative "./axi4/axi4_lib"
+
+class Axi4
+
+    def axi4_packet_fifo(depth:4,up_stream:nil,down_stream:self)
+        if down_stream && !up_stream
+            down_stream.axi4_packet_fifo(up_stream:self,down_stream:down_stream,depth:depth)
+            return down_stream
+        end
+
+        down_stream = self
+
+        $_draw = lambda { axi4_packet_fifo_draw(up_stream:up_stream,down_stream:down_stream,depth:depth) }
+        @correlation_proc +=$_draw.call
+        return self
+    end
+
+
+    def axi4_packet_fifo_draw(depth:4,up_stream:nil,down_stream:self)
+        large_name_len(depth,@mode,up_stream,down_stream)
+"\naxi4_packet_fifo #(
+    .DEPTH   (#{align_signal(depth)}),
+    .MODE    (#{align_signal(mode)})
+)axi4_packet_fifo_#{signal}_inst(
+/*  axi_inf.slaver */   .axi_in     (#{align_signal(up_stream)}),
+/*  axi_inf.master */   .axi_out    (#{align_signal(down_stream)})
+);
+"   end
+
+    def self.axi4_packet_fifo(up_stream:nil,down_stream:nil,depth:4,copy_inf:nil)
+        if up_stream==nil && down_stream==nil
+            new_up_stream = copy_inf.copy()
+            new_down_stream = copy_inf.copy()
+        elsif up_stream==nil
+            new_up_stream = down_stream.copy()
+            new_down_stream = down_stream
+        elsif down_stream==nil
+            new_up_stream = up_stream
+            new_down_stream = up_stream.copy()
+        end
+
+        new_down_stream.axi4_packet_fifo(up_stream:new_up_stream,down_stream:new_down_stream,depth:depth)
+
+        if up_stream==nil && down_stream==nil
+            return [new_up_stream,new_down_stream]
+        elsif up_stream==nil
+            return new_up_stream
+        elsif down_stream==nil
+            return new_down_stream
+        end
+
+    end
+
+end
+
+class TdlTest
+
+    def self.test_axi4_packet_fifo
+        c0 = Clock.new(name:"clk",freqM:148.5)
+        r0 = Reset.new(name:"rst_n",active:"low")
+        a0 = Axi4.new(name:"UP",clock:c0,reset:r0,mode:Axi4::BOTH,max_len:4096)
+        a1 = Axi4.new(name:"DOWN",clock:c0,reset:r0,mode:Axi4::BOTH)
+
+        a1.axi4_packet_fifo(up_stream:a0)
+
+        puts_sv Axi4.inst,Axi4.draw
+
+    end
+end
+
+# unless ARGV.empty?
+#     Test.test_axi4_packet_fifo
+# end

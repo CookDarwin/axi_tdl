@@ -1,0 +1,4 @@
+CM:
+    SYS_CLK:
+        pins:   C7
+        iostd:  LVCMOS18

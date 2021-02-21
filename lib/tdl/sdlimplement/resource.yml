@@ -1,0 +1,154 @@
+
+# Params = YAML::load(File.open('params.yml'))
+params:
+    yaml:
+        g1_params: ./params.yml
+        pins:   ./pins.yml
+    var:
+        sensor_freqM:   10
+        sensor_col_num: 2
+    tb:
+        - ModuleDirectReqDDRData
+
+implement:
+    modules:
+        # - ModuleTempSensorTpu
+        # - Mac_1G
+        - ModuleTpuDetBoardTH
+        # - ModuleDDR3
+    tb:
+        - ModuleTempSensorTpu
+    ex_up_code:
+        - "import UDPTapPKG::*;"
+    xdc:    true
+    constraints:
+        - set_system_jitter 0.500
+        # - set_property BITSTREAM.CONFIG.UNUSEDPIN PULLNONE [current_design]
+
+# ModuleClockMangerA2(`nickname`): ~
+
+ModuleClockMangerA2():
+    info:   "Custom 200T Board CLOCK Maneger VERA.2.0"
+    path:   ../../../git_repo/tdl_hardware/custom_200T/ct_clock_manager/module_clock_manager_A2.rb
+    sensor_freqM:   params-var-sensor_freqM
+    pins_map:       clock_reset
+    require: ~
+
+Mac_1G():
+    info:   "ethernet 1g sdl module"
+    path:   '../../../git_repo/tdl_software/ethernet_1g/module_1g_mac_verb.rb'
+    params:     params-yaml-g1_params
+    pins_map:   ethernet
+    enable_idle:    false
+    require:
+        clk_itgt:  ModuleClockMangerA2
+
+ModuleDDR3():
+    info:   "DDR sdl module for Custom 200T Board"
+    path:   '../../../git_repo/tdl_hardware/custom_200T/ddr3/module_ddr3.rb'
+    require:
+        clk_itgt:   ModuleClockMangerA2
+        # platform_itgt:  ModulePlatformCtrlVERD
+
+ModuleDirectReqDDRData:
+    info:       "direct require ddr data"
+    path:       '../../../git_repo/tdl_software/dire_req_ddr_data/module_direct_req_ddr_data.rb'
+    params:     params-yaml-g1_params
+    require:
+        g1_itgt:    Mac_1G()    # Mac_1G(`nickname`)
+        ddr_itgt:   ModuleDDR3
+
+ModuleFPGAVersion:
+    info:   "hardware FPGA version"
+    path:   '../../../git_repo/tdl_software/fpga_version/module_fpga_version.rb'
+    require:
+        g1_itgt:    Mac_1G
+
+ModuleChipRegUpdate():
+    info:   " update chip registers"
+    path:   '../../../git_repo/tdl_module/ct_chip_reg/module_chip_reg_update.rb'
+    pins_map:   chip_regs
+    require:
+        ethernet_1g_itgt:   Mac_1G
+
+ModuleSenserLvdsParseA4Track(kkk):
+    info:   'parse sensor lvds with track'
+    path:   '../../../git_repo/tdl_module/sensor_lvds_parse/module_senser_lvds_parse_a4_track.rb'
+    num:    params-var-sensor_col_num
+    pins_map:   sensor
+    require:
+        ddr3_api:   ModuleDDR3
+        ethernet_1g_itgt:  Mac_1G
+
+ModuleMessagesUDP(kkk):
+    info:   'some messages'
+    path:   '../../../git_repo/tdl_module/msg_udp/module_messages_udp.rb'
+    require:
+        g1_itgt:   Mac_1G
+
+ModulePlatformCtrlVERD(kkk):
+    info:   " shift platform contrl module VERD"
+    path:   '../../../git_repo/tdl_module/ct_moto/module_platform_ctrl_verd.rb'
+    pins_map:   moto
+    require:
+        ethernet_1g_itgt:   Mac_1G
+        sensor_lvds_parse_itgt: ModuleSenserLvdsParseA4Track
+        msg_itgt: ModuleMessagesUDP
+
+ModulePlatformCtrlVERB(bbb):
+    info:   " shift platform contrl module VERB"
+    path:   '../../../git_repo/tdl_module/ct_moto/module_platform_ctrl_verb.rb'
+    pins_map:   moto
+    require:
+        ethernet_1g_itgt:   Mac_1G
+        sensor_lvds_parse_itgt: ModuleSenserLvdsParseA4Track
+        msg_itgt: ModuleMessagesUDP
+
+ModuleSensorFrameReq:
+    info:   " require sensor frame"
+    path:   '../../../git_repo/tdl_software/sensor_req_frame/module_sensor_frame_req.rb'
+    require:
+        sensor_lvds_parse_itgt: ModuleSenserLvdsParseA4Track
+        ethernet_1g_itgt:       Mac_1G
+        chip_regs_update_itgt:  ModuleChipRegUpdate
+        msg_itgt:               ModuleMessagesUDP(kkk)
+
+ModuleInitValueDDR:
+    info:   "initialize ddr data at boot"
+    path:   '../../../git_repo/tdl_software/init_value_ddr/module_init_value_ddr.rb'
+    require:
+        ddr3_api:   ModuleDDR3
+
+ModuleInitValueDDRVERB:
+    info:   "initialize ddr data at boot and ctrl time"
+    path:   '../../../git_repo/tdl_software/init_value_ddr/module_init_value_ddr_verb.rb'
+    require:
+        ddr3_api:   ModuleDDR3
+        ethernet_1g_itgt:   Mac_1G
+
+ModuleTempSensorTpu:
+    info:   "read temp with tpu"
+    path:   '../../../git_repo/tpu_app/ct_board_th/module_temp_sensor_tpu.rb'
+    pins_map:   TH_ADC
+    require:
+        ethernet_1g_itgt:   Mac_1G
+    mutual:
+        - ModuleTpuDetBoardTH
+
+ModuleTpuDetBoardTH:
+    info:       "read temp with tpu more effact"
+    path:   '../../../git_repo/tpu_app/det_board_th/module_tpu_det_board_th.rb'
+    pins_map:   TH_ADC
+    require:
+        ethernet_1g_itgt:   Mac_1G
+        sensor_lvds_parse_itgt: ModuleSenserLvdsParseA4Track
+        platform_itgt:
+            - ModulePlatformCtrlVERD
+            - ModulePlatformCtrlVERB
+
+ModuleUDPResetSYS:
+    info:   "reset all fabri through UDP"
+    path:   '../../../git_repo/tdl_software/udp_reset_system/module_udp_reset_sys'
+    require:
+        g1_itgt:    Mac_1G
+        # platform_itgt:  ModulePlatformCtrlVERB

@@ -1,0 +1,7 @@
+TG:
+    SYSCTLR_CLK:
+        pins:   C7
+        iostd:  LVCMOS18
+    DATA:
+        pins:   A1 A3 B5 C6
+        iostd:  LVCMOS18 LVCMOS18 LVCMOS25 LVCMOS33

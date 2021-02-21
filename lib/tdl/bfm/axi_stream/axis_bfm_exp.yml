@@ -1,0 +1,38 @@
+axis_master_0:      # interface name
+    type:   master
+    dsize:  8       # DSIZE
+    FreqM:  100
+    wait:   10us
+    info:   false
+    queue:
+        -                   # First stream
+            length:     10  # stream length
+            persent:    50  # persent for valid
+            contect:    "0,1,2,3,4,5,6,7"
+            repeat:     false
+        -                   # second stream
+            length:     1
+            persent:    100
+            contect:    random(0,100)
+            repeat:     10
+        -                   # second stream
+            pre_wait:   10us
+            length:     10
+            persent:    100
+            contect:    range(0,100)
+            repeat:     1
+            post_wait:  10us
+
+axis_slaver_0:
+    type:   slaver
+    dsize:  8
+    FreqM:  100
+    wait:   10us
+    info:   false
+    queue:
+        -
+            persent:    50
+            repeat:     100
+        -
+            persent:    100
+            repeat:     3

@@ -1,0 +1,4 @@
+mentor:
+    ignores:
+        - tmp/
+        - examples/

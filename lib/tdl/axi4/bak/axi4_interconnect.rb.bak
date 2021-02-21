@@ -1,0 +1,91 @@
+require_relative ".././axi4"
+require_relative ".././axi_stream"
+
+class Axi4
+
+    def <<(*up_streams)
+        up_streams.each do |e|
+            next unless e.is_a? Axi4
+            if e.dsize == @dsize
+                @interconnect_up_streams << e.to_both
+            else
+                @interconnect_up_streams << (Axi4.axi4_data_convert(up_stream:e,dsize:@dsize))
+            end
+        end
+    end
+
+    def >>(down_stream)
+        down_stream.<< self
+    end
+
+    def sub_inst
+        return '' if @interconnect_up_streams.empty?
+        sub_num = @interconnect_up_streams.length
+"\naxi_inf #(
+    .IDSIZE    (#{align_signal(idsize-(Math.log2(sub_num).ceil))}),
+    .ASIZE     (#{align_signal(asize)}),
+    .LSIZE     (#{align_signal(lsize)}),
+    .DSIZE     (#{align_signal(dsize)}),
+    .MODE      (#{align_signal(@mode)})
+)sub_axi_#{name}_#{id}_inf[#{@interconnect_up_streams.length-1}:0](
+    .axi_aclk      (#{align_signal(@clock)}),
+    .axi_aresetn    (#{align_signal(@reset.low_signal,false)})
+);\n" + sub_direct
+    end
+
+    def sub_direct
+        str = ""
+        for i in 0...(@interconnect_up_streams.length)
+            str +=
+"\naxi4_direct #(
+    .MODE       (\"BOTH_to_BOTH\")    //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+)iterconnect_direct_#{signal}_inst#{i}(
+/* axi_inf.slaver */  .slaver   (#{@interconnect_up_streams[i].signal}),
+/* axi_inf.master */  .master   (sub_axi_#{name}_#{id}_inf[#{i}])
+);\n"
+        end
+        return str
+    end
+
+    def interconnect_draw
+
+        if @interconnect_up_streams.length > 1
+            str =
+"\naxi4_mix_interconnect_M2S #(
+    .NUM    (#{@interconnect_up_streams.length})
+)interconnect_#{signal}_inst(
+/*  axi_inf.slaver */   .slaver     (sub_axi_#{@name}_#{@id}_inf),    //[NUM-1:0],
+/*  axi_inf.master */   .master     (#{signal})
+);\n"
+        else
+            str =
+"\naxi4_direct #(
+    .MODE       (\"BOTH_to_BOTH\")    //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+)iterconnect_direct_#{signal}_instMM(
+/* axi_inf.slaver */  .slaver   (sub_axi_#{@name}_#{@id}_inf),
+/* axi_inf.master */  .master   (#{signal})
+);\n"
+        end
+
+        sub_inst+str
+    end
+
+end
+
+class TdlTest
+
+    def self.test_interconnect
+        c0 = Clock.new(name:"pix",freqM:148.5)
+        r0 = Reset.new(name:"pix",active:"low")
+        a0 = Axi4.new(name:"Z",clock:c0,reset:r0,mode:Axi4::BOTH)
+        a1 = Axi4.new(name:"A",clock:c0,reset:r0,mode:Axi4::ONLY_WRITE)
+        a2 = Axi4.new(name:"B",clock:c0,reset:r0,mode:Axi4::ONLY_READ)
+        a3 = Axi4.new(name:"C",clock:c0,reset:r0,mode:Axi4::BOTH,dsize:32)
+        a4 = Axi4.new(name:"D",clock:c0,reset:r0,mode:Axi4::BOTH)
+
+        a0.<< a1,a2,a3,a4
+
+        puts_sv Axi4.inst,Axi4.draw
+    end
+
+end

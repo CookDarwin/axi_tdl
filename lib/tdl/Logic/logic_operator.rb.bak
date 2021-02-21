@@ -1,0 +1,128 @@
+
+class String    ## add alias_method_chain
+    # alias_method :old_add,"+"
+    # alias_method :old_mult,"*"
+    #
+    # def new_add(a)
+    #     if a.is_a? Logic
+    #         a + self
+    #     else
+    #         self.old_add(a)
+    #     end
+    # end
+    #
+    # def new_mult(a)
+    #     if a.is_a? Logic
+    #         a * self
+    #     else
+    #         self.old_mult(a)
+    #     end
+    # end
+    #
+    # alias_method "+",:new_add
+    # alias_method "*",:new_mult
+
+    def And(*b)
+        lambda_b = b.any?{ |e| e.is_a? Proc }
+        if lambda_b
+            lambda { ("(#{self} && ".concat(b.map{ |e|  Logic.exp_element(e)}.join(" && ")).conact ")").to_nq}
+        else
+            ("(#{self} && ".concat(b.map{ |e|  Logic.exp_element(e)}.join(" && ")).concat ")").to_nq
+        end
+    end
+
+    def Or(*b)
+        lambda_b = b.any?{ |e| e.is_a? Proc }
+        if lambda_b
+            lambda { ("(#{self} || ".concat(b.map{ |e|  Logic.exp_element(e)}.join(" || ")).concat ")").to_nq}
+        else
+            ("(#{self} || ".concat(b.map{ |e|  Logic.exp_element(e)}.join(" || ")).concat ")").to_nq
+        end
+    end
+
+end
+
+
+class Logic
+
+
+    # Logic.instance_eval do
+    #     define_method("&&") do |b|
+    #         operation_tow("&&",b)
+    #     end
+    #
+    #     define_method("||") do |b|
+    #         operation_tow("||",b)
+    #     end
+    #
+    # end
+
+
+
+    def And(*b)
+        lambda_b = b.any?{ |e| e.is_a? Proc }
+        if lambda_b
+            lambda { ("(#{signal} && ".concat(b.map{ |e|  exp_element(e)}.join(" && ")).concat ")").to_nq}
+        else
+            ("(#{signal} && ".concat(b.map{ |e|  exp_element(e)}.join(" && ")).concat ")").to_nq
+        end
+    end
+
+    def Or(*b)
+        # operation_tow("||",b)
+        array_operation_tow("||",*b)
+    end
+
+    # def and(*b)
+    #     if b.size != 1
+    #         add(array_operation_tow("&&",*b[1,]))
+    #     else
+    #         operation_tow("&&",*b[0])
+    #     end
+    # end
+    #
+    # def or(*b)
+    #     if b.size != 1
+    #         operation_tow("||",*b[1,])
+    #     else
+    #         operation_tow("||",*b[0])
+    #     end
+    # end
+    # def +(b)
+    #     operation_tow("+",b)
+    # end
+    #
+    # def -(b)
+    #     operation_tow("-",b)
+    # end
+    #
+    # def *(b)
+    #     operation_tow("*",b)
+    # end
+    #
+    # def /(b)
+    #     operation_tow("/",b)
+    # end
+    #
+    # def %(b)
+    #     operation_tow("%",b)
+    # end
+    #
+    # def >(b)
+
+    private
+
+    def array_operation_tow(synb,*b)
+        lambda_b = b.any?{ |e| e.is_a? Proc }
+        if lambda_b
+            lambda { ("(#{signal} #{synb} ".concat(b.map{ |e|  exp_element(e)}.join(" #{synb} ")).concat ")").to_nq}
+        else
+            ("(#{signal} #{synb} ".concat(b.map{ |e|  exp_element(e)}.join(" #{synb} ")).concat ")").to_nq
+        end
+
+    end
+
+
+end
+
+# puts Logic.new.respond_to?("&&")
