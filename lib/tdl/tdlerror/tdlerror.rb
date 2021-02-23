@@ -1,5 +1,6 @@
 class TdlError < ScriptError
     def initialize(arge)
+        Tdl.PutsEnable = false
         head_str0 = String.new("\n+_____________________________________________+\n")
         head_str1 = "\n|----------------TDL ERROR--------------------|\n"
         end_str0  = "\n+================TDL ERROR====================+\n"

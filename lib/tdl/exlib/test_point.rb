@@ -113,12 +113,18 @@ module TdlSpace
         def root_ref(&block)
             ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
                 rels = path_refs(&block)
+                if block_given?
+                    sst = "block given"
+                else
+                    sst = "no block"
+                end
+
                 if rels.size == 1
                     rels[0]
                 elsif rels.size == 0
-                    raise TdlError.new "#{self} Cant find root ref"
+                    raise TdlError.new "#{self} Cant find root ref {#{sst}}"
                 else
-                    raise TdlError.new "#{self} Find multi root refs \n#{rels.join("\n")}\n"
+                    raise TdlError.new "#{self} Find multi root refs {#{sst}} \n#{rels.join("\n")}\n"
                 end
             end
         end

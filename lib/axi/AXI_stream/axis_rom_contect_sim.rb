@@ -1,6 +1,7 @@
 
 require_hdl 'axis_uncompress_A1.sv'
 require_sdl 'common_ram_sim_wrapper.rb'
+require_hdl 'axi_stream_planer.sv'
 
 TdlBuild.axis_rom_contect_sim(__dir__) do 
     # vcs_string(256).INIT_FILE   'template.coe'

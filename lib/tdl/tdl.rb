@@ -123,7 +123,7 @@ require_relative "./exlib/dve_tcl.rb"
 
 ## === INIT BLOCK Methods =====
 $argvs_hash = {}
-$argvs_hash = Parser.parse(ARGV) unless $_child_argv_
+$argvs_hash = Parser.parse($TdlARGV || ARGV) unless $_child_argv_
 TopModule.sim = $argvs_hash[:sim]
 
 class Tdl

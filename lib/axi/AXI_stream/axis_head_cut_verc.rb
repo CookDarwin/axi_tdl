@@ -7,7 +7,7 @@ TdlBuild.axis_head_cut_verc(__dir__) do
     port.axis.slaver        - 'origin_inf'
     port.axis.master        - 'out_inf'
 
-    localparam.DX   (origin_inf.DSIZE / param.BYTE_BITS)
+    parameter.DX   (origin_inf.DSIZE / param.BYTE_BITS)
 
     Initial do 
         assert(param.DX < 17, "param.DX<%0d> !< 17",param.DX)

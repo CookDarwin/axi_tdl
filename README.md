@@ -1,5 +1,10 @@
 # Axi
-&emsp;&emsp;It is a wonderful library of axi4, but it is not full axi4, It is designed by systemverilog. I compact axi4 and add something to it. 
+&emsp;&emsp;It is a wonderful library of axi4, but it is not full axi4, It is designed by systemverilog. I compact axi4 and add something to it.
+&emsp;&emsp;axi hdl path
+```ruby
+require 'axi_tdl'
+AxiTdl::AXI_PATH
+```
 # Other
 &emsp;&emsp;It contain a simple interface that only define three signals, `valid`, `ready`, and `data`. I think it is useful for design. 
 
