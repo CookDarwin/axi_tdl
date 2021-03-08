@@ -16,10 +16,11 @@ module parse_big_field_table_A2 #(
     parameter   DSIZE         = 8,
     parameter   FIELD_LEN     = 16*8,     //MAX 16*8
     parameter   FIELD_NAME    = "Big Filed",
-    parameter   TRY_PARSE     = "OFF"
+    parameter   TRY_PARSE     = "OFF",
+    parameter   TMP_START     = 0
 )(
     input                                   enable,
-    output[0:DSIZE*FIELD_LEN-1]             value,
+    output[TMP_START:DSIZE*FIELD_LEN-1]     value,
     output logic                            out_valid,
     axi_stream_inf.slaver                   cm_tb_s,
     axi_stream_inf.master                   cm_tb_m,

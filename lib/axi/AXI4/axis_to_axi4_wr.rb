@@ -2,6 +2,11 @@
 
 ## raise TdlError.new("The module have be abandon\n    Path:[#{__dir__}]\n    Name:[#{__FILE__}]")
 
+require_hdl 'axis_length_split_with_addr.sv'
+require_hdl 'axi_stream_long_fifo.sv'
+require_hdl 'axi4_wr_auxiliary_gen_without_resp.sv'
+require_hdl 'axis_valve_with_pipe.sv'
+
 new_m = SdlModule.new(name:File.basename(__FILE__,".rb"),out_sv_path:__dir__)
 
 # Parameter :ADDR_STEP,1.0

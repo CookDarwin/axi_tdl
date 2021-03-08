@@ -11,7 +11,8 @@ madified:
 `timescale 1ns/1ps
 
 module axis_head_cut_verc #(
-    parameter  BYTE_BITS = 8
+    parameter  BYTE_BITS = 8,
+    parameter  DX        =  origin_inf.DSIZE/BYTE_BITS
 )(
     input [9:0]             bytes,
     axi_stream_inf.slaver   origin_inf,
@@ -20,16 +21,19 @@ module axis_head_cut_verc #(
 
 //==========================================================================
 //-------- define ----------------------------------------------------------
-localparam  DX  =  origin_inf.DSIZE/BYTE_BITS;
 logic  clock;
 logic  rst_n;
+logic [18-1:0]  origin_sync_info[3-1:0] ;
+logic [18-1:0]  origin_sync_info_out[3-1:0] ;
+logic [10-1:0]  bytes_Q ;
+logic [10-1:0]  bytes_QQ ;
 logic [4-1:0]  bytes_x ;
 logic [4-1:0]  bytes_x_Q ;
 logic [4-1:0]  bytes_x_tmp ;
 logic [4-1:0]  bytes_x_sub_nDx ;
+logic [4-1:0]  bytes_x_sub_nDx_tmp ;
 logic [2-1:0]  route_addr ;
-logic [4-1:0]  bytes_y ;
-logic [10-1:0]  tmp_loop ;
+logic [2-1:0]  route_addr_tmp ;
 logic fifo_wr_en;
 logic [4-1:0]  int_cut_len ;
 logic [4-1:0]  shift_sel_pre ;
@@ -41,14 +45,17 @@ axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss (.aclk(origin
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_cut_mix (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss_E0 (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss_E0_CH (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(out_inf.DSIZE),.USIZE(1)) out_inf_branchR587 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(out_inf.DSIZE),.USIZE(1)) out_inf_branchR671 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
-axis_slaver_pipe_A1 #(
-    .DEPTH (3 )
-)axis_slaver_pipe_A1_inst(
-/* axi_stream_inf.slaver */.axis_in  (origin_inf      ),
-/* axi_stream_inf.master */.axis_out (origin_inf_post )
+axis_pipe_sync_seam #(
+    .LAT   (3  ),
+    .DSIZE (18 )
+)axis_pipe_sync_seam_inst(
+/* input                 */.in_datas  (origin_sync_info     ),
+/* output                */.out_datas (origin_sync_info_out ),
+/* axi_stream_inf.slaver */.in_inf    (origin_inf           ),
+/* axi_stream_inf.master */.out_inf   (origin_inf_post      )
 );
 axi_stream_interconnect_S2M #(
     .NUM   (3 )
@@ -115,7 +122,7 @@ axis_connect_pipe_right_shift_verb #(
 axis_head_cut_verb last_cut_inst(
 /* input                 */.length   (16'd1               ),
 /* axi_stream_inf.slaver */.axis_in  (origin_inf_ss_E0_CH ),
-/* axi_stream_inf.master */.axis_out (out_inf_branchR587  )
+/* axi_stream_inf.master */.axis_out (out_inf_branchR671  )
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
@@ -129,7 +136,7 @@ axis_direct  axis_direct_out_inf_inst0 (
 );
 
 axis_direct  axis_direct_out_inf_inst1 (
-/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR587),
+/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR671),
 /*  axi_stream_inf.master*/ .master (sub_out_inf[1])
 );
 
@@ -160,41 +167,31 @@ always_comb begin
      bytes_x_tmp = '0;
     for(integer gvar_cc_1=0;gvar_cc_1<10;gvar_cc_1=gvar_cc_1+1)begin
         if( bytes<DX*(10-gvar_cc_1))begin
-             bytes_x_tmp = ( 10-1- gvar_cc_1);
+             bytes_x_tmp = ( ( 10-1)-gvar_cc_1);
         end
     end
 end
 
-always_ff@(posedge clock,negedge rst_n) begin 
-    if(~rst_n)begin
-         bytes_x <= '0;
-         bytes_x_Q <= '0;
-         bytes_x_sub_nDx <= '0;
-    end
-    else begin
-         bytes_x <= bytes_x_tmp;
-         bytes_x_Q <= bytes_x;
-         bytes_x_sub_nDx <= ( bytes-( bytes_x*DX));
-    end
-end
+assign  origin_sync_info[0] = {bytes_x_tmp,bytes_x_tmp,bytes};
+assign  {bytes_x,bytes_Q} = {origin_sync_info_out[0][13:10],origin_sync_info_out[0][9:0]};
+assign  bytes_x_sub_nDx_tmp = ( bytes_Q-( bytes_x*DX));
+assign  origin_sync_info[1] = {bytes_x_sub_nDx_tmp,bytes_x,bytes_Q};
+assign  {bytes_x_sub_nDx,bytes_x_Q,bytes_QQ} = {origin_sync_info_out[1][17:14],origin_sync_info_out[1][13:10],origin_sync_info_out[1][9:0]};
+assign  origin_sync_info[2] = {10'd0,route_addr_tmp};
+assign  route_addr = origin_sync_info_out[2][1:0];
 
-always_ff@(posedge clock,negedge rst_n) begin 
-    if(~rst_n)begin
-         route_addr <= '0;
+always_comb begin 
+    if( bytes_QQ=='0)begin
+         route_addr_tmp = 2'd0;
+    end
+    else if( bytes_x_Q=='0)begin
+         route_addr_tmp = 2'd2;
+    end
+    else if( bytes_x_sub_nDx=='0)begin
+         route_addr_tmp = 2'd1;
     end
     else begin
-        if( bytes=='0)begin
-             route_addr <= 2'd0;
-        end
-        else if( bytes_x=='0)begin
-             route_addr <= 2'd2;
-        end
-        else if( bytes_x_sub_nDx=='0)begin
-             route_addr <= 2'd1;
-        end
-        else begin
-             route_addr <= 2'd1;
-        end
+         route_addr_tmp = 2'd1;
     end
 end
 

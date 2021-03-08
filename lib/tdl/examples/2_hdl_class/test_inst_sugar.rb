@@ -1,4 +1,6 @@
-require_relative '../../tdl.rb'
+require 'axi_tdl'
+require_hdl 'axi_stream_cache.sv'
+require_hdl 'axis_append_A1.sv'
 
 TdlBuild.test_inst_sugar(File.join(__dir__,"tmp")) do 
 

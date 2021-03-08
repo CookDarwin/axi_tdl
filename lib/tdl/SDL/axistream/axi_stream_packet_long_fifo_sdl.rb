@@ -6,6 +6,7 @@ self.real_sv_path = '/home/CookDarwin/work/fpga/axi/AXI_stream/packet_fifo/axi_s
 self.path = File.expand_path(__FILE__)
 parameter.DEPTH   2
 parameter.BYTE_DEPTH   8096
+parameter.USE_KEEP    "OFF"
 port.axi_stream_inf.slaver - 'axis_in' 
 port.axi_stream_inf.master - 'axis_out' 
 end

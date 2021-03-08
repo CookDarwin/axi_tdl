@@ -1,5 +1,7 @@
 ## VERC 非整数型剪切,使用 right shift 
 require_hdl 'axis_connect_pipe_right_shift_verb.sv'
+# require_hdl 'axi_stream_latency.sv'
+require_sdl 'axis_pipe_sync_seam.rb'
 
 TdlBuild.axis_head_cut_verc(__dir__) do 
     parameter.BYTE_BITS     8
@@ -16,30 +18,61 @@ TdlBuild.axis_head_cut_verc(__dir__) do
 
     origin_inf.clock_reset_taps('clock', 'rst_n')
 
-    axis_slaver_pipe_A1.axis_slaver_pipe_A1_inst do |h| #(
-        h.param.DEPTH               3
-        h.port.axis.slaver.axis_in      origin_inf
-        h.port.axis.master.axis_out     origin_inf.copy(name: 'origin_inf_post')
-    end 
+    # axis_slaver_pipe_A1.axis_slaver_pipe_A1_inst do |h| #(
+    #     h.param.DEPTH               3
+    #     h.port.axis.slaver.axis_in      origin_inf
+    #     h.port.axis.master.axis_out     origin_inf.copy(name: 'origin_inf_post')
+    # end 
+
+    # axi_stream_latency.axi_stream_latency_inst do |h| #(
+    #     h.parameter.LAT                 3
+    #     h.input.reset                   1.b0
+    #     h.port.axis.slaver.axis_in      origin_inf
+    #     h.port.axis.master.axis_out     origin_inf.copy(name: 'origin_inf_post')   
+    # end
+
+    axis_pipe_sync_seam.axis_pipe_sync_seam_inst  do |h|
+        h.parameter.LAT       3 
+        h.parameter.DSIZE     10+4+4
+        ## as like: hdl``` 
+        ## assign in_datas[0] = in_inf.data + 1;
+        ## assign in_datas[1] = out_datas[0]+1;```
+        h.input[h.param.LAT,h.param.DSIZE].in_datas         logic[3,18].origin_sync_info
+        h.output[h.param.LAT,h.param.DSIZE].out_datas       logic[3,18].origin_sync_info_out
+        h.port.axis.slaver.in_inf                           origin_inf
+        h.port.axis.master.out_inf                          origin_inf.copy(name: 'origin_inf_post')   
+    end
 
     ## 解析编码
+    ##          IN_DATA<0>      IN_DATA<1>         IN_DATA<2>
+    ###[11:8]   bytes_x_tmp     bytes_x_sub_nDx    route_addr_P
+    ###[7 :4]   bytes           bytes_x_tmp_Q      ???
+    ###[3 :0]   bytes           bytes_Q            ??    
+    
+    ##          OUT_DATA<0>     OUT_DATA<1>       IN_DATA<1>
+    ###[11:8]   bytes_x_tmp_Q   bytes_x_sub_nDx_Q route_addr
+    ###[7 :4]   bytes_Q         bytes_x_tmp_QQ    ???
+    ###[3 :0]   bytes_Q         bytes_QQ          ?? 
+
+    ##             IN_DATA<0>       IN_DATA<1> OUT<0>     IN_DATA<2> OUT<1>         OUT<2>
+    ##          |- bytes  ------- | bytes_Q ----------  | bytes_QQ
+    ##          |> {bytes_x}   -- | bytes_x ----------  | bytes_x_Q
+    ##                            |> {bytes_x_sub_nDx}  | bytes_x_sub_nDx
+    ##                                                  |> {route_addr}-------- | route_addr 
+
+    logic[10]       - 'bytes_Q'
+    logic[10]       - 'bytes_QQ'
     logic[4]        - 'bytes_x'
     logic[4]        - 'bytes_x_Q'
     logic[4]        - 'bytes_x_tmp'
     logic[4]        - 'bytes_x_sub_nDx'
+    logic[4]        - 'bytes_x_sub_nDx_tmp'
     logic[2]        - 'route_addr'
+    logic[2]        - 'route_addr_tmp'
+    # logic           - 'route_addr_vld'
 
-    logic[4]        - 'bytes_y'
-    logic[10]       - 'tmp_loop'
-
-    # genvar - 'cc'
 
     always_comb() do  
-        # FOREACH(tmp_loop) do |ii|
-        #     IF bytes < "#{param.DX}*(10-#{ii})".to_nq do 
-        #         bytes_x_tmp <= (10-1-ii)
-        #     end
-        # end
         bytes_x_tmp <= 0.A
         FOR(start: 0,stop: 10) do |ii|
             IF bytes < "#{param.DX}*(10-#{ii})".to_nq do 
@@ -48,39 +81,62 @@ TdlBuild.axis_head_cut_verc(__dir__) do
         end
     end
 
-    always_ff(posedge.clock ,negedge.rst_n) do 
-        IF ~rst_n do 
-            bytes_x             <= 0.A 
-            bytes_x_Q           <= 0.A 
-            bytes_x_sub_nDx     <= 0.A
+    Assign do 
+        ## --------IN<0>--
+        origin_sync_info[0]     <= logic_bind_(bytes_x_tmp, bytes_x_tmp , bytes)
+        ## ===============
+        ## --------OUT<0> 
+        logic_bind_(bytes_x, bytes_Q) <= logic_bind_(origin_sync_info_out[0][13,10], origin_sync_info_out[0][9,0])
+        ## ==============
+        ## --------IN<1>
+        bytes_x_sub_nDx_tmp <= bytes_Q - bytes_x*param.DX
+        origin_sync_info[1] <= logic_bind_(bytes_x_sub_nDx_tmp, bytes_x, bytes_Q)
+        ## ==============
+        ## --------OUT<1>
+        logic_bind_(bytes_x_sub_nDx, bytes_x_Q,bytes_QQ) <= logic_bind_(origin_sync_info_out[1][17,14],origin_sync_info_out[1][13,10], origin_sync_info_out[1][9,0])
+        ## ==============
+        ## --------IN<2>
+        origin_sync_info[2] <= logic_bind_(10.d0, route_addr_tmp)
+        ## ==============
+        ## --------OUT<2>
+        route_addr  <= origin_sync_info_out[2][1,0]
+        ## ==============
+    end
+    always_comb do 
+        IF bytes_QQ == 0.A do 
+            route_addr_tmp  <= 2.d0 
+        end
+        ELSIF bytes_x_Q == 0.A do 
+            route_addr_tmp  <= 2.d2
+        end
+        ELSIF bytes_x_sub_nDx == 0.A do 
+            route_addr_tmp  <= 2.d1 
+        end
+        ELSE do 
+            route_addr_tmp  <= 2.d1
         end 
-        ELSE do 
-            bytes_x             <= bytes_x_tmp
-            bytes_x_Q           <= bytes_x
-            bytes_x_sub_nDx     <= bytes - bytes_x*param.DX
-        end
     end
 
-    always_ff(posedge.clock, negedge.rst_n) do 
-        IF ~rst_n do 
-            route_addr  <= 0.A 
-        end
-        ELSE do 
-            IF bytes == 0.A do 
-                route_addr  <= 2.d0 
-            end
-            ELSIF bytes_x == 0.A do 
-                route_addr  <= 2.d2
-            end
-            ELSIF bytes_x_sub_nDx == 0.A do 
-                route_addr  <= 2.d1 
-            end
-            ELSE do 
-                route_addr  <= 2.d1
-            end 
-        end
-    end
+    # always_ff(posedge.clock ,negedge.rst_n) do 
+    #     IF ~rst_n do 
+    #         bytes_x             <= 0.A 
+    #         bytes_x_Q           <= 0.A 
+    #         bytes_x_sub_nDx     <= 0.A
+    #         bytes_x_vld         <= 1.b0
+    #         bytes_Q             <= 0.A 
+    #         bytes_QQ            <= 0.A 
+    #     end 
+    #     ELSE do 
+    #         bytes_Q             <= bytes
+    #         bytes_QQ            <= bytes_Q
 
+    #         bytes_x             <= bytes_x_tmp
+    #         bytes_x_Q           <= bytes_x
+
+    #         bytes_x_sub_nDx     <= bytes_Q - bytes_x*param.DX
+    #         bytes_x_vld         <= origin_inf.vld_rdy
+    #     end
+    # end
 
     axi_stream_interconnect_S2M.axi_stream_interconnect_S2M_inst do |h| #(
         h.param.NUM                         3

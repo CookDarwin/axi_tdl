@@ -9,8 +9,6 @@ created: xxxx.xx.xx
 madified:
 ***********************************************/
 `timescale 1ns/1ps
-`timescale 1ns/1ps
-`timescale 1ns/1ps
 
 module tb_test_tttop();
 //==========================================================================

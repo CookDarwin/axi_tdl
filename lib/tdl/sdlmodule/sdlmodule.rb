@@ -405,3 +405,67 @@ class SdlModule
         Clock.same_clock(self, *objs_clks)
     end
 end
+
+## 获取 引用的所有文件
+class SdlModule
+
+    def __ref_children_modules__
+        curr_refs = []
+
+        @_import_packages_ ||= []
+        curr_refs << @_import_packages_
+
+        instance_and_children_module.values.each do |pm|
+            curr_refs << [pm, pm.__ref_children_modules__()]
+        end
+
+        return curr_refs
+    end
+
+    def ref_modules
+
+        curr_refs = __ref_children_modules__.flatten.uniq.reject do |e|
+            e.is_a?(ClassHDL::ClearSdlModule)
+        end
+        curr_refs << self
+    end
+
+    def self.base_hdl_ref
+        ## 基本接口引用
+        _base_refs = []
+        _base_refs << ['axi_inf', File.expand_path(File.join(__dir__, "../../axi/interface_define/axi_inf.sv"))]
+        _base_refs << ['axi_lite_inf', File.expand_path(File.join(__dir__, "../../axi/interface_define/axi_lite_inf.sv"))]
+        _base_refs << ['axi_stream', File.expand_path(File.join(__dir__, "../../axi/interface_define/axi_stream_inf.sv"))]
+        _base_refs << ['data_inf', File.expand_path(File.join(__dir__, "../../axi/data_interface/data_interface.sv"))]
+        _base_refs << ['data_inf_c', File.expand_path(File.join(__dir__, "../../axi/data_interface/data_interface_pkg.sv"))]
+        _base_refs << ['axi_bfm_pkg', File.expand_path(File.join(__dir__, "../../axi/AXI_BFM/AXI_BFM_PKG.sv"))]
+        _base_refs << ['cm_ram_inf', File.expand_path(File.join(__dir__, "../../tdl/rebuild_ele/cm_ram_inf.sv"))]
+        _base_refs << ['Lite_Addr_Data_CMD', File.expand_path(File.join(__dir__, "../../axi/AXI_Lite/gen_axi_lite_ctrl.sv"))]
+        _base_refs
+    end
+
+    def pretty_ref_hdl_moduls_echo
+        index = 1
+        _indexs = []
+        _names = []
+        _paths = []
+        max_size = 0
+        ref_modules.each do |e| 
+            _indexs << index 
+            _names << e.module_name
+            _paths << File.expand_path(e.real_sv_path)
+            index += 1
+            if e.module_name.size > max_size
+                max_size = e.module_name.size 
+            end
+        end
+        puts(pagination(" Modules of <#{module_name}> reference"))
+
+        # fstr = "[%#{index.to_s.size}d] %-#{ _names.map do |e| e.size end.max }s    %s"
+        fstr = "[%#{index.to_s.size}d] %-#{ max_size }s    %s"
+
+        (index-1).times do |xi|
+            puts (fstr % [_indexs[xi], _names[xi], _paths[xi]])
+        end
+    end
+end

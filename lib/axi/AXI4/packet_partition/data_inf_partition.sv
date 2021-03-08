@@ -31,7 +31,7 @@ logic one_long_stream;
 logic fifo_wr;
 logic [ IDSIZE+4-1:0]  curr_id ;
 logic [LSIZE-1:0]  curr_length ;
-logic [ data_in.DSIZE-IDSIZE- LSIZE-1:0]  curr_addr ;
+logic [ ( data_in.DSIZE-IDSIZE)-LSIZE-1:0]  curr_addr ;
 logic [LSIZE-1:0]  wr_length ;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_full;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_empty;
@@ -68,7 +68,7 @@ typedef enum {
 } SE_STATE_ps;
 SE_STATE_ps CSTATE_ps,NSTATE_ps;
 initial begin
-    assert( data_in.DSIZE+4== data_out.DSIZE)else begin
+    assert( ( data_in.DSIZE+4)==data_out.DSIZE)else begin
          $error("data_in.DSIZE<%d> != data_out.DSIZE<%d>",data_in.DSIZE,data_out.DSIZE);
          $stop;
     end

@@ -3,6 +3,7 @@ require_hdl File.join(__dir__,'full_axi4_to_axis_partition_wr_rd.sv')
 require_sdl 'common_ram_wrapper.rb'
 
 require_hdl File.join(__dir__,"./full_axi4_to_axis.sv")
+require_hdl 'data_inf_c_planer_A1.sv'
 
 TdlBuild.axi4_dpram_cache(__dir__) do 
     parameter.INIT_FILE     ''

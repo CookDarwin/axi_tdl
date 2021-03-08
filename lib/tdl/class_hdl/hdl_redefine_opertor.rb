@@ -58,9 +58,21 @@ module ClassHDL
                 # 计算生成新的OpertorChain 是 self 也需要抛弃
                 self.slaver = true
                 # return self
-                new_op =  OpertorChain.new 
-                new_op.tree = new_op.tree + self.tree
-                new_op.tree.push [b,os] 
+                new_op = nil
+                AssignDefOpertor.with_rollback_opertors(:old) do 
+                    if tree.size == 2 && tree.last[1].to_s == "<="
+                        new_op =  OpertorChain.new 
+                        new_op.tree = new_op.tree + self.tree
+                        new_op.tree.push [b,os] 
+                    elsif  tree.size >= 2 && (!['*',"/","~"].include?(tree.last[1].to_s))
+                        new_op =  brackets 
+                        new_op.tree.push [b,os] 
+                    else
+                        new_op =  OpertorChain.new 
+                        new_op.tree = new_op.tree + self.tree
+                        new_op.tree.push [b,os] 
+                    end 
+                end
 
                 if ClassHDL::AssignDefOpertor.curr_assign_block
                     ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(new_op)

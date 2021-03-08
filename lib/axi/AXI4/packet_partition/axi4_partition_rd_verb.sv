@@ -86,7 +86,7 @@ always_ff@(posedge clock,negedge rst_n) begin
          wait_last_inf.ready <= 1'b0;
     end
     else begin
-         wait_last_inf.ready <= ( long_inf.axi_rvalid&long_inf.axi_rready& long_inf.axi_rlast);
+         wait_last_inf.ready <= ( ( long_inf.axi_rvalid&long_inf.axi_rready)&long_inf.axi_rlast);
     end
 end
 

@@ -15,7 +15,7 @@ module data_c_pipe_force_vld_bind_data #(
     parameter   HEAD_MODE = "ON",        // data in master.head
     parameter   SYNC = "master"
 )(
-    input [DSIZE-1:0]           data,   //sync master
+    input [DSIZE-1:0]           data,   //sync master, need bypass
     data_inf_c.slaver           slaver,
     data_inf_c.master           master
 );

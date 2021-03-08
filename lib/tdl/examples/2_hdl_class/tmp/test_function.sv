@@ -35,7 +35,7 @@ function status(input [7:0] code,output logic [15:0] pl);
 endfunction:status
 
 function logic status_xp(input [7:0] code,output logic [15:0] pl); 
-     status_xp = ( inm!=0| ( inm!=1));
+     status_xp = ( ( inm!=0)|( inm!=1));
 endfunction:status_xp
 
 function SE_STATE_ctrl pre_status(input [7:0] code,output logic [15:0] pl,input SE_STATE_ctrl ll); 
@@ -47,6 +47,6 @@ endfunction:pre_status
 
 assign  gp = status(67, gp+1,opop);
 assign  gp = pre_status();
-assign  gp = ( inm!=0| ( inm!=1));
+assign  gp = ( ( inm!=0)|( inm!=1));
 
 endmodule

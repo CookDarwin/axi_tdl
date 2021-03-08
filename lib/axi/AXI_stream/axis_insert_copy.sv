@@ -58,7 +58,7 @@ always_ff@(posedge clock,negedge rst_n) begin
             end
         end
         else begin
-             insert_tri <= ( in_inf_valve.axis_tcnt>=( insert_seed-1'b1)&& in_inf_valve.axis_tvalid && in_inf_valve.axis_tready && ( in_inf_valve.axis_tcnt<( insert_seed+insert_len- 1'b1))&& ~in_inf.axis_tlast);
+             insert_tri <= ( in_inf_valve.axis_tcnt>=( insert_seed-1'b1)&& in_inf_valve.axis_tvalid && in_inf_valve.axis_tready && ( in_inf_valve.axis_tcnt<( ( insert_seed+insert_len)-1'b1))&& ~in_inf.axis_tlast);
         end
     end
 end

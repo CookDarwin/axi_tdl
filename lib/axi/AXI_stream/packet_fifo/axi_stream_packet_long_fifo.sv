@@ -12,7 +12,8 @@ madified:
 (* axi_stream = "true" *)
 module axi_stream_packet_long_fifo #(
     parameter DEPTH         = 2,   //2-4
-    parameter BYTE_DEPTH    = 8096
+    parameter BYTE_DEPTH    = 8096,
+    parameter USE_KEEP      = "OFF"
 )(
     (* up_stream = "true" *)
     axi_stream_inf.slaver      axis_in,
@@ -27,21 +28,41 @@ logic   data_fifo_full;
 logic   data_fifo_empty;
 logic [axis_in.DSIZE-1:0]   stream_fifo_data;
 
-fifo_36kb_long #(
-    .DSIZE      (axis_out.DSIZE ),
-    .DEPTH      (BYTE_DEPTH     )
-)fifo_36kb_long_inst(
-/*  input              */  .wr_clk      (axis_in.aclk       ),
-/*  input              */  .wr_rst      (~axis_in.aresetn   ),
-/*  input              */  .rd_clk      (axis_out.aclk      ),
-/*  input              */  .rd_rst      (~axis_out.aresetn  ),
-/*  input [DSIZE-1:0]  */  .din         (axis_in.axis_tdata ),
-/*  input              */  .wr_en       ((axis_in.axis_tvalid && !data_fifo_full && axis_in.axis_tready)             ),
-/*  input              */  .rd_en       ((axis_out.axis_tvalid && !data_fifo_empty && axis_out.axis_tready)          ),
-/*  output [DSIZE-1:0] */  .dout        (axis_out.axis_tdata    ),
-/*  output             */  .full        (data_fifo_full         ),
-/*  output             */  .empty       (data_fifo_empty        )
-);
+generate 
+    if(USE_KEEP=="OFF" || USE_KEEP=="FALSE")begin 
+        fifo_36kb_long #(
+            .DSIZE      (axis_out.DSIZE ),
+            .DEPTH      (BYTE_DEPTH     )
+        )fifo_36kb_long_inst(
+        /*  input              */  .wr_clk      (axis_in.aclk       ),
+        /*  input              */  .wr_rst      (~axis_in.aresetn   ),
+        /*  input              */  .rd_clk      (axis_out.aclk      ),
+        /*  input              */  .rd_rst      (~axis_out.aresetn  ),
+        /*  input [DSIZE-1:0]  */  .din         (axis_in.axis_tdata ),
+        /*  input              */  .wr_en       ((axis_in.axis_tvalid && !data_fifo_full && axis_in.axis_tready)             ),
+        /*  input              */  .rd_en       ((axis_out.axis_tvalid && !data_fifo_empty && axis_out.axis_tready)          ),
+        /*  output [DSIZE-1:0] */  .dout        (axis_out.axis_tdata    ),
+        /*  output             */  .full        (data_fifo_full         ),
+        /*  output             */  .empty       (data_fifo_empty        )
+        );
+    end else begin 
+        fifo_36kb_long #(
+            .DSIZE      (axis_out.DSIZE+axis_out.KSIZE ),
+            .DEPTH      (BYTE_DEPTH     )
+        )fifo_36kb_long_inst(
+        /*  input              */  .wr_clk      (axis_in.aclk       ),
+        /*  input              */  .wr_rst      (~axis_in.aresetn   ),
+        /*  input              */  .rd_clk      (axis_out.aclk      ),
+        /*  input              */  .rd_rst      (~axis_out.aresetn  ),
+        /*  input [DSIZE-1:0]  */  .din         ({axis_in.axis_tkeep, axis_in.axis_tdata} ),
+        /*  input              */  .wr_en       ((axis_in.axis_tvalid && !data_fifo_full && axis_in.axis_tready)             ),
+        /*  input              */  .rd_en       ((axis_out.axis_tvalid && !data_fifo_empty && axis_out.axis_tready)          ),
+        /*  output [DSIZE-1:0] */  .dout        ({axis_out.axis_tkeep, axis_out.axis_tdata}    ),
+        /*  output             */  .full        (data_fifo_full         ),
+        /*  output             */  .empty       (data_fifo_empty        )
+        );
+    end
+endgenerate
 
 // assign axis_out.axis_tdata = axis_out.axis_tvalid? stream_fifo_data : '0;
 //---<< NATIVE FIFO IP >>------------------------------

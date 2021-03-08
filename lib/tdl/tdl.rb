@@ -89,7 +89,11 @@ require_relative "./exlib/itegration"
 require_relative "./exlib/itegration_verb"
 require_relative "./exlib/parse_argv"
 # require_relative "./tdlmodule_ex"
-require_relative "./SDL/path_lib"     # require sdlmodule
+# require_relative "./SDL/path_lib"     # require sdlmodule
+## VSC COMPATABLE support 
+require_relative "./SDL/vcs_axi4_comptable.rb"
+require_relative "./SDL/vcs_data_c_comptable.rb"
+require_relative "./SDL/vcs_axis_comptable.rb"
 
 ## 添加 M2S方法
 require_relative "./axi_stream/axi_stream_interconnect.rb"
@@ -254,6 +258,14 @@ class Tdl
         puts TopModule.current.test_unit.echo_units if TopModule.current
         puts(pagination("SUMMARY"))
         puts "#{TopModule.sim ? 'SIM' : 'SYNTH'} RUN SPEND #{Time.now - $__start_time__} sec @ TIME : #{Time.now}"
+
+        ## ----------- 
+        # TopModule.current.ref_modules.uniq.each do |e| 
+        #     unless  e.is_a? ClassHDL::ClearSdlModule
+        #         puts "#{e.real_sv_path}: #{e.module_name}"
+        #     end
+        # end
+        ## ===========
     end
 
 end

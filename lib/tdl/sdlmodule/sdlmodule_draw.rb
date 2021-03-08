@@ -6,11 +6,12 @@ class Tdl
     end
 
     def self.head_logo=(a) 
+        $__sdlmodule_head_logo__ = a
         @@__head_logo__ = a
     end
 end
 
-$__sdlmodule_head_logo__ = Tdl.head_logo || File.open(File.join(__dir__,"sdlmodule_head_logo.txt")).read
+$__sdlmodule_head_logo__ = File.open(File.join(__dir__,"sdlmodule_head_logo.txt")).read
 
 class SdlModule
     attr_accessor :origin_sv

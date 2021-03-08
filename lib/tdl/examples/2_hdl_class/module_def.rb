@@ -1,5 +1,6 @@
-require_relative '../../tdl.rb'
+require 'axi_tdl'
 # require_relative "./../../class_hdl/hdl_module_def.rb"
+require_hdl 'axi_stream_cache_35bit.sv'
 
 TdlBuild.test_module(File.join(__dir__,"tmp")) do 
     input.clock     - 'clock'
