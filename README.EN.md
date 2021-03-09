@@ -1,53 +1,53 @@
 # Axi
-&emsp;&emsp;axi是一个 axi4 拓展库，它使用的是删减版的AXI4协议，使用systemverilog开发，除此外我还拓展了AXI4的一些信号。
+&emsp;&emsp;It is a wonderful library of axi4, but it is not full axi4, It is designed by systemverilog. I compact axi4 and add something to it.
 
-&emsp;&emsp;axi hdl 所在路径可以如下Ruby 脚本获取
+&emsp;&emsp;axi hdl path
 ```ruby
 require 'axi_tdl'
 AxiTdl::AXI_PATH
 ```
-# 其他
-&emsp;&emsp;此库还包含一个简单的接口定义, 接口信号只有 `valid`, `ready`, 和 `data`. 对于一些轻量设计很有帮助。
+# Other
+&emsp;&emsp;It contain a simple interface that only define three signals, `valid`, `ready`, and `data`. I think it is useful for design. 
 
-## tdl 是什么？
-&emsp;&emsp;tdl 是一种硬件构造语言, 和chisel类似, 但是更加有趣, 他是一种基于Ruby的DSL. 最终它会编译输出systemverilog。 tdl也是基于axi库做的设计。这两部分都包含这此gem包中。
+## What is tdl?
+&emsp;&emsp;tdl is a hardware Construction language, it like chisel, but more intresting. It is a DSL and base on ruby. Finally, it convert to systemverilog. And it depend on the axi library of my other github respo.
 
-## tdl 能做什么？
-&emsp;&emsp;使用tdl做设计开发, 语法类似systemverilog，这样更亲切。不止于此, tdl加入了大量的验证语法。tdl创建的初衷就是为了快速构建`逻辑系统`, 这就是tdl和其他硬件构造语言最大的区别。
+## What tdl can do?
+&emsp;&emsp;When you write RTL code by tdl, it look like systemverilog. And not only that, you can verify design by tdl. Even more, you can construct `Logic System`, I think it is main difference between tdl and other hardware Construction languages. 
 
-## 安装
+## Installation
 
- Gemfile中添加:
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'axi_tdl'
 ```
 
-然后执行:
+And then execute:
 
     $ bundle
 
-或则通过gem命令安装:
+Or install it yourself as:
 
     $ gem install axi_tdl
 
-## 代码示例
+## Code Example
 
-### 1. 定义模块 
-在当前tdl所在的路径创建一个systemverilog模块文件，模块名为 `test_module`.
+### 1. define module 
+It will create a module of systemverilog that name is `test_module` in current dir.
 ```ruby 
 TdlBuild.test_module(__dir__) do
 ## Other code
 end
 ```
-输出的systemverilog 文件如下：
+the sv file look like this
 ```systemverilog
 `timescale 1ns/1ps
 module test_module(
 );
 endmodule
 ```
-### 2. 端口
+### 2. ports
 ```ruby 
 TdlBuild.test_module(__dir__) do 
     input.clock         - 'clock'
@@ -72,7 +72,7 @@ module test_module (
 endmodule
 ```
 
-## 3. 接口
+## 3. interface
 ```ruby 
 TdlBuild.test_interface(__dir__) do 
 
@@ -270,7 +270,7 @@ endgenerate
 endmodule
 ```
 
-## 6. 合并 logic
+## 6. combin logic
 ```ruby
 TdlBuild.test_logic_combin(__dir__) do 
     logic[7]    - 'a0'

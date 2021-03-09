@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Cook.Darwin"]
   spec.email         = ["cook_darwin@hotmail.com"]
 
-  spec.summary       = %q{Axi is a light weight axi library. Tdl is a hardware Construction language}
-  spec.description   = %q{tdl is a hardware Construction language, it like chisel, but more intresting. It is a DSL and base on ruby. Finally, it convert to systemverilog. }
+  spec.summary       = %q{Axi 是一个轻量级的AXI4库. Tdl 是一种硬件构造语言}
+  spec.description   = %q{tdl 是一种硬件构造语言, 和chisel类似, 但是更加有趣, 他是一种基于Ruby的DSL. 最终它会编译输出systemverilog 。 }
   spec.homepage      = "https://www.github.com/CookDarwin/axi_tdl"
   # spec.homepage      = "https://rubygems.org/gems/axi_tdl"
   spec.license       = "LGPL-2.1"
