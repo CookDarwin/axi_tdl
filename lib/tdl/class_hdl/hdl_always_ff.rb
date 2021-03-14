@@ -153,7 +153,7 @@ class SdlModule
 
     def always_ff(*args,&block)
         if args[0].is_a? Hash 
-            return Always(args[0],&block)
+            return Always(**args[0],&block)
         end 
         posedge_list = []
         negedge_list = [] 

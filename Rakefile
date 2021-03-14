@@ -10,5 +10,5 @@ Rake::TestTask.new(:test) do |t|
     t.libs << "lib/tdl"
     t.pattern = "test/*_test.rb"
     # t.ruby_opts = ["-c"]
-    t.verbose = true
+    # t.verbose = true
 end
