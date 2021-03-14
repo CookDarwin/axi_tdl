@@ -22,7 +22,7 @@ DEPENDENCIES
   bundler (~> 1.16)
   minitest
   pry
-  rake (~> 10.0)
+  rake
 
 BUNDLED WITH
    1.17.3
