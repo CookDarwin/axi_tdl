@@ -8,3 +8,4 @@
 /tmp/
 .rake_tasks~
 lib/tdl/auto_script/tmp/
+/*.gem

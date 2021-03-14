@@ -6,5 +6,5 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gemspec
 
 gem 'rake'
-gem 'minitest',"~> 5.10"
-gem 'pry',"~> 0.11"
+# gem 'minitest',"~> 5.10"
+# gem 'pry',"~> 0.11"
