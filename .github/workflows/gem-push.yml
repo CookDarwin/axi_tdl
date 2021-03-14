@@ -13,10 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.6
+    - name: Set up Ruby
       uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 
+          - 2.6.x
+          - 2.7.x
+          - 3.0.x
 
     - name: Publish to GPR
       run: |

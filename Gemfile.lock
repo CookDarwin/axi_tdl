@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    axi_tdl (0.0.11)
+    axi_tdl (0.0.12)
 
 GEM
   remote: https://rubygems.org/
@@ -20,8 +20,8 @@ PLATFORMS
 DEPENDENCIES
   axi_tdl!
   bundler (~> 1.16)
-  minitest
-  pry
+  minitest (~> 5.10)
+  pry (~> 0.11)
   rake
 
 BUNDLED WITH
