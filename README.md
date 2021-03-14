@@ -1,4 +1,8 @@
-# Axi
+# AxiTdl
+[![Gem Version](https://badge.fury.io/rb/axi_tdl.svg)](https://badge.fury.io/rb/axi_tdl)
+[![Build Status](https://travis-ci.com/CookDarwin/axi_tdl.svg?branch=main)](https://travis-ci.com/CookDarwin/axi_tdl)
+
+## Axi
 &emsp;&emsp;axi是一个 axi4 拓展库，它使用的是删减版的AXI4协议，使用systemverilog开发，除此外我还拓展了AXI4的一些信号。
 
 &emsp;&emsp;axi hdl 所在路径可以如下Ruby 脚本获取
@@ -6,7 +10,7 @@
 require 'axi_tdl'
 AxiTdl::AXI_PATH
 ```
-# 其他
+## 其他
 &emsp;&emsp;此库还包含一个简单的接口定义, 接口信号只有 `valid`, `ready`, 和 `data`. 对于一些轻量设计很有帮助。
 
 ## tdl 是什么？
