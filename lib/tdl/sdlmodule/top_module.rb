@@ -431,9 +431,11 @@ class TopModule
             # sdlm.gen_sv_module
             sdlm.gen_sv_module_verb
             unless sdlm.vcs_path
-                sdlm.test_unit.gen_dve_tcl(File.join(args[0],"dve.tcl"))
+                # sdlm.test_unit.gen_dve_tcl(File.join(args[0],"dve.tcl"))
+                SdlModule.gen_dev_wave_tcl File.join(args[0],"dve.tcl")
             else  
-                sdlm.test_unit.gen_dve_tcl(File.join(sdlm.vcs_path,"dve.tcl"))
+                # sdlm.test_unit.gen_dve_tcl(File.join(sdlm.vcs_path,"dve.tcl"))
+                SdlModule.gen_dev_wave_tcl File.join(sdlm.vcs_path,"dve.tcl")
             end
             sdlm.create_xdc
         else 
@@ -450,55 +452,57 @@ class TopModule
 end
 
 ## 給TopModule 添加单元测试 方法
-module TdlSpace 
-    class TopModuleTestUnitRef
+# module TdlSpace 
+#     class TopModuleTestUnitRef
 
-        def collect_unit(tu)
-            @__collect_units__ ||= []
-            @__collect_units__ << tu 
-        end
+#         def collect_unit(tu)
+#             @__collect_units__ ||= []
+#             @__collect_units__ << tu 
+#         end
 
-        def echo_units
-            @__collect_units__ ||= []
-            index = 1
+#         def echo_units
+#             @__collect_units__ ||= []
+#             index = 1
     
-            rels = []
-            __collect = TdlTestPoint.inst_collect.select { |e| e.target.belong_to_module.top_tb_ref? }
-            @__collect_units__.each do |ue|
-                tp_str = ue.origin.dve_wave_signals.map do |ele| 
-                    unless __collect.index(ele.tp_instance)
-                        puts ele.name
-                    end
-                    "     ->#{__collect.index(ele.tp_instance)+1}< :: #{ele.tp_instance.name} || #{ele.tp_instance.file}:#{ele.tp_instance.line}" 
-                end.join("\n")
+#             rels = []
+#             # __collect = TdlTestPoint.inst_collect.select { |e| e.target.belong_to_module.top_tb_ref? }
+#             # @__collect_units__.each do |ue|
+#             #     tp_str = ue.origin.dve_wave_signals.select do |e|
+#             #         e.respond_to? :tp_instance
+#             #     end.map do |ele| 
+#             #         unless __collect.index(ele.tp_instance)
+#             #             puts ele.name
+#             #         end
+#             #         "     ->#{__collect.index(ele.tp_instance)+1}< :: #{ele.tp_instance.name} || #{ele.tp_instance.file}:#{ele.tp_instance.line}" 
+#             #     end.join("\n")
 
-                rels << "  [#{index}]  #{ue.origin.module_name} ::<TestPoints> \n#{tp_str}"
-                index += 1
-            end
-            rels.join("\n")
-        end
+#             #     rels << "  [#{index}]  #{ue.origin.module_name} ::<TestPoints> \n#{tp_str}"
+#             #     index += 1
+#             # end
+#             rels.join("\n")
+#         end
 
-        def dve_wave(name: '', signals: [])
-            return unless signals
-            @_dev_wave_ ||= Hash.new 
-            @_dev_wave_[name.to_s] = signals    ## Signal is TdlTestPoint
-        end
+#         def dve_wave(name: '', signals: []) #name => SdlModule instance name
+#             return unless signals
+#             @_dev_wave_ ||= Hash.new 
+#             @_dev_wave_[name.to_s] = signals    ## Signal is TdlTestPoint
+#         end
 
-        def gen_dve_tcl(filename)
-            File.open(filename,'w') do |f|
-                f.puts TdlSpace.gen_dev_wave_tcl(@_dev_wave_ || Hash.new)
-            end
-        end
+#         def gen_dve_tcl(filename)
+#             File.open(filename,'w') do |f|
+#                 f.puts TdlSpace.gen_dev_wave_tcl(@_dev_wave_ || Hash.new)
+#             end
+#         end
 
-    end
-end 
+#     end
+# end 
 
-class TopModule
-    def test_unit
-        @__test_unit__ ||= TdlSpace::TopModuleTestUnitRef.new
-    end
+# class TopModule
+#     def test_unit
+#         @__test_unit__ ||= TdlSpace::TopModuleTestUnitRef.new
+#     end
 
-end
+# end
 
 ##  判断 是否被顶层引用
 class SdlModule
@@ -522,6 +526,7 @@ class SdlModule
     end
 
     def top_tb_ref?
+        return false unless TopModule.current
         if self == TopModule.current.techbench 
             return true
         end

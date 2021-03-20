@@ -99,8 +99,13 @@ module TdlSpace
     end
 end
 
+module AxiTdl
+    class SdlModuleActiveBaseElm
+    end
+end
 
-class BaseElm
+
+class BaseElm < AxiTdl::SdlModuleActiveBaseElm
     # attr_accessor :belong_module
     attr_accessor :belong_to_module
     attr_accessor :name

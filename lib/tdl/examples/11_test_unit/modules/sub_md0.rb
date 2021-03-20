@@ -17,7 +17,10 @@ TdlBuild.sub_md0(__dir__) do
     end
 
     ## CREATE TEST POINT
-    cnt.create_tp('count test point')   - 'tp_cnt'
-    axis_in.create_tp('test point of axis_in',__FILE__,__LINE__)    - 'tp_axis_in'
-    inter_tf.create_tp('inner test point',__FILE__,__LINE__)        - 'tp_inter_tf'
+    # cnt.create_tp('count test point')   - 'tp_cnt'
+    # axis_in.create_tp('test point of axis_in',__FILE__,__LINE__)    - 'tp_axis_in'
+    # inter_tf.create_tp('inner test point',__FILE__,__LINE__)        - 'tp_inter_tf'
+    cnt.tracked_by_dve(:logic)
+    axis_in.tracked_by_dve(:interface)
+    inter_tf.tracked_by_dve
 end

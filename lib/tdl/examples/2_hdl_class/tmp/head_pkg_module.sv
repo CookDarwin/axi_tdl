@@ -21,22 +21,22 @@ module head_pkg_module import test_package::*;(
 //-------- define ----------------------------------------------------------
 z_ing y0;
 z_ing curr_y0;
-logic [ $clog2( NUM*8)-1:0]  clog2_data ;
+logic [$clog2(NUM*8)-1:0]  clog2_data ;
 
 //==========================================================================
 //-------- instance --------------------------------------------------------
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  out = NUM;
-assign  out = data;
-assign  struct_z_l[8].op[0] = 0;
+assign out = NUM;
+assign out = data;
+assign struct_z_l[8].op[0] = 0;
 
-assign  y0.op = 1'b0;
-assign  y0.op[0] = 1'd0;
-assign  y0.op[1] = struct_z.op[1];
-assign  y0.op[y0.op[3:1]] = struct_z.op;
+assign y0.op = 1'b0;
+assign y0.op[0] = 1'd0;
+assign y0.op[1] = struct_z.op[1];
+assign y0.op[y0.op[3:1]] = struct_z.op;
 
-assign  curr_y0 = struct_z;
+assign curr_y0 = struct_z;
 
 endmodule

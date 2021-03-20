@@ -5,13 +5,12 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-03-20 12:10:27 +0800
 madified:
 ***********************************************/
 
 
-package test_package;
-parameter  NUM = 6;
+module test_packageparameter  NUM = 6;();
 //==========================================================================
 //-------- define ----------------------------------------------------------
 typedef struct {
@@ -33,6 +32,6 @@ s_ing s_ing_v1;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  zing_v0.op[9] = 0;
+assign zing_v0.op[9] = 0;
 
-endpackage:test_package
+endmodule

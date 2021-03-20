@@ -5,13 +5,12 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-03-20 12:10:27 +0800
 madified:
 ***********************************************/
 
 
-package head_package;
-parameter  HDSIZE = 8;
+module head_packageparameter  HDSIZE = 8;();
 //==========================================================================
 //-------- define ----------------------------------------------------------
 typedef struct {
@@ -26,4 +25,4 @@ logic valid;
 //==========================================================================
 //-------- expression ------------------------------------------------------
 
-endpackage:head_package
+endmodule

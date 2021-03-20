@@ -13,7 +13,7 @@ madified:
 module common_ram_sim_wrapper #(
     parameter  FNUM = 8
 )(
-    input [ FNUM-1:0]   load_files,
+    input [FNUM-1:0]    load_files,
     input [4095:0]      init_files [FNUM-1:0],
     cm_ram_inf.slaver   ram_inf
 );
@@ -59,17 +59,17 @@ xilinx_hdl_dpram_sim #(
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  addra = ram_inf.addra;
-assign  dina = ram_inf.dia;
-assign  addrb = ram_inf.addrb;
-assign  dinb = ram_inf.dib;
+assign addra = ram_inf.addra;
+assign dina = ram_inf.dia;
+assign addrb = ram_inf.addrb;
+assign dinb = ram_inf.dib;
 
-always_ff@(posedge ram_inf.clka) begin 
-     ram_inf.doa <= douta[ ram_inf.DSIZE-1:0];
+always@(posedge ram_inf.clka) begin 
+    ram_inf.doa <= douta[ram_inf.DSIZE-1:0];
 end
 
-always_ff@(posedge ram_inf.clkb) begin 
-     ram_inf.dob <= doutb[ ram_inf.DSIZE-1:0];
+always@(posedge ram_inf.clkb) begin 
+    ram_inf.dob <= doutb[ram_inf.DSIZE-1:0];
 end
 
 endmodule

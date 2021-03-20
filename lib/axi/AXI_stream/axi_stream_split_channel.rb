@@ -20,7 +20,13 @@ TdlBuild.axi_stream_split_channel(__dir__) do
             new_last    <= 1.b0
         end
         ELSE do 
-            new_last    <= (origin_inf.axis_tcnt == (split_len - 2)).and(origin_inf.vld_rdy)
+            IF origin_inf.vld_rdy do 
+                new_last    <= (origin_inf.axis_tcnt == (split_len - 2))
+            end
+            ELSE do 
+                new_last    <= new_last
+            end
+            # new_last    <= (origin_inf.axis_tcnt == (split_len - 2)).and(origin_inf.vld_rdy)
 
             IF origin_inf.vld_rdy_last do 
                 addr    <= 1.b0 

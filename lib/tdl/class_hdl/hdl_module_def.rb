@@ -70,6 +70,9 @@ module ClassHDL
         def initialize(name,sdlm)
             @name = name
             @sdlm = sdlm
+            unless SdlModule.exist_module?(@name)
+                raise TdlError.new("Cant find module `#{name}` !!!")
+            end
         end
 
         def inst(dname,&block)
@@ -95,9 +98,23 @@ module ClassHDL
             # else 
             #     @sdlm.Instance(@name,dname.to_s,&block)
             # end
+            rel = nil
             AssignDefOpertor.with_rollback_opertors(:old) do 
-                inst(dname,&block)
+                if block_given?
+                    rel = inst(dname,&block)
+                else
+                    ## 当没有block 判断 sdlm是否相应方法
+                    # if @sdlm.has_signal?(dname)
+                    # if SdlModule.call_module(@name).has_signal?(dname)
+                    if SdlModule.call_module(@name).respond_to?(dname)
+                        rel =  SdlModule.call_module(@name).signal(dname)
+                    else 
+                        # super 
+                        raise TdlError.new( "Cant find signal `#{dname}` in module `#{@name}` path: #{SdlModule.call_module(@name).real_sv_path } !!!" )
+                    end
+                end
             end
+            return rel
         end
 
     end

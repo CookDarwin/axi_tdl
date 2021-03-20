@@ -28,38 +28,38 @@ data_inf_c #(.DSIZE(8)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-always_ff@(posedge clock) begin 
+always@(posedge clock) begin 
     case(tmp0) 
         a_inf.data:begin 
             if(90)begin
-                 tmp1 <= 0;
+                tmp1 <= 0;
             end
             else begin
-                 tmp1 <= 1;
+                tmp1 <= 1;
             end
         end
         1,2:begin 
             if(90)begin
-                 tmp1 <= 0;
+                tmp1 <= 0;
             end
             else begin
-                 tmp1 <= 1;
+                tmp1 <= 1;
             end
         end
         c_inf[0][1][2].data,2:begin 
             if(c_inf[0][1][2].valid)begin
-                 tmp1 <= 0;
+                tmp1 <= 0;
             end
             else begin
-                 tmp1 <= 1;
+                tmp1 <= 1;
             end
         end
         default:begin 
             if(909)begin
-                 tmp1 <= 0;
+                tmp1 <= 0;
             end
             else begin
-                 tmp1 <= 1;
+                tmp1 <= 1;
             end
         end
     endcase
@@ -69,34 +69,34 @@ always_comb begin
     case(tmp0) 
         a_inf.data:begin 
             if(90)begin
-                 tmp1 = 0;
+                tmp1 = 0;
             end
             else begin
-                 tmp1 = 1;
+                tmp1 = 1;
             end
         end
         1,2:begin 
             if(90)begin
-                 tmp1 = 0;
+                tmp1 = 0;
             end
             else begin
-                 tmp1 = 1;
+                tmp1 = 1;
             end
         end
         c_inf[0][1][2].data,2:begin 
             if(c_inf[0][1][2].valid)begin
-                 tmp1 = 0;
+                tmp1 = 0;
             end
             else begin
-                 tmp1 = 1;
+                tmp1 = 1;
             end
         end
         default:begin 
             if(909)begin
-                 tmp1 = 0;
+                tmp1 = 0;
             end
             else begin
-                 tmp1 = 1;
+                tmp1 = 1;
             end
         end
     endcase

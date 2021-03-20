@@ -232,10 +232,21 @@ class AutoGenSdl
     end
 
     def gen_file
-        @autof = File.open(@autof_name,"w") do |f|
-            f.puts gen_head
-            f.puts gen_content
-            # f.puts "sm.origin_sv = true"
+        unless File.exist?(@autof_name) 
+            @autof = File.open(@autof_name,"w") do |f|
+                f.print gen_head
+                f.print gen_content
+                # f.puts "sm.origin_sv = true"
+            end
+        else 
+            _old_str  = File.open(@autof_name).read
+            _new_str = gen_head+gen_content
+            if _old_str != _new_str
+                @autof = File.open(@autof_name,"w") do |f|
+                    f.print _new_str
+                    # f.puts "sm.origin_sv = true"
+                end
+            end
         end
     end
 
@@ -255,7 +266,7 @@ self.path = File.expand_path(__FILE__)
     end
 
     def gen_content
-        (@param_port_inst+@signals_ports_inst+@inf_ports_inst + ["end"]).join("\n")
+        (@param_port_inst+@signals_ports_inst+@inf_ports_inst + ["end\n\n"]).join("\n")
     end
 
 

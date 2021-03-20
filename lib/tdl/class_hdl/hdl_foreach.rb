@@ -55,7 +55,7 @@ class SdlModule
         ClassHDL::AssignDefOpertor.with_normal_opertor do 
             @@__foreach_index_cnt__ += 1
         end
-        new_op = ClassHDL::BlockFOREACH.new
+        new_op = ClassHDL::BlockFOREACH.new(self)
 
         ClassHDL::AssignDefOpertor.with_new_opertor do 
             ClassHDL::AssignDefOpertor.with_new_assign_block(new_op) do |ab|
@@ -81,7 +81,7 @@ class SdlModule
         ClassHDL::AssignDefOpertor.with_normal_opertor do 
             @@__for_index_cnt__ += 1
         end
-        new_op = ClassHDL::BlockFOR.new
+        new_op = ClassHDL::BlockFOR.new(self)
 
         ClassHDL::AssignDefOpertor.with_new_opertor do 
             ClassHDL::AssignDefOpertor.with_new_assign_block(new_op) do |ab|

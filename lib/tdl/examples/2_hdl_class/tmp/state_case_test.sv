@@ -37,39 +37,39 @@ SE_STATE_ctrl_state CSTATE_ctrl_state,NSTATE_ctrl_state;
 always_comb begin 
     case(CSTATE_ctrl_state) 
         IDLE:begin 
-             NSTATE_ctrl_state = EXEC;
+            NSTATE_ctrl_state = EXEC;
         end
         EXEC:begin 
             if(90)begin
-                 NSTATE_ctrl_state = DONE;
+                NSTATE_ctrl_state = DONE;
             end
             else begin
-                 NSTATE_ctrl_state = EXEC;
+                NSTATE_ctrl_state = EXEC;
             end
         end
         DONE:begin 
-             NSTATE_ctrl_state = IDLE;
+            NSTATE_ctrl_state = IDLE;
         end
         default:begin 
-             NSTATE_ctrl_state = IDLE;
+            NSTATE_ctrl_state = IDLE;
         end
     endcase
 end
 
-always_ff@(posedge clock,negedge rst_n) begin 
+always@(posedge clock,negedge rst_n) begin 
     if(~rst_n)begin
-         a_inf.data <= '0;
+        a_inf.data <= '0;
     end
     else begin
         case(NSTATE_ctrl_state) 
             IDLE:begin 
-                 a_inf.data <= 8'd9;
+                a_inf.data <= 8'd9;
             end
             EXEC:begin 
-                 a_inf.data <= 8'h12;
+                a_inf.data <= 8'h12;
             end
             default:begin 
-                 a_inf.data <= ~('0);
+                a_inf.data <= ~('0);
             end
         endcase
     end

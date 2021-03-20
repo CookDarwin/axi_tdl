@@ -22,6 +22,6 @@ data_inf_c #(.DSIZE(8)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  tmp1 = ( tmp0[0]&"FALSE" && ( c_inf.data==3 ||  a_inf.valid|1'b0));
+assign tmp1 = tmp0[0]&"FALSE" &&(c_inf.data==3 ||a_inf.valid|1'b0);
 
 endmodule

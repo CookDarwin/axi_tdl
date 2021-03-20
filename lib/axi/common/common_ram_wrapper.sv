@@ -56,26 +56,26 @@ xilinx_hdl_dpram #(
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  addra = ram_inf.addra;
-assign  dina = ram_inf.dia;
-assign  addrb = ram_inf.addrb;
-assign  dinb = ram_inf.dib;
+assign addra = ram_inf.addra;
+assign dina = ram_inf.dia;
+assign addrb = ram_inf.addrb;
+assign dinb = ram_inf.dib;
 
-always_ff@(posedge ram_inf.clka) begin 
-    if( ram_inf.DSIZE<34)begin
-         ram_inf.doa <= douta[32:0];
+always@(posedge ram_inf.clka) begin 
+    if(ram_inf.DSIZE<34)begin
+        ram_inf.doa <= douta[32:0];
     end
     else begin
-         ram_inf.doa <= douta;
+        ram_inf.doa <= douta;
     end
 end
 
-always_ff@(posedge ram_inf.clkb) begin 
-    if( ram_inf.DSIZE<34)begin
-         ram_inf.dob <= doutb[32:0];
+always@(posedge ram_inf.clkb) begin 
+    if(ram_inf.DSIZE<34)begin
+        ram_inf.dob <= doutb[32:0];
     end
     else begin
-         ram_inf.dob <= doutb;
+        ram_inf.dob <= doutb;
     end
 end
 

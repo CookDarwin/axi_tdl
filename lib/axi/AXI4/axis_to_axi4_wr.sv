@@ -56,7 +56,7 @@ logic stream_en;
 axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) split_out (.aclk(axis_in.aclk),.aresetn(axis_in.aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) long_fifo_axis_out (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(axi_wr.IDSIZE + axi_wr.ASIZE + axi_wr.LSIZE),.USIZE(1)) id_add_len_in (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
-axi_inf #(.DSIZE(axi_wr.DSIZE),.IDSIZE(axi_wr.IDSIZE),.ASIZE(axi_wr.ASIZE),.LSIZE(axi_wr.LSIZE),.MODE(axi_wr.MODE),.ADDR_STEP(axi_wr.ADDR_STEP)) axi_wr_vcs_cp_R1264 (.axi_aclk(axi_wr.axi_aclk),.axi_aresetn(axi_wr.axi_aresetn)) ;
+axi_inf #(.DSIZE(axi_wr.DSIZE),.IDSIZE(axi_wr.IDSIZE),.ASIZE(axi_wr.ASIZE),.LSIZE(axi_wr.LSIZE),.MODE(axi_wr.MODE),.ADDR_STEP(axi_wr.ADDR_STEP)) axi_wr_vcs_cp_R1977 (.axi_aclk(axi_wr.axi_aclk),.axi_aresetn(axi_wr.axi_aresetn)) ;
 axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) pipe_axis (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
@@ -94,13 +94,13 @@ independent_clock_fifo #(
 axi4_wr_auxiliary_gen_without_resp axi4_wr_auxiliary_gen_without_resp_inst(
 /* output                        */.stream_en     (stream_en           ),
 /* axi_stream_inf.slaver         */.id_add_len_in (id_add_len_in       ),
-/* axi_inf.master_wr_aux_no_resp */.axi_wr_aux    (axi_wr_vcs_cp_R1264 )
+/* axi_inf.master_wr_aux_no_resp */.axi_wr_aux    (axi_wr_vcs_cp_R1977 )
 );
 vcs_axi4_comptable #(
     .ORIGIN ("master_wr_aux_no_resp" ),
     .TO     ("master_wr"             )
-)vcs_axi4_comptable_axi_wr_aux_R858_axi_wr_inst(
-/* input  */.origin (axi_wr_vcs_cp_R1264 ),
+)vcs_axi4_comptable_axi_wr_aux_R874_axi_wr_inst(
+/* input  */.origin (axi_wr_vcs_cp_R1977 ),
 /* output */.to     (axi_wr              )
 );
 axis_valve_with_pipe #(
@@ -112,30 +112,30 @@ axis_valve_with_pipe #(
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-always_ff@(posedge axis_in.aclk,negedge axis_in.aresetn) begin 
+always@(posedge axis_in.aclk,negedge axis_in.aresetn) begin 
     if(~axis_in.aresetn)begin
-         id <= 0;
+        id <= 0;
     end
     else if(split_out.axis_tvalid && split_out.axis_tready && split_out.axis_tlast)begin
-         id <= ( id+1);
+        id <= (id+1);
     end
     else begin
-         id <= id;
+        id <= id;
     end
 end
 
-assign  addr_s = addr_cur;
-assign  len_s = split_out.axis_tcnt;
-assign  id_add_len_in.axis_tvalid = ~fifo_empty;
-assign  id_add_len_in.axis_tdata = fifo_rdata;
-assign  id_add_len_in.axis_tlast = "1'b1";
-assign  rd_en = id_add_len_in.axis_tready;
+assign addr_s = addr_cur;
+assign len_s = split_out.axis_tcnt;
+assign id_add_len_in.axis_tvalid = ~fifo_empty;
+assign id_add_len_in.axis_tdata = fifo_rdata;
+assign id_add_len_in.axis_tlast = "1'b1";
+assign rd_en = id_add_len_in.axis_tready;
 
-assign  axi_wr.axi_wdata = pipe_axis.axis_tdata;
-assign  axi_wr.axi_wstrb = ~pipe_axis.axis_tkeep;
-assign  axi_wr.axi_wvalid = pipe_axis.axis_tvalid;
-assign  axi_wr.axi_wlast = pipe_axis.axis_tlast;
-assign  axi_wr.axi_bready = 1'b1;
-assign  pipe_axis.axis_tready = axi_wr.axi_wready;
+assign axi_wr.axi_wdata = pipe_axis.axis_tdata;
+assign axi_wr.axi_wstrb = ~pipe_axis.axis_tkeep;
+assign axi_wr.axi_wvalid = pipe_axis.axis_tvalid;
+assign axi_wr.axi_wlast = pipe_axis.axis_tlast;
+assign axi_wr.axi_bready = 1'b1;
+assign pipe_axis.axis_tready = axi_wr.axi_wready;
 
 endmodule

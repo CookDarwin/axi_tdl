@@ -264,6 +264,7 @@ class Integer
     def clog2
         b = Math.log2(self)
         c = b.ceil
+        return c
     end
 
 end

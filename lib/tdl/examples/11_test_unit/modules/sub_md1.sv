@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-03-20 12:08:00 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -26,15 +26,15 @@ data_inf_c #(.DSIZE(8)) inter_tf (.clock(clock),.rst_n(rst_n)) ;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  clock = axis_out.aclk;
-assign  rst_n = axis_out.aresetn;
+assign clock = axis_out.aclk;
+assign rst_n = axis_out.aresetn;
 
 always_ff@(posedge clock,negedge rst_n) begin 
     if(~rst_n)begin
-         cnt <= '0;
+        cnt <= '0;
     end
     else begin
-         cnt <= ( cnt+1'b1);
+        cnt <= (cnt+1'b1);
     end
 end
 

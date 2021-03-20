@@ -67,10 +67,10 @@ gui_show_grid -id ${Wave.3} -enable false
 }
     end
 
-    def self.dev_signals_to_tcl(flag: gname ,signals: [])
+    def self.dev_signals_to_tcl(flag: gname ,signals: [], group_name: nil )
         sst = %Q{
 ## -------------- #{flag} -------------------------
-set _wave_session_group_#{flag} #{flag}
+set _wave_session_group_#{flag} #{group_name || flag}
 # set _wave_session_group_#{flag} [gui_sg_generate_new_name -seed #{flag}]
 if {[gui_sg_is_group -name "$_wave_session_group_#{flag}"]} {
     set _wave_session_group_#{flag} [gui_sg_generate_new_name]
@@ -109,7 +109,7 @@ gui_sg_addsignal -group "$_wave_session_group_#{flag}_#{iname}" { #{signals.map{
         "gui_list_set_insertion_bar  -id ${Wave.3} -group ${Group2_#{flag}}  -position in"
     end
 
-    def self.gen_dev_wave_tcl(khash) # {group_name : [*signal]}
+    def self.gen_dev_wave_tcl(khash) # {group_name<sdlmodule instance name> : [*signal]}
         add_ss = []
         add_list = []
         add_bar = []
@@ -128,21 +128,41 @@ gui_sg_addsignal -group "$_wave_session_group_#{flag}_#{iname}" { #{signals.map{
                 end
             end
             signals = base_elms.map do |e| 
-                unless e.tp_instance.filter_block
-                    e.root_ref.sub("$root.","Sim:") 
+                # if e.respond_to? :tp_instance
+                #     if e.tp_instance.filter_block
+                #         e.root_ref(&e.tp_instance.filter_block).sub("$root.","Sim:") 
+                #     else
+                #         e.root_ref.sub("$root.","Sim:") 
+                #     end
+                # else
+                #     e.root_ref.sub("$root.","Sim:")
+                # end
+                xb = e.instance_variable_get("@dve_wave_filter_block")
+                if xb
+                    e.root_ref(&xb).sub("$root.","Sim:") 
                 else
-                    e.root_ref(&e.tp_instance.filter_block).sub("$root.","Sim:") 
+                    e.root_ref.sub("$root.","Sim:")
                 end
             end
 
             add_ss  << dev_signals_to_tcl(flag: k, signals: signals )
 
             intf_elms.each do |e|
+                # if e.respond_to? :tp_instance
+                #     unless e.tp_instance.filter_block
+                #         signalx = e.root_ref.sub("$root.","Sim:") 
+                #     else
+                #         signalx = e.root_ref(&e.tp_instance.filter_block).sub("$root.","Sim:") 
+                #     end
+                # else
+                #     signalx = e.root_ref.sub("$root.","Sim:") 
+                # end
+                xb = e.instance_variable_get("@dve_wave_filter_block")
 
-                unless e.tp_instance.filter_block
-                    signalx = e.root_ref.sub("$root.","Sim:") 
+                if xb
+                    signalx = e.root_ref(&xb).sub("$root.","Sim:") 
                 else
-                    signalx = e.root_ref(&e.tp_instance.filter_block).sub("$root.","Sim:") 
+                    signalx = e.root_ref.sub("$root.","Sim:") 
                 end
 
                 add_ss << dev_interface_to_tcl(flag: k, iname: e.inst_name ,signals: [ signalx ])
@@ -158,5 +178,4 @@ gui_sg_addsignal -group "$_wave_session_group_#{flag}_#{iname}" { #{signals.map{
         dve_tcl_temp(add_ss.join("\n"), add_list.join("\n"), add_bar.join("\n") )
 
     end
-
 end

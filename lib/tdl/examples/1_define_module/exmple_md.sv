@@ -14,13 +14,13 @@ module exmple_md #(
     parameter  DSIZE  = 8,
     parameter real MK = 1.1
 )(
-    input                    insdata,
-    output                   outsdata,
-    input [7:0]              inpdata,
-    output [15:0]            outpdata,
-    output logic[ DSIZE-1:0] ldata,
-    input                    clock,
-    input                    rst_n
+    input                   insdata,
+    output                  outsdata,
+    input [7:0]             inpdata,
+    output [15:0]           outpdata,
+    output logic[DSIZE-1:0] ldata,
+    input                   clock,
+    input                   rst_n
 );
 
 //==========================================================================
@@ -32,18 +32,18 @@ logic [6-1:0]  tmp_data[9-1:0][7-1:0] ;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  outsdata = insdata;
+assign outsdata = insdata;
 
 always_comb begin 
-     outpdata[8:0] = inpdata;
+    outpdata[8:0] = inpdata;
 end
 
-always_ff@(posedge clock,negedge rst_n) begin 
+always@(posedge clock,negedge rst_n) begin 
     if(~rst_n)begin
-         ldata <= '0;
+        ldata <= '0;
     end
     else begin
-         ldata[ DSIZE-1:0] <= ( outpdata[7:0]+insdata);
+        ldata[DSIZE-1:0] <= (outpdata[7:0]+insdata);
     end
 end
 

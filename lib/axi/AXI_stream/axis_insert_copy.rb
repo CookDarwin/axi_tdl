@@ -1,4 +1,4 @@
-
+require_hdl 'axis_connect_pipe.sv'
 
 TdlBuild.axis_insert_copy(__dir__) do 
     input[16]               - 'insert_seed'     ## 0 need first
@@ -37,15 +37,29 @@ TdlBuild.axis_insert_copy(__dir__) do
                 IF in_inf.vld_rdy_last do 
                     insert_tri  <= 1.b1 
                 end
-                ELSIF in_inf.vld_rdy do 
-                    insert_tri  <= (in_inf_valve.axis_tcnt >= insert_len - 1.b1 )
+                ELSIF in_inf_valve.vld_rdy do 
+                    insert_tri  <= (in_inf_valve.axis_tcnt < insert_len - 1.b1 )
+                end
+                ELSIF (in_inf_valve.axis_tcnt == 0.A).and( "~(#{in_inf.vld_rdy})".to_nq ) do 
+                    insert_tri  <= 1.b1 
                 end
                 ELSE do 
                     insert_tri  <= insert_tri
                 end
             end
             ELSE do 
-                insert_tri <= (in_inf_valve.axis_tcnt >= insert_seed - 1.b1 ).and(in_inf_valve.vld_rdy).and(in_inf_valve.axis_tcnt < insert_seed + insert_len - 1.b1).and( ~in_inf.axis_tlast)
+                IF in_inf_valve.vld_rdy do 
+                    IF (in_inf_valve.axis_tcnt >= insert_seed - 1.b1 ).and(in_inf_valve.axis_tcnt < insert_seed + insert_len - 1.b1).and( ~in_inf.axis_tlast) do 
+                        insert_tri  <= 1.b1 
+                    end
+                    ELSE do 
+                        insert_tri  <= 1.b0 
+                    end
+                end
+                ELSE do 
+                    insert_tri  <= insert_tri
+                end
+                # insert_tri <= (in_inf_valve.axis_tcnt >= insert_seed - 1.b1 ).and(in_inf_valve.vld_rdy).and(in_inf_valve.axis_tcnt < insert_seed + insert_len - 1.b1).and( ~in_inf.axis_tlast)
             end
         end
     end

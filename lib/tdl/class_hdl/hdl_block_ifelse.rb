@@ -2,9 +2,11 @@ module ClassHDL
 
     class BlockIF
         attr_accessor :cond,:opertor_chains,:slaver
-        def initialize
+        attr_reader :belong_to_module
+        def initialize(belong_to_module)
             @opertor_chains = []
             @cond = nil
+            @belong_to_module = belong_to_module
         end
 
         def instance(as_type= :cond)
@@ -180,7 +182,7 @@ module ClassHDL
 end
 
 module ClassHDL
-    class EnumStruct
+    class EnumStruct < AxiTdl::SdlModuleActiveBaseElm
         # attr_accessor :sdl_m
         attr_accessor :belong_to_module
         def initialize(sdl_m,*args)
@@ -238,7 +240,7 @@ end
 class SdlModule
 
     def IF(cond,&block)
-        new_op = ClassHDL::BlockIF.new
+        new_op = ClassHDL::BlockIF.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -255,7 +257,7 @@ class SdlModule
     end
 
     def ELSIF(cond,&block)
-        new_op = ClassHDL::BlockELSIF.new
+        new_op = ClassHDL::BlockELSIF.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -272,7 +274,7 @@ class SdlModule
     end
 
     def ELSE(&block)
-        new_op = ClassHDL::BlockELSE.new
+        new_op = ClassHDL::BlockELSE.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -284,7 +286,7 @@ class SdlModule
     end
 
     def CASE(cond,&block)
-        new_op = ClassHDL::BlockCASE.new
+        new_op = ClassHDL::BlockCASE.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -301,7 +303,7 @@ class SdlModule
     end
 
     def CASEX(cond,&block)
-        new_op = ClassHDL::BlockCASEX.new
+        new_op = ClassHDL::BlockCASEX.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -318,7 +320,7 @@ class SdlModule
     end
 
     def WHEN(*cond,&block)
-        new_op = ClassHDL::BlockCASEWHEN.new
+        new_op = ClassHDL::BlockCASEWHEN.new(self)
 
         ClassHDL::AssignDefOpertor.with_new_assign_block(new_op) do |ab|
             if cond.is_a? ClassHDL::OpertorChain
@@ -333,7 +335,7 @@ class SdlModule
     end
 
     def DEFAULT(&block)
-        new_op = ClassHDL::BlockCASEDEFAULT.new
+        new_op = ClassHDL::BlockCASEDEFAULT.new(self)
 
         ClassHDL::AssignDefOpertor.with_new_assign_block(new_op) do |ab|
             block.call

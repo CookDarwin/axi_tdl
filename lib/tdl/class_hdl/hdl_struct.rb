@@ -132,7 +132,7 @@ module ClassHDL
 
     end
 
-    class StructVar 
+    class StructVar < AxiTdl::SdlModuleActiveBaseElm
         # include ClassHDL::AssignDefOpertor
         attr_accessor :belong_to_module
         attr_accessor :dimension

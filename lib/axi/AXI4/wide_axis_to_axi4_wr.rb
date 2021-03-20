@@ -1,5 +1,6 @@
 # require_relative "../prj_lib"
-require_hdl File.join(__dir__,"../AXI_stream/axis_length_split_with_addr.sv")
+require_hdl "axis_length_split_with_addr.sv"
+require_hdl 'axi_stream_wide_fifo.sv'
 new_m = SdlModule.new(name:File.basename(__FILE__,".rb"),out_sv_path:__dir__)
 new_m.target_class = AxiStream
 

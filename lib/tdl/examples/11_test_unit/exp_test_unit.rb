@@ -22,17 +22,18 @@ TopModule.exp_test_unit(__dir__) do
     end
 
     ## CREATE TEST POINT
-    axis_data_inf.create_tp(' top test point',__FILE__,__LINE__)    - 'axis_data_inf'
+    # axis_data_inf.create_tp(' top test point',__FILE__,__LINE__)    - 'axis_data_inf'
+    axis_data_inf.tracked_by_dve
 
     TdlTestUnit.tu0(__dir__) do 
-        add_to_dve_wave TdlTestPoint.sub_md1.enable_tp
-        add_to_dve_wave(TdlTestPoint.sub_md0.tp_axis_in)
-        add_to_dve_wave(TdlTestPoint.sub_md1.tp_inter_tf)
+        # add_to_dve_wave TdlTestPoint.sub_md1.enable_tp
+        # add_to_dve_wave(TdlTestPoint.sub_md0.tp_axis_in)
+        # add_to_dve_wave(TdlTestPoint.sub_md1.tp_inter_tf)
     
         test_unit_init do 
-            TdlTestPoint.sub_md1.enable_tp.root_ref   <= 1.b1 
+            sub_md1.enable   <= 1.b1 
             initial_exec("#(1us)")
-            TdlTestPoint.sub_md1.enable_tp.root_ref   <= 1.b0 
+            sub_md1.enable   <= 1.b0 
             initial_exec("#(500us)")
         end
     
@@ -40,8 +41,8 @@ TopModule.exp_test_unit(__dir__) do
     
     TdlTestUnit.tu1(__dir__) do 
         # puts TdlTestPoint.sub_md0.tp_cnt.path_refs
-        add_to_dve_wave(TdlTestPoint.sub_md0.tp_cnt)
-        add_to_dve_wave(TdlTestPoint.sub_md1.tp_cnt)
+        # add_to_dve_wave(TdlTestPoint.sub_md0.tp_cnt)
+        # add_to_dve_wave(TdlTestPoint.sub_md1.tp_cnt)
     end
 
     add_test_unit('tu0','tu1')

@@ -51,28 +51,34 @@ class SdlModule
         return if (@origin_sv || @dont_gen_sv)
         pre_inst_stack_call
         @out_sv_path ||= '..\..\tdl\test_sdlmodule'
-        # unless GlobalParam.sim
+        if File.exist?(File.join(@out_sv_path,"#{module_name}.sv")) 
+            old_str = File.open(File.join(@out_sv_path,"#{module_name}.sv")).read.gsub(/\/\*.*?\*\//m,"").gsub(/\/\/.*/,"").sub(/^`timescale .*/,"").strip
+        
+
+            head_str,body_str = build_module_verb(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
+            new_str = head_str+body_str
+            if body_str.gsub(/\/\*.*?\*\//m,"").gsub(/\/\/.*/,"").strip != old_str
+                File.open(File.join(@out_sv_path,"#{module_name}.sv"),"w") do |f|
+                    f.print new_str
+                end
+            end 
+        else
             File.open(File.join(@out_sv_path,"#{module_name}.sv"),"w") do |f|
-                f.puts build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
+                f.print build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
             end
-        # else
-        #     Tdl.Puts "+INFO+ It generate SIM top File"
-        #     File.open(File.join(out_sv_path,"#{module_name}_sim.sv"),"w") do |f|
-        #         f.puts build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
-        #     end
-        # end
+        end 
     end
 
-    def gen_sv_module_text
-        # @out_sv_path ||= File.dirname(File.expand_path(__FILE__))
-        return if (@origin_sv || @dont_gen_sv)
-        pre_inst_stack_call
-        @out_sv_path ||= '..\..\tdl\test_sdlmodule'
-        # unless GlobalParam.sim
+    # def gen_sv_module_text
+    #     # @out_sv_path ||= File.dirname(File.expand_path(__FILE__))
+    #     return if (@origin_sv || @dont_gen_sv)
+    #     pre_inst_stack_call
+    #     @out_sv_path ||= '..\..\tdl\test_sdlmodule'
+    #     # unless GlobalParam.sim
 
-        return build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
+    #     return build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
 
-    end
+    # end
 
     def build_module(ex_param:"",ex_port:"",ex_up_code:"",ex_down_code:"")
         # Tdl.Puts pagination(module_name)
@@ -124,6 +130,58 @@ class SdlModule
         return str
     end
 
+    def build_module_verb(ex_param:"",ex_port:"",ex_up_code:"",ex_down_code:"") #return [ head, body]
+        # Tdl.Puts pagination(module_name)
+        Tdl.Build_SdlModule_Puts(module_name)
+
+        ex_param        = ex_param.to_s     unless ex_param
+        ex_port         = ex_port.to_s      unless ex_port
+        ex_up_code      = ex_up_code.to_s   unless ex_up_code
+        ex_down_code    = ex_down_code.to_s unless ex_down_code
+
+        # gen_auto_method     # auto generate class method for interface
+        # draw = Tdl.inst + Tdl.draw
+
+        instance_draw_str = instance_draw       # It must run before vars_define_inst,because some signals define when inst
+        vars_exec_inst_str = vars_exec_inst     # It must run before vars_define_inst,because some signals define when vars exec
+
+        post_str = post_inst_stack_call()
+
+        unless post_str.strip.empty?
+            post_str = pagination("ROOT REF") + post_str
+        end
+
+        draw = pagination("define") + vars_define_inst + pagination("instance") + instance_draw_str + pagination("expression") + vars_exec_inst_str + post_str
+
+        unless ex_up_code.empty?
+            ex_up_code = "\n//------>> EX CODE <<-------------------\n" + ex_up_code + "//------<< EX CODE >>-------------------\n"
+        end
+
+        unless ex_down_code.empty?
+            ex_down_code = "//------>> EX CODE <<-------------------\n" + ex_down_code + "//------<< EX CODE >>-------------------\n"
+        end
+
+        # str = module_head+"module #{@module_name}" + build_params(ex_param) + build_ports(ex_port) + ex_up_code + gen_lite_str() + draw + ex_down_code + "\nendmodule\n"
+        # unless GlobalParam.sim
+            module_name_str = @module_name
+        # else
+        #     module_name_str = @module_name+"_sim"
+        # end
+        unless head_import_packages
+            str = "module #{module_name_str}" + build_params(ex_param) + build_ports(ex_port) + ex_up_code + draw + ex_down_code + "\nendmodule\n" + add_sub_module_file_paths
+        else
+            head_import_pkgs_str = head_import_packages.map{|e| "import #{e}::*;" }.join('')
+            str = "module #{module_name_str} #{head_import_pkgs_str}" + build_params(ex_param) + build_ports(ex_port) + ex_up_code + draw + ex_down_code + "\nendmodule\n" + add_sub_module_file_paths
+        end
+
+        create_vivado_tcl if @create_tcl
+        create_constraints_file if @create_sdc
+
+        # return str
+        return [module_head_verb, str]
+    end
+
+
     private
 
     def old_module_head
@@ -148,6 +206,13 @@ madified:
 #{head_class}
 }
     end
+
+    def module_head_verb
+%Q{#{$__sdlmodule_head_logo__.sub(/created:.*/, "created: #{Time.now()}")}
+#{macro_def}
+#{head_class}
+}
+            end
 
     def head_class
         case(@target_class.to_s)

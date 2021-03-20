@@ -3,9 +3,10 @@ module ClassHDL
     class HDLAssignGenerateBlock  
 
         attr_accessor :opertor_chains
-
-        def initialize
+        attr_reader :belong_to_module
+        def initialize(belong_to_module)
             @opertor_chains = []
+            @belong_to_module = belong_to_module
         end
 
         def instance
@@ -160,11 +161,11 @@ class SdlModule
         add_children_modules(inst_obj:inst_obj ,module_poit: tmp_sm)
 
         args.each_index do |e|
-            new_op = ClassHDL::OpertorChain.new 
+            new_op = ClassHDL::OpertorChain.new(nil, self) 
             new_op.tree.push(["KK#{e}".to_nq])
             kk_args << new_op
         end
-        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAssignGenerateBlock.new ) do 
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAssignGenerateBlock.new(self) ) do 
             ClassHDL::AssignDefOpertor.with_rollback_opertors(:new) do 
                 tmp_sm.instance_exec(*kk_args,&block)
             end

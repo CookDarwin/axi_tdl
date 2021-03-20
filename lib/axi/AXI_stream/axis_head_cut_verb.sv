@@ -34,11 +34,15 @@ always_ff@(posedge axis_in.aclk, negedge axis_in.aresetn)
         if(axis_in.axis_tvalid && axis_in.axis_tready)begin 
             if(axis_in.axis_tlast)
                     ex_viliad   <= 1'b0;
+            else if(length == 16'd0)
+                    ex_viliad   <= 1'b1;
             else if(axis_in.axis_tcnt >= length - 1'b1)
                     ex_viliad   <= 1'b1;
             else    ex_viliad   <= ex_viliad;
-        end else begin 
-            ex_viliad   <= ex_viliad;
+        end else begin
+            if(axis_in.axis_tcnt == '0 && length == 16'd0)
+                    ex_viliad   <= 1'b1;
+            else    ex_viliad   <= ex_viliad;
         end
     end
 

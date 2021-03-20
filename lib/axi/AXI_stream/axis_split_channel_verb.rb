@@ -1,6 +1,8 @@
 ## VERB
 ## - insert copy first
 require_sdl 'axis_insert_copy.rb'
+require_hdl 'common_fifo.sv'
+require_sdl 'axi_stream_split_channel.rb'
 TdlBuild.axis_split_channel_verb(__dir__) do 
     input[16]               - 'split_len'       # 1:need 1 size ; split len must large than 2
     port.axis.slaver        - 'origin_inf'

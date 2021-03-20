@@ -11,8 +11,8 @@ madified:
 `timescale 1ns/1ps
 
 module example_pkg import head_package::*;(
-    input [ HDSIZE-1:0] indata,
-    output logic[31:0]  odata
+    input [HDSIZE-1:0] indata,
+    output logic[31:0] odata
 );
 
 //------>> EX CODE <<-------------------
@@ -29,7 +29,7 @@ s_head ss_head;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  ss_head.idata = 4;
-assign  ss_head.valid = 1'b1;
+assign ss_head.idata = 4;
+assign ss_head.valid = 1'b1;
 
 endmodule

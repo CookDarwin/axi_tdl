@@ -81,6 +81,9 @@ require_relative "./rebuild_ele/data_inf_c.rb"
 require_relative "./rebuild_ele/axi_lite.rb"
 require_relative "./rebuild_ele/cm_ram_inf_define.rb"
 
+## 添加axis 流slice功能
+require_relative "./exlib/axis_eth_ex.rb"
+
 require_relative "./bfm/axi_stream/axi_stream_bfm.rb"
 
 require_relative "./exlib/constraints"
@@ -117,6 +120,12 @@ require_relative "./sdlmodule/test_unit_module.rb"
 
 ## 添加 DVE TCL 支持
 require_relative "./exlib/dve_tcl.rb"
+
+## 添加 verify 
+require_relative "./exlib/axis_verify.rb"
+require_relative "./exlib/clock_reset_verify.rb"
+require_relative "./exlib/logic_verify.rb"
+
 
 ## --- INIT BLOCK Methods -----
 # AutoGenSdl.add_inf_parse TrackInf.method(:parse_ports)
@@ -175,6 +184,7 @@ class Tdl # add file paths
          else
              @@all_file_paths[a] = b
          end
+
      end
 
      def self.all_file_paths
@@ -250,12 +260,14 @@ class Tdl
         self.log_array("LOG FOR GEN SDLMOUDLE",@@build_sdlmodule_collect)
         self.log_array("LOG OF WARNING",@@warning_collect)
         # puts(page(tag: "SUMMARY" ,body: "RUN @ TIME : #{Time.now}"))
-        puts(pagination("TEST POINT"))
-        puts TdlTestPoint.echo_list
+        puts(pagination("TEST POINT")) if TopModule.current
+        # puts TdlTestPoint.echo_list
         # puts(pagination("SIM TEST"))
         # puts TdlSimTest::TdlBaseTestUnit.echo_prj_test_list
+        puts SdlModule.echo_tracked_by_dve if TopModule.current && TopModule.sim
         puts(pagination("TEST UNIT")) if TopModule.current
-        puts TopModule.current.test_unit.echo_units if TopModule.current
+        # puts TopModule.current.test_unit.echo_units if TopModule.current
+        puts TestUnitModule.echo_be_instanced_by_sim if TopModule.current
         puts(pagination("SUMMARY"))
         puts "#{TopModule.sim ? 'SIM' : 'SYNTH'} RUN SPEND #{Time.now - $__start_time__} sec @ TIME : #{Time.now}"
 
@@ -266,6 +278,9 @@ class Tdl
         #     end
         # end
         ## ===========
+        # File.open("/home/myw357/work/FPGA/mammo_tcp_20210315/tmp.tcl", "w") do |f|
+        #     f.puts SdlModule.call_module('test_mac_1g_verb').gen_dev_wave_tcl
+        # end
     end
 
 end

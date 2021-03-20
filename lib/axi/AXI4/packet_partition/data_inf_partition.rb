@@ -1,3 +1,5 @@
+require_hdl 'common_fifo.sv'
+
 TdlBuild.data_inf_partition(__dir__) do
     parameter.PLEN          128 
     parameter.LSIZE         8

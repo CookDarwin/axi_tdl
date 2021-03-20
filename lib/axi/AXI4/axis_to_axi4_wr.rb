@@ -6,6 +6,7 @@ require_hdl 'axis_length_split_with_addr.sv'
 require_hdl 'axi_stream_long_fifo.sv'
 require_hdl 'axi4_wr_auxiliary_gen_without_resp.sv'
 require_hdl 'axis_valve_with_pipe.sv'
+require_hdl 'independent_clock_fifo.sv'
 
 new_m = SdlModule.new(name:File.basename(__FILE__,".rb"),out_sv_path:__dir__)
 

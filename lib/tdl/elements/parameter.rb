@@ -183,7 +183,7 @@ class Parameter # add +
             else  
                 rel = NqString.new(signal.concat("#{symb}").concat('"').concat(a.to_s)).concat('"')
             end
-            new_op = ClassHDL::OpertorChain.new 
+            new_op = ClassHDL::OpertorChain.new(nil,belong_to_module) 
             new_op.tree.push([rel])
 
             return new_op

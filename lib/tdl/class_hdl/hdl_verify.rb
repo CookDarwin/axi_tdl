@@ -76,7 +76,7 @@ module ClassHDL
                     IF ~intf.rst_n do  
                         track_ci <= 0.A
                     end 
-                    ELSIF intf.vld_rdy do 
+                    ELSIF intf.vld_rdy do  
                         assert(intf.data == "#{mem_args}[#{track_ci}]".to_nq,"TRACK <#{intf.to_s}> Error;","Real<%d>"," != Expect<%d>",intf.data,"#{mem_args}[#{track_ci}]".to_nq)
                         track_ci <= track_ci + 1.b1
                     end

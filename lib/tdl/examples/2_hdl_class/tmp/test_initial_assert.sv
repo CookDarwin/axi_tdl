@@ -22,10 +22,10 @@ logic ppx;
 //-------- expression ------------------------------------------------------
 initial begin
     assert(9)else begin
-         $error("iiiiiiiiiiiii");
-         $stop;
+        $error("iiiiiiiiiiiii");
+        $stop;
     end
-     ppx = 1'b0;
+    ppx = 1'b0;
 end
 
 endmodule

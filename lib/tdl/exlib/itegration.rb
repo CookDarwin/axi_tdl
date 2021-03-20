@@ -12,8 +12,10 @@ class StringBandItegration < String
             obj
         end
 
-        stringbanditegration.itgt.define_singleton_method(stringbanditegration.key) do
-            obj
+        if stringbanditegration.origin_str.to_s != stringbanditegration.key.to_s
+            stringbanditegration.itgt.define_singleton_method(stringbanditegration.key) do
+                obj
+            end
         end
         obj
     end
@@ -271,7 +273,17 @@ class String ## add to itegration names_pool
     def snoop(itgt=nil,sdlmodule=nil)
         itgt ||= $_implicit_curr_itgt_.last
         if sdlmodule
-            sdlmodule.signal(itgt.names_pool[self])
+            # unless sdlmodule.has_signal?(itgt.names_pool[self])
+            unless sdlmodule.respond_to?(itgt.names_pool[self])
+                if sdlmodule.is_a?(TopModule) && sdlmodule.techbench.respond_to?(itgt.names_pool[self])
+                    sdlmodule.techbench.signal(itgt.names_pool[self])
+                else 
+                    sdlmodule.signal(itgt.names_pool[self])
+                    # raise TdlError.new("Dont have `#{itgt.names_pool[self]}` in module <#{sdlmodule.module_name}>" )
+                end
+            else 
+                sdlmodule.signal(itgt.names_pool[self])
+            end
         else
             itgt.top_module.signal(itgt.names_pool[self])
         end

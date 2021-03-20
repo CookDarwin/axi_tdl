@@ -15,10 +15,10 @@ module text_generate #(
     parameter  BOARD_TOTAL = 4,
     parameter  WW          = "OFF"
 )(
-    input [ NUM-1:0]        ip_s_addr          [32-1:0],
-    input [ NUM-1:0]        ip_d_addr          [32-1:0],
-    input [ NUM-1:0]        mac_s_addr         [48-1:0],
-    input [ NUM-1:0]        mac_d_addr         [48-1:0],
+    input [NUM-1:0]         ip_s_addr          [32-1:0],
+    input [NUM-1:0]         ip_d_addr          [32-1:0],
+    input [NUM-1:0]         mac_s_addr         [48-1:0],
+    input [NUM-1:0]         mac_d_addr         [48-1:0],
     input [15:0]            fpga_udp_ctrl_port,
     input [15:0]            fpga_udp_data_port,
     input [15:0]            fpga_udp_dire_port,
@@ -43,12 +43,12 @@ for(genvar KK0=0;KK0 < NUM;KK0++)begin
     for(genvar KK1=0;KK1 < 7;KK1++)begin
         for(genvar KK2=0;KK2 < 6;KK2++)begin
 
-            if( KK0==2)begin
-                assign  rx_udp_data_8bit[ 8*1][ 1*2] = "90909";
+            if(KK0==2)begin
+                assign rx_udp_data_8bit[8*1][1*2] = "90909";
             end end
     end
 end
 endgenerate
-assign  mac_s_addr[0][0] = mac_d_addr[0][0];
+assign mac_s_addr[0][0] = mac_d_addr[0][0];
 
 endmodule

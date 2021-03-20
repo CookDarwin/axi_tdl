@@ -24,9 +24,9 @@ logic [32-1:0]  data[32-1:0] ;
 //-------- expression ------------------------------------------------------
 always_comb begin 
     foreach(data[i1])begin
-         4-i1;
-        if( i1==( NUM* 4-i1))begin
-             data[i1] = '0;
+        4-i1;
+        if(i1==(NUM*4-i1))begin
+            data[i1] = '0;
         end
     end
 end

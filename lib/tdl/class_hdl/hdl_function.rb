@@ -57,12 +57,14 @@ module ClassHDL
         attr_accessor :opertor_chains,:name
         attr_accessor :open_ivoke
         attr_reader   :return_type
+        attr_reader   :belong_to_module
 
-        def initialize(name,return_type,*argvs)
+        def initialize(belong_to_module,name,return_type,*argvs)
             @opertor_chains = []
             @name = name
             @argvs = argvs
             @return_type = return_type
+            @belong_to_module = belong_to_module
         end
 
         def inst_port
@@ -117,7 +119,7 @@ module ClassHDL
 
     def self.Function(sdl_m,name,return_type,*argvs,&block)
         define_func_block_method(sdl_m,*argvs)
-        func_inst = ClassHDL::HDLFunction.new(name,return_type,*argvs)
+        func_inst = ClassHDL::HDLFunction.new(sdl_m,name,return_type,*argvs)
         ## 给 sdl module 定义函数方法
         sdl_m.define_singleton_method(name) do |*fargvs|
             # new_op = OpertorChain.new 

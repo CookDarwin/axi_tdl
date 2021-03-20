@@ -116,6 +116,7 @@ class SdlModule
     attr_accessor :dont_gen_sv,:target_class
     ## 模块头部添加package引入
     attr_accessor :head_import_packages
+    attr_accessor :instanced_and_parent_module
 
     def initialize(name: "tdlmodule",out_sv_path: nil)
         # $new_m = self
@@ -341,23 +342,26 @@ class SdlModule
     ## 例化模块
 
     def method_missing(method,*args,&block)
+        rel = nil
+        ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
+            @@_method_missing_sub_methds ||= []
 
-        @@_method_missing_sub_methds ||= []
+            @@_method_missing_sub_methds.each do |me|
+                rel = self.send(me,method,*args,&block)
+                if rel 
+                    rel 
+                end
+            end
 
-        @@_method_missing_sub_methds.each do |me|
-            rel = self.send(me,method,*args,&block)
+            ## 最后才调用阴性例化模块
+            rel = implicit_inst_module_method_missing(method,*args,&block)
             if rel 
-                return rel 
+                rel
+            else
+                super
             end
         end
-
-        ## 最后才调用阴性例化模块
-        rel = implicit_inst_module_method_missing(method,*args,&block)
-        if rel 
-            return rel
-        else
-            super
-        end
+        return rel
     end
 end
 

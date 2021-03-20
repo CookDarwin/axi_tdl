@@ -23,85 +23,85 @@ data_inf_c #(.DSIZE(18)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
 //==========================================================================
 //-------- expression ------------------------------------------------------
 always_comb begin 
-     tmp1 = a_inf.data[ 6-1];
-     a_inf.valid = 1;
+    tmp1 = a_inf.data[6-1];
+    a_inf.valid = 1;
     if(0)begin
-         tmp1 = 90;
-         tmp1 = a_inf.data[ 6-1];
-         a_inf.valid = 1;
-         a_inf.data[6:3] = ( 12+( a_inf.data[6:0]+tmp1));
-         a_inf.data[6:3] = ( 12+( tmp1+a_inf.data[6:0]));
-         a_inf.data = ( 12+12);
-         "90"+"0";
+        tmp1 = 90;
+        tmp1 = a_inf.data[6-1];
+        a_inf.valid = 1;
+        a_inf.data[6:3] = 12+(a_inf.data[6:0]+tmp1);
+        a_inf.data[6:3] = 12+(tmp1+a_inf.data[6:0]);
+        a_inf.data = 12+12;
+        "90"+"0";
     end
     else if(1)begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
     else begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
 end
 
 always_comb begin 
-     tmp1 = a_inf.data[ 6-1];
-     a_inf.valid = 1;
+    tmp1 = a_inf.data[6-1];
+    a_inf.valid = 1;
     if(tmp1)begin
-         tmp1 = 90;
-         tmp1 = a_inf.data[ 6-1];
-         a_inf.valid = 1;
-         a_inf.data[6:3] = ( 12+( a_inf.data[6:0]+tmp1));
-         a_inf.data[6:3] = ( 12+( tmp1+a_inf.data[6:0]));
-         a_inf.data = ( 12+12);
-         "90"+"0";
+        tmp1 = 90;
+        tmp1 = a_inf.data[6-1];
+        a_inf.valid = 1;
+        a_inf.data[6:3] = 12+(a_inf.data[6:0]+tmp1);
+        a_inf.data[6:3] = 12+(tmp1+a_inf.data[6:0]);
+        a_inf.data = 12+12;
+        "90"+"0";
         if(9999)begin
-             a_inf.valid = 1;
-             a_inf.data[6:3] = ( 12+( a_inf.data[6:0]+tmp1));
-             a_inf.data[6:3] = ( 12+( tmp1+a_inf.data[6:0]));
-             a_inf.data = ( 12+12);
+            a_inf.valid = 1;
+            a_inf.data[6:3] = 12+(a_inf.data[6:0]+tmp1);
+            a_inf.data[6:3] = 12+(tmp1+a_inf.data[6:0]);
+            a_inf.data = 12+12;
         end
     end
-    else if( tmp1>1)begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+    else if(tmp1>1)begin
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
     else if(~tmp1)begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
-    else if( tmp1>c_inf[0][0][1].data)begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+    else if(tmp1>c_inf[0][0][1].data)begin
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
-    else if( c_inf[0][0][1].data+tmp0[0][0][0])begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+    else if(c_inf[0][0][1].data+tmp0[0][0][0])begin
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
     else begin
-         c_inf[0][0][1].valid = 1;
-         c_inf[0][0][1].data = 0;
-         c_inf[0][0][1].data[0] = 3;
-         c_inf[0][0][1].data[0] = 3<= 7;
-         c_inf.data[0][0][0] = 0;
+        c_inf[0][0][1].valid = 1;
+        c_inf[0][0][1].data = 0;
+        c_inf[0][0][1].data[0] = 3;
+        c_inf[0][0][1].data[0] = 3<=7;
+        c_inf.data[0][0][0] = 0;
     end
 end
 

@@ -3,9 +3,10 @@ module ClassHDL
 
     class HDLAlwaysCombBlock 
         attr_accessor :opertor_chains
-
-        def initialize
+        attr_reader :belong_to_module
+        def initialize(belong_to_module)
             @opertor_chains = []
+            @belong_to_module = belong_to_module
         end
 
         def instance
@@ -28,7 +29,7 @@ module ClassHDL
     end
 
     def self.AlwaysComb(sdl_m,&block)
-        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysCombBlock.new) do |ab|
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysCombBlock.new(sdl_m)) do |ab|
             AssignDefOpertor.with_rollback_opertors(:new,&block)
             # return ClassHDL::AssignDefOpertor.curr_assign_block
             AssignDefOpertor.with_rollback_opertors(:old) do

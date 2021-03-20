@@ -28,9 +28,9 @@ module exp_random #(
 //==========================================================================
 //-------- expression ------------------------------------------------------
 initial begin
-     param_random_b = ($urandom_range(0,99) <= PX);
-     int_random_b = ($urandom_range(1,100) > 34);
-     rd_range = $urandom_range(12,1000);
+    param_random_b = $urandom_range(0,99) <= PX;
+    int_random_b = $urandom_range(1,100) > 34;
+    rd_range = $urandom_range(12,1000);
 end
 
 endmodule

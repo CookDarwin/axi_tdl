@@ -20,6 +20,7 @@ add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/common_fifo"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/common"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/data_interface")) 
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/data_interface/data_inf_c"))
+add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/techbench"))
 
 ## base require 
 require_hdl 'axis_master_empty.sv'

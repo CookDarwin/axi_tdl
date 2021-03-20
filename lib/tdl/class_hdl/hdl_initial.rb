@@ -3,9 +3,10 @@ module ClassHDL
 
     class HDLInitialBlock 
         attr_accessor :opertor_chains
-
-        def initialize
+        attr_reader :belong_to_module
+        def initialize(belong_to_module)
             @opertor_chains = []
+            @belong_to_module = belong_to_module
         end
 
         def instance(block_name=nil)
@@ -28,7 +29,7 @@ module ClassHDL
     end
 
     def self.Initial(sdl_m,block_name=nil,&block)
-        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLInitialBlock.new) do |ab|
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLInitialBlock.new(sdl_m)) do |ab|
             AssignDefOpertor.with_rollback_opertors(:new,&block)
             # return ClassHDL::AssignDefOpertor.curr_assign_block
             AssignDefOpertor.with_rollback_opertors(:old) do
@@ -82,7 +83,7 @@ class SdlModule
             return assert_old(cond,argv_str=formats,&block)
         end
 
-        new_op = ClassHDL::BlocAssertIF.new
+        new_op = ClassHDL::BlocAssertIF.new(self)
         ClassHDL::AssignDefOpertor.with_new_assign_block(new_op) do |ab|
             if cond.is_a? ClassHDL::OpertorChain
                 cond.slaver = true
@@ -102,7 +103,7 @@ class SdlModule
     end
 
     def assert_old(cond,argv_str=nil,&block)
-        new_op = ClassHDL::BlocAssertIF.new
+        new_op = ClassHDL::BlocAssertIF.new(self)
         # if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? ClassHDL::BlockIF
         #     new_op.slaver = true
         # end
@@ -130,17 +131,17 @@ class SdlModule
     end
 
     def assert_error(argv_str)
-        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$error(\"#{argv_str}\")".to_nq]))
-        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$stop".to_nq]))
+        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$error(\"#{argv_str}\")".to_nq], self))
+        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$stop".to_nq], self))
     end
 
     def assert_format_error(formats=[],args=[])
-        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$error(\"#{formats.join(' ')}\",#{args.map{|s| s.to_s}.join(',')})".to_nq]))
-        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$stop".to_nq]))
+        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$error(\"#{formats.join(' ')}\",#{args.map{|s| s.to_s}.join(',')})".to_nq], self))
+        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new(["$stop".to_nq], self))
     end
 
     def initial_exec(str)
-        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new([str.to_s.to_nq]))
+        ClassHDL::AssignDefOpertor.curr_assign_block.opertor_chains.push(ClassHDL::OpertorChain.new([str.to_s.to_nq], self))
     end
 
     alias_method :always_sim_exec, :initial_exec

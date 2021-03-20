@@ -21,9 +21,9 @@ module test_module (
 //==========================================================================
 //-------- define ----------------------------------------------------------
 logic [axi_wr_inf.ASIZE-1:0]  addr ;
-logic [ axi_wr_inf.IDSIZE-4-1:0]  id ;
+logic [axi_wr_inf.IDSIZE-4-1:0]  id ;
 logic [24-1:0]  length ;
-axi_inf #(.DSIZE(axi_wr_inf.DSIZE),.IDSIZE( axi_wr_inf.IDSIZE-4),.ASIZE(axi_wr_inf.ASIZE),.LSIZE(24),.MODE("ONLY_WRITE"),.ADDR_STEP(8192)) pre_axi_wr_inf (.axi_aclk(axi_wr_inf.axi_aclk),.axi_aresetn(axi_wr_inf.axi_aresetn)) ;
+axi_inf #(.DSIZE(axi_wr_inf.DSIZE),.IDSIZE(axi_wr_inf.IDSIZE-4),.ASIZE(axi_wr_inf.ASIZE),.LSIZE(24),.MODE("ONLY_WRITE"),.ADDR_STEP(8192)) pre_axi_wr_inf (.axi_aclk(axi_wr_inf.axi_aclk),.axi_aresetn(axi_wr_inf.axi_aresetn)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axi_stream_cache_35bit cache_inst(

@@ -537,7 +537,7 @@ module TdlSpace
 end
 
 module TdlSpace
-    class TdlBaseInterface
+    class TdlBaseInterface < AxiTdl::SdlModuleActiveBaseElm
         extend VarElemenAttr
         include VarElemenCore
 

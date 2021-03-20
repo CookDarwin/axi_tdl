@@ -37,8 +37,8 @@ s_map s_map_a1;
 //==========================================================================
 //-------- expression ------------------------------------------------------
 function s_map f_g(input s_map fin); 
-     f_g = fin.op;
-     f_g.yp = 1;
+    f_g = fin.op;
+    f_g.yp = 1;
 endfunction:f_g
 
 endmodule

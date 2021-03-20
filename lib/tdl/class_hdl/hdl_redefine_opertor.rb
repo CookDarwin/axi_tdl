@@ -39,13 +39,14 @@ module ClassHDL
 
     class OpertorChain
         attr_accessor :slaver,:tree,:instance_add_brackets
-
-        def initialize(arg=nil)
+        attr_reader :belong_to_module
+        def initialize(arg, belong_to_module)
             @tree = [] #[[inst0,symb0],[inst1,symb1],[other_chain,symb2],[other_chain,symb3]]
                        # self <symb0> inst0 <symb1> inst1 <symb2> ( other_chain ) <symb3> ( other_chain )
             if arg 
                 @tree << arg 
             end  
+            @belong_to_module = belong_to_module
         end
 
         ClassHDL::OP_SYMBOLS.each do |os|
@@ -61,14 +62,14 @@ module ClassHDL
                 new_op = nil
                 AssignDefOpertor.with_rollback_opertors(:old) do 
                     if tree.size == 2 && tree.last[1].to_s == "<="
-                        new_op =  OpertorChain.new 
+                        new_op =  OpertorChain.new(nil,belong_to_module) 
                         new_op.tree = new_op.tree + self.tree
                         new_op.tree.push [b,os] 
                     elsif  tree.size >= 2 && (!['*',"/","~"].include?(tree.last[1].to_s))
                         new_op =  brackets 
                         new_op.tree.push [b,os] 
                     else
-                        new_op =  OpertorChain.new 
+                        new_op =  OpertorChain.new(nil,belong_to_module)  
                         new_op.tree = new_op.tree + self.tree
                         new_op.tree.push [b,os] 
                     end 
@@ -107,12 +108,12 @@ module ClassHDL
 
         def brackets
             self.slaver = true
-            new_op = OpertorChain.new(["(#{self.instance})".to_nq])
+            new_op = OpertorChain.new(["(#{self.instance})".to_nq], belong_to_module)
         end
 
         def clog2
             self.slaver = true
-            new_op = OpertorChain.new(["$clog2(#{self.instance})".to_nq])
+            new_op = OpertorChain.new(["$clog2(#{self.instance})".to_nq],belong_to_module)
         end
 
         def self.define_op_flag(ruby_op,hdl_op)
@@ -126,7 +127,7 @@ module ClassHDL
                 # 计算生成新的OpertorChain 是 self 也需要抛弃
                 self.slaver = true
                 # return self
-                new_op =  OpertorChain.new 
+                new_op =  OpertorChain.new(nil, belong_to_module) 
                 new_op.tree = new_op.tree + self.tree
                 new_op.tree.push [b,hdl_op] 
     
@@ -159,10 +160,18 @@ module ClassHDL
                                 sb = " = "
                             end 
                         else 
-                            sb = "#{node[1].to_s}"
+                            # if(node[1].respond_to?(:belong_to_module) && node[1].belong_to_module && node[1].belong_to_module != belong_to_module)
+                            #     sb = "#{node[1].root_ref.to_s}"
+                            # else
+                                sb = "#{node[1].to_s}"
+                            # end
                         end
                     else
-                        sb = "#{node[1].to_s} "
+                        # if(node[1].respond_to?(:belong_to_module) && node[1].belong_to_module && node[1].belong_to_module != belong_to_module)
+                        #     sb = "#{node[1].root_ref.to_s}"
+                        # else
+                            sb = "#{node[1].to_s}"
+                        # end
                     end
                     
                     unless node[0].is_a? OpertorChain
@@ -173,7 +182,18 @@ module ClassHDL
                             # "如果是字符串 则原始输出"
                             str += (sb + '"' + node[0].to_s + '"')
                         else 
-                            str += (sb + node[0].to_s)
+                            # str += (sb + node[0].to_s)
+                            if(node[0].respond_to?(:root_ref) && node[0].respond_to?(:belong_to_module) && node[0].belong_to_module && (node[0].belong_to_module != belong_to_module) && node[0].belong_to_module.top_tb_ref? )
+                                # sb = "#{node[1].root_ref.to_s}"
+                                str += (sb + node[0].root_ref)
+                                ## 反向添加到 TestUnitModule
+                                if belong_to_module.is_a?(TestUnitModule)
+                                    belong_to_module.add_root_ref_ele(node[0])
+                                end
+                            else
+                                # sb = "#{node[1].to_s}"
+                                str += (sb + node[0].to_s)
+                            end
                         end
                     else 
                         node[0].slaver = true
@@ -215,8 +235,8 @@ module ClassHDL
 
     module AssignDefOpertor
         @@included_class = []
-        @@curr_assign_block = HDLAssignBlock.new ##HDLAssignBlock ##HDLAlwaysCombBlock
-        @@curr_assign_block_stack = [HDLAssignBlock.new ]
+        @@curr_assign_block = HDLAssignBlock.new(nil) ##HDLAssignBlock ##HDLAlwaysCombBlock
+        @@curr_assign_block_stack = [HDLAssignBlock.new(nil) ]
         @@curr_opertor_stack = [:old]
 
         def self.curr_opertor_stack
@@ -275,7 +295,8 @@ module ClassHDL
                     if b.is_a? OpertorChain
                         b.slaver = true 
                     end
-                    new_op = OpertorChain.new 
+                    ## 当 进行 X < Y 等运算时OpertorChain 需要获取 assign block的 belong_to_module
+                    new_op = OpertorChain.new(nil,@@curr_assign_block && @@curr_assign_block.belong_to_module) 
                     new_op.tree.push([self])
                     new_op.tree.push([b,symb])
                     if @@curr_assign_block
@@ -642,7 +663,7 @@ module TdlSpace
 end
 
 module ClassHDL
-    class StructVar 
+    class StructVar < AxiTdl::SdlModuleActiveBaseElm
         include ClassHDL::AssignDefOpertor
     end 
 end

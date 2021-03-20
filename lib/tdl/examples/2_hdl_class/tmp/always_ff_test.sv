@@ -28,8 +28,8 @@ data_inf_c #(.DSIZE(8)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-always_ff@(posedge clock,negedge rst_n) begin 
-     ( 32*2- 5)-6;
+always@(posedge clock,negedge rst_n) begin 
+    (32*2-5)-6;
 end
 
 endmodule

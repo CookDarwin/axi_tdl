@@ -33,8 +33,8 @@ a_test_md a_test_md_inst(
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  x_origin_inf.axis_tvalid = 1'b0;
-assign  x_origin_inf.axis_tdata = '0;
-assign  x_origin_inf.axis_tlast = 1'b0;
+assign x_origin_inf.axis_tvalid = 1'b0;
+assign x_origin_inf.axis_tdata = '0;
+assign x_origin_inf.axis_tlast = 1'b0;
 
 endmodule

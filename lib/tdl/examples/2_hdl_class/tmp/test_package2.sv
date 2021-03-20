@@ -27,10 +27,10 @@ z_ing y0;
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  out = NUM;
-assign  out = data;
+assign out = NUM;
+assign out = data;
 
-assign  y0.op = 0;
-assign  y0.op[0] = 0;
+assign y0.op = 0;
+assign y0.op[0] = 0;
 
 endmodule

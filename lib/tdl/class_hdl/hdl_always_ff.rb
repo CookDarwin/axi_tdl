@@ -30,14 +30,14 @@ module ClassHDL
     class ClassNegedge < ClassEdge
     end
 
-
-    class HDLAlwaysFFBlock 
+    class HDLAlwaysBlock 
         attr_accessor :opertor_chains,:posedges,:negedges
-
-        def initialize
+        attr_reader :belong_to_module
+        def initialize(belong_to_module)
             @opertor_chains = []
             @posedges = []
             @negedges = []
+            @belong_to_module = belong_to_module
         end
 
         def edge_instance(flag='posedge',edges=[])
@@ -49,6 +49,32 @@ module ClassHDL
             es.compact!
             return es.map{|e| "#{flag} #{e.to_s}"}
         end
+
+        def instance
+            str = []
+
+            pose_str = edge_instance('posedge',@posedges)
+            nege_str = edge_instance('negedge',@negedges)
+            pose_str.concat nege_str
+
+            str.push "always@(#{pose_str.join(",")}) begin "
+            opertor_chains.each do |op|
+                unless op.is_a? OpertorChain
+                    str.push op.instance(:always_ff).gsub(/^./){ |m| "    #{m}"}
+                else 
+                    unless op.slaver
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:always_ff))
+                        str.push "    #{rel_str};"
+                    end
+                end
+                
+            end
+            str.push "end\n"
+            str.join("\n")
+        end
+    end
+
+    class HDLAlwaysFFBlock < HDLAlwaysBlock
 
         def instance
             str = []
@@ -74,8 +100,21 @@ module ClassHDL
         end
     end
 
+    def self.Always(sdl_m: nil,posedge: [],negedge: [],&block)
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysBlock.new(sdl_m)) do |ab|
+            ab.posedges = posedge
+            ab.negedges = negedge
+
+            AssignDefOpertor.with_rollback_opertors(:new,&block)
+            # return ClassHDL::AssignDefOpertor.curr_assign_block
+            AssignDefOpertor.with_rollback_opertors(:old) do
+                sdl_m.Logic_draw.push ab.instance
+            end
+        end
+    end
+
     def self.AlwaysFF(sdl_m: nil,posedge: [],negedge: [],&block)
-        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysFFBlock.new) do |ab|
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysFFBlock.new(sdl_m)) do |ab|
             ab.posedges = posedge
             ab.negedges = negedge
 
@@ -116,7 +155,7 @@ module ClassHDL
     end
 
     def self.AlwaysSIM(sdl_m: nil,posedge: [],negedge: [],&block)
-        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysSIMBlock.new) do |ab|
+        ClassHDL::AssignDefOpertor.with_new_assign_block(ClassHDL::HDLAlwaysSIMBlock.new(sdl_m)) do |ab|
             ab.posedges = posedge
             ab.negedges = negedge
 
@@ -144,8 +183,10 @@ class SdlModule
     end
 
     def Always(posedge: nil,negedge: nil,&block)
-        ClassHDL::AlwaysFF(sdl_m: self,posedge: posedge,negedge: negedge,&block)
+        ClassHDL::Always(sdl_m: self,posedge: posedge,negedge: negedge,&block)
     end
+
+    alias_method :always, :Always
 
     def Always_ff(posedge: nil,negedge: nil,&block)
         ClassHDL::AlwaysFF(sdl_m: self,posedge: posedge,negedge: negedge,&block)
