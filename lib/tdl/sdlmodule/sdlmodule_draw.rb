@@ -64,7 +64,7 @@ class SdlModule
             end 
         else
             File.open(File.join(@out_sv_path,"#{module_name}.sv"),"w") do |f|
-                f.print build_module(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code)
+                f.print build_module_verb(ex_param:ex_param,ex_port:ex_port,ex_up_code:ex_up_code,ex_down_code:ex_down_code).join("")
             end
         end 
     end

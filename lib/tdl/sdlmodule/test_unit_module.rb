@@ -325,6 +325,12 @@ class TopModule
     def _exec_add_test_unit
         @_test_unit_collect_ ||= []
         args = @_test_unit_collect_
+        ## 例化需要的itgt test unit
+        # ItegrationVerb.test_unit_inst
+        ItegrationVerb.test_unit_inst do |name|
+            args.include? name.to_s
+        end
+
         self.techbench.instance_exec(args) do |args|
             index = 0
             last_index = 0

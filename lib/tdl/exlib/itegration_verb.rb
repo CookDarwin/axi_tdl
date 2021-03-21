@@ -354,25 +354,25 @@ class ItegrationVerb
         _names_pool_inst()
         # @itgt_links = ItgtLinks.new(self)
         ## 为child module 生成方法
-        init_children_modules()
+        # init_children_modules()
         # init_children_modules_post()
     end
 
-    def init_children_modules
-        blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_") || {}
-        blocks_hash_post = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_") || {}
-        dir_hash = self.class.instance_variable_get("@_sdl_eval_dir_hash_")
+    # def init_children_modules
+    #     blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_") || {}
+    #     blocks_hash_post = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_") || {}
+    #     dir_hash = self.class.instance_variable_get("@_sdl_eval_dir_hash_")
 
-        blocks_hash = blocks_hash.merge blocks_hash_post
+    #     blocks_hash = blocks_hash.merge blocks_hash_post
 
-        blocks_hash.keys.each do |key|
+    #     blocks_hash.keys.each do |key|
 
-            sdlm = SdlModule.new(name:self.class.to_s + "_#{@nickname}#{key}",out_sv_path:dir_hash[key])
-            define_singleton_method(key) do
-                sdlm
-            end
-        end
-    end
+    #         sdlm = SdlModule.new(name:self.class.to_s + "_#{@nickname}#{key}",out_sv_path:dir_hash[key])
+    #         define_singleton_method(key) do
+    #             sdlm
+    #         end
+    #     end
+    # end
 
     # def init_children_modules_post
     #     blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_")
@@ -387,20 +387,20 @@ class ItegrationVerb
     #     end
     # end
 
-    def gen_children_modules
-        blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_") || {}
-        blocks_hash_post = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_") || {}
-        blocks_hash = blocks_hash.merge blocks_hash_post
-        blocks_hash.keys.each do |key|
-            self.send(key).gen_sv_module()
-        end
-    end
+    # def gen_children_modules
+    #     blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_") || {}
+    #     blocks_hash_post = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_") || {}
+    #     blocks_hash = blocks_hash.merge blocks_hash_post
+    #     blocks_hash.keys.each do |key|
+    #         self.send(key).gen_sv_module()
+    #     end
+    # end
 
         # define_singleton_method(:inst) do
     def inst
         # 先生成子模块
         ## 执行 生成 sdl module
-        inst_child_module()
+        # inst_child_module()
 
         blocks = self.class.instance_variable_get("@_inst_blocks_")
         ItegrationVerb.curr_itgt_push(self)
@@ -422,7 +422,7 @@ class ItegrationVerb
         end
 
         ## 执行 生成 sdl module
-        inst_child_module_post()
+        # inst_child_module_post()
 
         ## 执行top module techbench eval
         tb_inst()
@@ -431,7 +431,8 @@ class ItegrationVerb
         ## 执行 约束
         inst_constraints()
         ## 执行单元测试
-        test_unit_inst()
+        ## 改到 运行 top_module _exec_add_test_unit 那边执行
+        # test_unit_inst()
     end
 
     def tb_inst
@@ -464,8 +465,11 @@ class ItegrationVerb
         return if blocks.empty?
         ItegrationVerb.curr_itgt_push self
 
-        return unless TopModule.sim
-       
+        unless TopModule.sim
+            ItegrationVerb.curr_itgt_pop
+            return 
+        end
+
         blocks.each do |b|
             # @top_module.techbench.instance_exec(self,&b.clone)
             sdlm = TestUnitModule.new(name: b[0],out_sv_path: b[1])
@@ -486,61 +490,93 @@ class ItegrationVerb
 
     end
 
-    def inst_child_module
-        blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_")
-        return unless blocks_hash
-        ItegrationVerb.curr_itgt_push self
-        $_implicit_curr_itgt_.with_none_itgt do 
-            blocks_hash.keys.each do |key|
-                sdlm = self.send(key)
+    def self.test_unit_inst(&filter_block)
+        # blocks = self.instance_variable_get("@_inst_test_unit_blocks_")
+        # blocks = instance_variable_get("@_inst_test_unit_blocks_") || []
+        blocks = @@_inst_test_unit_blocks_
+        return unless blocks
+        return if blocks.empty?
+        return unless TopModule.sim
 
+        ItegrationVerb.curr_itgt_push nil
 
-                blocks = blocks_hash[key]
-                if blocks.length ==  1
-                    block = blocks[0]
-                    sdlm.instance_exec(self,&block)
-                elsif blocks.length >  1
-                    # block = Proc.new do
-                        blocks.each do |b|
-                            # b.call
-                            sdlm.instance_exec(self,&b)
-                        end
-                    # end
-                else
-                    ;
+        blocks.each do |b|
+            # @top_module.techbench.instance_exec(self,&b.clone)
+            if !(block_given?) || filter_block.call(b[0])
+                sdlm = TestUnitModule.new(name: b[0],out_sv_path: b[1])
+                $_implicit_curr_itgt_.with_none_itgt do 
+                    sdlm.input - "from_up_pass"
+                    sdlm.output.logic - "to_down_pass"
+                end
+                sdlm.instance_exec(nil,&b[2])
+
+                if b[1] && File.exist?(b[1])
+                    sdlm.gen_sv_module
+                else 
+                    sdlm.origin_sv = true 
                 end
             end
         end
+
         ItegrationVerb.curr_itgt_pop
+
     end
 
-    def inst_child_module_post
-        blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_")
-        return unless blocks_hash
-        ItegrationVerb.curr_itgt_push self
-        $_implicit_curr_itgt_.with_none_itgt do
-            blocks_hash.keys.each do |key|
-                sdlm = self.send(key)
-                # $_implicit_curr_itgt_ = self
+    # def inst_child_module
+    #     blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_hash_")
+    #     return unless blocks_hash
+    #     ItegrationVerb.curr_itgt_push self
+    #     $_implicit_curr_itgt_.with_none_itgt do 
+    #         blocks_hash.keys.each do |key|
+    #             sdlm = self.send(key)
 
-                blocks = blocks_hash[key]
-                if blocks.length ==  1
-                    block = blocks[0]
-                    sdlm.instance_exec(self,&block)
-                elsif blocks.length >  1
-                    # block = Proc.new do
-                        blocks.each do |b|
-                            # b.call
-                            sdlm.instance_exec(self,&b)
-                        end
-                    # end
-                else
-                    next
-                end
-            end
-        end
-        ItegrationVerb.curr_itgt_pop
-    end
+
+    #             blocks = blocks_hash[key]
+    #             if blocks.length ==  1
+    #                 block = blocks[0]
+    #                 sdlm.instance_exec(self,&block)
+    #             elsif blocks.length >  1
+    #                 # block = Proc.new do
+    #                     blocks.each do |b|
+    #                         # b.call
+    #                         sdlm.instance_exec(self,&b)
+    #                     end
+    #                 # end
+    #             else
+    #                 ;
+    #             end
+    #         end
+    #     end
+    #     ItegrationVerb.curr_itgt_pop
+    # end
+
+    # def inst_child_module_post
+    #     blocks_hash = self.class.instance_variable_get("@_sdl_eval_blocks_post_hash_")
+    #     return unless blocks_hash
+    #     ItegrationVerb.curr_itgt_push self
+    #     $_implicit_curr_itgt_.with_none_itgt do
+    #         blocks_hash.keys.each do |key|
+    #             sdlm = self.send(key)
+    #             # $_implicit_curr_itgt_ = self
+
+    #             blocks = blocks_hash[key]
+    #             if blocks.length ==  1
+    #                 block = blocks[0]
+    #                 sdlm.instance_exec(self,&block)
+    #             elsif blocks.length >  1
+    #                 # block = Proc.new do
+    #                     blocks.each do |b|
+    #                         # b.call
+    #                         sdlm.instance_exec(self,&b)
+    #                     end
+    #                 # end
+    #             else
+    #                 next
+    #             end
+    #         end
+    #     end
+    #     ItegrationVerb.curr_itgt_pop
+    # end
 
     def self.inherited(subclass)
         unless @@child.include? subclass
@@ -589,7 +625,7 @@ class ItegrationVerb
     public
     def check_same_method(name)
         if respond_to? name.to_s
-            raise TdlError.new("Itegration can't Redefine method #{name}")
+            raise TdlError.new("Itegration `#{to_s}` can't Redefine method #{name}")
         end
     end
 
@@ -736,63 +772,64 @@ class ItegrationVerb
     ## 添加测试用例
 
     def self.def_test_unit(name,path,&block)
-        _inst_test_unit_blocks_ = instance_variable_get("@_inst_test_unit_blocks_")
-        _inst_test_unit_blocks_ ||= []
-        _inst_test_unit_blocks_ << [name.to_s, path, block]
-        instance_variable_set("@_inst_test_unit_blocks_",_inst_test_unit_blocks_)
+        # @@_inst_test_unit_blocks_ = instance_variable_get("@_inst_test_unit_blocks_")
+        @@_inst_test_unit_blocks_ ||= []
+        @@_inst_test_unit_blocks_ << [name.to_s, path, block]
+        # instance_variable_set("@_inst_test_unit_blocks_",_inst_test_unit_blocks_)
+        @@_inst_test_unit_blocks_
     end
 
     ## 生成 itgt内的模块,
-    def self.has_module(dir,*names)
-        unless File.exist? dir
-            Dir.mkdir dir
-        end
-        ## itgt 生成 sdl 模块
-        names.each do |name|
-            # unless container_hash[name.to_s]
-            #     container_hash[name.to_s] = []
-            # end
-            self.define_singleton_method("#{name}_sdl_eval") do |&block|
-                _sdl_eval_blocks_hash_ = instance_variable_get("@_sdl_eval_blocks_hash_")
-                _sdl_eval_dir_hash_ = instance_variable_get("@_sdl_eval_dir_hash_")
-                _sdl_eval_blocks_hash_ ||= {}
-                _sdl_eval_dir_hash_ ||= {}
+    # def self.has_module(dir,*names)
+    #     unless File.exist? dir
+    #         Dir.mkdir dir
+    #     end
+    #     ## itgt 生成 sdl 模块
+    #     names.each do |name|
+    #         # unless container_hash[name.to_s]
+    #         #     container_hash[name.to_s] = []
+    #         # end
+    #         self.define_singleton_method("#{name}_sdl_eval") do |&block|
+    #             _sdl_eval_blocks_hash_ = instance_variable_get("@_sdl_eval_blocks_hash_")
+    #             _sdl_eval_dir_hash_ = instance_variable_get("@_sdl_eval_dir_hash_")
+    #             _sdl_eval_blocks_hash_ ||= {}
+    #             _sdl_eval_dir_hash_ ||= {}
 
-                if _sdl_eval_blocks_hash_[name]
-                    _sdl_eval_blocks_hash_[name] << block
-                    # _sdl_eval_blocks_hash_[name] << $_implicit_curr_itgt_.wrap_nont_itgt(&block)
-                    # _sdl_eval_blocks_hash_[name] << lambda {|itgt| block.call }
-                else
-                    _sdl_eval_blocks_hash_[name] = [block]
-                    # _sdl_eval_blocks_hash_[name] = [$_implicit_curr_itgt_.wrap_nont_itgt(&block)]
-                    # _sdl_eval_blocks_hash_[name] == [ lambda {|itgt| block.call }]
-                end
+    #             if _sdl_eval_blocks_hash_[name]
+    #                 _sdl_eval_blocks_hash_[name] << block
+    #                 # _sdl_eval_blocks_hash_[name] << $_implicit_curr_itgt_.wrap_nont_itgt(&block)
+    #                 # _sdl_eval_blocks_hash_[name] << lambda {|itgt| block.call }
+    #             else
+    #                 _sdl_eval_blocks_hash_[name] = [block]
+    #                 # _sdl_eval_blocks_hash_[name] = [$_implicit_curr_itgt_.wrap_nont_itgt(&block)]
+    #                 # _sdl_eval_blocks_hash_[name] == [ lambda {|itgt| block.call }]
+    #             end
 
-                _sdl_eval_dir_hash_[name] = dir if dir
-                instance_variable_set("@_sdl_eval_dir_hash_",_sdl_eval_dir_hash_)
-                instance_variable_set("@_sdl_eval_blocks_hash_",_sdl_eval_blocks_hash_)
-            end
-            ## 在 top_module 后再执行
-            self.define_singleton_method("#{name}_sdl_post_eval") do |&block|
-                $_implicit_curr_itgt_.with_none_itgt do 
-                    _blocks_hash_ = instance_variable_get("@_sdl_eval_blocks_post_hash_")
-                    _sdl_eval_dir_hash_ = instance_variable_get("@_sdl_eval_dir_hash_")
-                    _blocks_hash_ ||= {}
-                    _sdl_eval_dir_hash_ ||= {}
+    #             _sdl_eval_dir_hash_[name] = dir if dir
+    #             instance_variable_set("@_sdl_eval_dir_hash_",_sdl_eval_dir_hash_)
+    #             instance_variable_set("@_sdl_eval_blocks_hash_",_sdl_eval_blocks_hash_)
+    #         end
+    #         ## 在 top_module 后再执行
+    #         self.define_singleton_method("#{name}_sdl_post_eval") do |&block|
+    #             $_implicit_curr_itgt_.with_none_itgt do 
+    #                 _blocks_hash_ = instance_variable_get("@_sdl_eval_blocks_post_hash_")
+    #                 _sdl_eval_dir_hash_ = instance_variable_get("@_sdl_eval_dir_hash_")
+    #                 _blocks_hash_ ||= {}
+    #                 _sdl_eval_dir_hash_ ||= {}
 
-                    if _blocks_hash_[name]
-                        _blocks_hash_[name] << block    #$_implicit_curr_itgt_.wrap_nont_itgt(&block)
-                    else
-                        _blocks_hash_[name] = [block]   #[$_implicit_curr_itgt_.wrap_nont_itgt(&block)]
-                    end
+    #                 if _blocks_hash_[name]
+    #                     _blocks_hash_[name] << block    #$_implicit_curr_itgt_.wrap_nont_itgt(&block)
+    #                 else
+    #                     _blocks_hash_[name] = [block]   #[$_implicit_curr_itgt_.wrap_nont_itgt(&block)]
+    #                 end
 
-                    _sdl_eval_dir_hash_[name] = dir if dir
-                    instance_variable_set("@_sdl_eval_dir_hash_",_sdl_eval_dir_hash_)
-                    instance_variable_set("@_sdl_eval_blocks_post_hash_",_blocks_hash_)
-                end
-            end
-        end
-    end
+    #                 _sdl_eval_dir_hash_[name] = dir if dir
+    #                 instance_variable_set("@_sdl_eval_dir_hash_",_sdl_eval_dir_hash_)
+    #                 instance_variable_set("@_sdl_eval_blocks_post_hash_",_blocks_hash_)
+    #             end
+    #         end
+    #     end
+    # end
 
     def self.record_instance_var_block(name,default=[],&block)
         _inst_ccc_ = instance_variable_get("@_#{name}_")

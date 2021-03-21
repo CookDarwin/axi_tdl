@@ -154,17 +154,16 @@ endmodule\n"
         end
 
         ## 生成 itgt下的子模块文件
-        # gen_children_modules
-        @_itgt_collect_.each do |itgt|
-            itgt.gen_children_modules()
-        end
+        # @_itgt_collect_.each do |itgt|
+        #     itgt.gen_children_modules()
+        # end
 
-        if implicit_itgt_collect
-            ## 执行 itegration_verb 里面的silence
-            implicit_itgt_collect.each do |itgt|
-                itgt.gen_children_modules()
-            end
-        end
+        # if implicit_itgt_collect
+        #     ## 执行 itegration_verb 里面的silence
+        #     implicit_itgt_collect.each do |itgt|
+        #         itgt.gen_children_modules()
+        #     end
+        # end
 
     end
 

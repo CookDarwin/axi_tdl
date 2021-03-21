@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-03-20 20:34:51 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,7 +23,7 @@ test_top rtl_top(
 //==========================================================================
 //-------- expression ------------------------------------------------------
 initial begin
-     forever begin #(33ns);gl_clk = ~gl_clk;end;
+    forever begin #(33ns);gl_clk = ~gl_clk;end;
 end
 
 endmodule

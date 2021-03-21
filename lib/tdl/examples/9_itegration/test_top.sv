@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-03-20 20:34:51 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -33,8 +33,8 @@ a_test_md a_test_md_inst(
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign  x_origin_inf.axis_tvalid = 1'b0;
-assign  x_origin_inf.axis_tdata = '0;
-assign  x_origin_inf.axis_tlast = 1'b0;
+assign x_origin_inf.axis_tvalid = 1'b0;
+assign x_origin_inf.axis_tdata = '0;
+assign x_origin_inf.axis_tlast = 1'b0;
 
 endmodule

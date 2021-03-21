@@ -29,5 +29,18 @@ class ClockManage < ItegrationVerb
 
     end
 
+    def_test_unit('test_clock_xx',__dir__) do 
+        test_unit_init do 
+
+        end
+    end
+
+    def_test_unit('test_clock_bb',__dir__) do 
+        test_unit_init do 
+
+        end
+    end
+
+
 end
 

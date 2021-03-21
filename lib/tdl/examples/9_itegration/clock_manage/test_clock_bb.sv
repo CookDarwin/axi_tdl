@@ -5,15 +5,16 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-21 10:19:17 +0800
+created: 2021-03-20 23:48:13 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
-`include "define_macro.sv" 
 
-module test_vcs_string #(
-    `parameter_longstring(111) INIT_FILE = "ppppppppp"
-)();
+module test_clock_bb(
+    input        from_up_pass,
+    output logic to_down_pass
+);
+
 //==========================================================================
 //-------- define ----------------------------------------------------------
 
@@ -23,5 +24,11 @@ module test_vcs_string #(
 
 //==========================================================================
 //-------- expression ------------------------------------------------------
+initial begin
+    to_down_pass = 1'b0;
+    wait(from_up_pass);
+    $root.tb_test_tttop_sim.test_unit_region = "test_clock_bb";
+    to_down_pass = 1'b1;
+end
 
 endmodule
