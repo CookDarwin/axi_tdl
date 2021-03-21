@@ -69,7 +69,13 @@ class CptHDLTest < Minitest::Test
         require "8_top_module/example"
     end
 
-    def test_itegration 
+    def test_itegration_synth
+        TopModule.sim = false
+        require "9_itegration/top"
+    end
+
+    def test_itegration_sim
+        TopModule.sim = true
         require "9_itegration/top"
     end
 
@@ -78,6 +84,12 @@ class CptHDLTest < Minitest::Test
     end
 
     def test_tunit
+        TopModule.sim = true
+        require "11_test_unit/exp_test_unit"
+    end
+
+    def test_tunit_1
+        TopModule.sim = false
         require "11_test_unit/exp_test_unit"
     end
     # def test_hdl_class

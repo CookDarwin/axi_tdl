@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-20 20:34:51 +0800
+created: 2021-03-21 23:51:42 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -19,7 +19,7 @@ module test_module_var #(
 
 //==========================================================================
 //-------- define ----------------------------------------------------------
-localparam  ASIZE  = 20;
+localparam  ASIZE  = 20   ;
 axi_stream_inf #(.DSIZE(8),.USIZE(1)) tmp_axis_inf (.aclk(clock),.aresetn(rst_n),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(8),.USIZE(1)) tmp_axis0_inf (.aclk(clock),.aresetn(rst_n),.aclken(1'b1)) ;
 axi_inf #(.DSIZE(32),.IDSIZE(2),.ASIZE(8),.LSIZE(9),.MODE("BOTH"),.ADDR_STEP(4294967295)) tmp_axi4_inf (.axi_aclk(clock),.axi_aresetn(rst_n)) ;

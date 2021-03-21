@@ -493,7 +493,7 @@ class ItegrationVerb
     def self.test_unit_inst(&filter_block)
         # blocks = self.instance_variable_get("@_inst_test_unit_blocks_")
         # blocks = instance_variable_get("@_inst_test_unit_blocks_") || []
-        blocks = @@_inst_test_unit_blocks_
+        blocks = @@_inst_test_unit_blocks_ || []
         return unless blocks
         return if blocks.empty?
         return unless TopModule.sim
@@ -770,7 +770,7 @@ class ItegrationVerb
     end
 
     ## 添加测试用例
-
+    @@_inst_test_unit_blocks_ = []
     def self.def_test_unit(name,path,&block)
         # @@_inst_test_unit_blocks_ = instance_variable_get("@_inst_test_unit_blocks_")
         @@_inst_test_unit_blocks_ ||= []

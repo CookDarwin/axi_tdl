@@ -5,27 +5,23 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-21 23:54:11 +0800
+created: 2021-03-21 23:50:09 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
 
-module test_module_port (
-    axi_stream_inf.slaver   from_ethernet_udp_stream,
-    axi_stream_inf.master   to_ethernet_udp_stream,
-    axi_inf.master          ddr_dma_inf,
-    data_inf.slaver         test_data_inf,
-    data_inf_c.slaver       test_data_inf_c
-);
-
+module tb_test_top_sim();
 //==========================================================================
 //-------- define ----------------------------------------------------------
+string test_unit_region;
+logic [0-1:0]  unit_pass_u ;
+logic [0-1:0]  unit_pass_d ;
 
-data_inf_c #(.DSIZE(test_data_inf_c.DSIZE)) inherited_inf (.clock(test_data_inf_c.clock),.rst_n(test_data_inf_c.rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
-test_module_port_sub test_module_port_sub_inst(
-/* axi_inf.master */.test_axi4 (ddr_dma_inf )
+test_top_sim rtl_top(
+/* input clock */.sys_clock ( ),
+/* output      */.odata     ( )
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
