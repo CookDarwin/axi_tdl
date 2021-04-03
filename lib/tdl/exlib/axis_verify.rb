@@ -128,9 +128,9 @@ end
 
 class AxiStream
 
-    def to_simple_sim_master_coe(length: [10,200], gap_len: [0,10], data: [ (0...100) ] , vld_perc: [50, 100], loop_coe: true)
+    def to_simple_sim_master_coe(enable: 1.b1, length: [10,200], gap_len: [0,10], data: [ (0...100) ] , vld_perc: [50, 100], loop_coe: true)
         # raise TdlError.new "file cant be empty"  unless file
-        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","#{self.name}_#{globle_random_name_flag}.coe")
+        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","coe_#{self.name}_#{globle_random_name_flag}.coe")
         _sps = nil
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
             require_sdl 'axis_sim_master_model.rb'
@@ -144,11 +144,12 @@ class AxiStream
             _sps 
         end
 
-        @belong_to_module.instance_exec(self,file,loop_coe) do |_self,file,loop_coe| 
+        @belong_to_module.instance_exec(self,file,loop_coe,enable) do |_self,file,loop_coe,_enable| 
 
             Instance(:axis_sim_master_model,"sim_model_inst_#{_self.name}") do |h| 
                 h.param.LOOP                (loop_coe ? "TRUE" : "FALSE")
                 h.param.RAM_DEPTH           File.open(File.expand_path(file)).readlines.size
+                h.input.enable              _enable
                 h.input.load_trigger        1.b0
                 h.input[32].total_length    h.param.RAM_DEPTH
                 h.input[512*8].mem_file     File.expand_path(file) # {axis_tvalid, axis_tuser, axis_tkeep, axis_tlast, axis_tdata}

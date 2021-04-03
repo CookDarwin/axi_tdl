@@ -13,25 +13,25 @@ class DefXp
     end
 
     def logic(name:"tmp",dsize:1,port:false,default:nil,msb_high:true,dimension:[],type:"logic",&block)
-        lg = Logic.new(name:name,dsize:dsize,port:port,default:default,msb_high:msb_high,dimension:dimension,type:type)
+        lg = Logic.new(name:name,dsize:dsize,port:port,default:default,msb_high:msb_high,dimension:dimension,type:type, belong_to_module: @sdlmodule)
         var_common(lg,&block)
         add_method_to_itgt(name,lg)
     end
 
     def clock(name:"",freqM:100,dsize:1,&block)
-        a = Clock.new(name:name,freqM:freqM,dsize:dsize)
+        a = Clock.new(name:name,freqM:freqM,dsize:dsize, belong_to_module: @sdlmodule)
         var_common(a,&block)
         add_method_to_itgt(name,a)
     end
 
     def reset(name:"",active:"low",dsize:1,&block)
-        a = Reset.new(name:name,active:active,dsize:dsize)
+        a = Reset.new(name:name,active:active,dsize:dsize, belong_to_module: @sdlmodule)
         var_common(a,&block)
         add_method_to_itgt(name,a)
     end
 
     def parameter(name:"P",value:100,local:false,type:nil,&block)
-        a = Parameter.new(name:name,value:value,local:local,port:false,show:true,type:type)
+        a = Parameter.new(name:name,value:value,local:local,port:false,show:true,type:type, belong_to_module: @sdlmodule)
         var_common(a,&block)
         add_method_to_itgt(name,a)
     end
@@ -77,12 +77,12 @@ class DefXp
     # end
 
     def mailbox(name:'mbox',depth:100,&block)
-        a = MailBox.new(name:name,depth:depth)
+        a = MailBox.new(name:name,depth:depth, belong_to_module: @sdlmodule)
         var_common(a,&block)
     end
 
     def debuglogic(name:"tmp",dsize:1,port:false,default:nil,msb_high:true,dimension:[],type:"logic",&block)
-        lg = DebugLogic.new(name:name,dsize:dsize,port:port,default:default,msb_high:msb_high,dimension:dimension,type:type)
+        lg = DebugLogic.new(name:name,dsize:dsize,port:port,default:default,msb_high:msb_high,dimension:dimension,type:type, belong_to_module: @sdlmodule)
         var_common(lg,&block)
         add_method_to_itgt(name,lg)
     end

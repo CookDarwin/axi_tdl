@@ -7,6 +7,9 @@ module ClassHDL
         def initialize(belong_to_module)
             @opertor_chains = []
             @belong_to_module = belong_to_module
+            unless @belong_to_module 
+                raise TdlError.new("HDLInitialBlock must have belong_to_module")
+            end
         end
 
         def instance(block_name=nil)
@@ -17,7 +20,26 @@ module ClassHDL
                     str.push op.instance(:assign).gsub(/^./){ |m| "    #{m}"}
                 else 
                     unless op.slaver
-                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign))
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign, belong_to_module))
+                        str.push "    #{rel_str};"
+                    end
+                end
+                
+            end
+            str.push "end\n"
+            str.join("\n")
+        end
+
+        def instance_inspect()
+            str = []
+            block_name=nil
+            str.push "initial begin#{block_name ? ':'.concat(block_name.to_s) : ''}"
+            opertor_chains.each do |op|
+                unless op.is_a? OpertorChain
+                    str.push op.instance(:assign).gsub(/^./){ |m| "    #{m}"}
+                else 
+                    unless op.slaver
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign,belong_to_module))
                         str.push "    #{rel_str};"
                     end
                 end
@@ -41,7 +63,7 @@ module ClassHDL
     class BlocAssertIF < BlockIF
         def instance(as_type= :cond)
             if cond.is_a? ClassHDL::OpertorChain
-                head_str = "assert(#{cond.instance(:cond)})else begin"
+                head_str = "assert(#{cond.instance(:cond, belong_to_module)})else begin"
             else 
                 head_str = "assert(#{cond.to_s})else begin"
             end
@@ -50,7 +72,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type,belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )

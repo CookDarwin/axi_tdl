@@ -567,23 +567,6 @@ end
 
 class DataInf_C ## signals in interface
 
-    # def valid
-    #     RedefOpertor.with_normal_operators do 
-    #         # raise TdlError.new("\nARRAY Don't have 'valid'") unless @dimension.empty?
-    #         # NqString.new(signal.concat ".valid") 
-    #         if @dimension.empty?
-    #             NqString.new(signal.concat ".valid") 
-    #         else 
-    #             unless @_array_chain_hash_
-    #                 rel = generate_inf_to_signals('valid',width=1)
-    #                 @_array_chain_hash_ = {}
-    #                 @_array_chain_hash_['valid'] = rel
-    #             end
-    #             TdlSpace::ArrayChain.new(@_array_chain_hash_['valid'],[])
-    #         end
-    #     end
-    # end
-
     define_arraychain_tail_method('valid')
     define_arraychain_tail_method('ready',width=1,rv=true)
     define_arraychain_tail_method('vld_rdy')

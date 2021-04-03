@@ -88,7 +88,7 @@ module TdlSpace
                 dimension = []
             end
             name = to_inp(name)
-            belong_to_module.Def.logic(name: name,dsize: @chain.last || 1,dimension: dimension,type: @type || 'logic')
+            rel = belong_to_module.Def.logic(name: name,dsize: @chain.last || 1,dimension: dimension,type: @type || 'logic')
         end
 
         def wire 

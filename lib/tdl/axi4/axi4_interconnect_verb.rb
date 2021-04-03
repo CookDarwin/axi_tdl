@@ -66,7 +66,34 @@ class Axi4
             # next unless e.is_a? Axi4
             if e.is_a? Axi4
                 e.band_params_from(self)
-                @interconnect_up_streams << e
+                
+                ## e is a Vector 
+                if e.dimension[0].is_a?(Integer) && e.dimension[0] > 1
+                    # require_hdl 'axi4_direct_B1.sv'
+                    require_hdl 'axi4_direct_verc.sv'
+
+                    e.dimension[0].times do |xi|
+                        _ne = e.copy(name: "#{e.inst_name}_toM_#{xi}")
+                        # _ne << e[xi]
+                        # belong_to_module.Instance('axi4_direct_B1',"axi4_direc_#{e.inst_name}_toM_#{xi}") do |h|
+                        #     # h.param.MODE    mode_str    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+                        #     h.slaver_inf        e[xi]
+                        #     h.master_inf        _ne
+                        # end
+
+                        belong_to_module.Instance('axi4_direct_verc',"axi4_direc_#{e.inst_name}_toM_#{xi}") do |h|
+                            h.param.MODE            "#{_ne.mode}_to_#{_ne.mode}"    # //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+                            h.param.SLAVER_MODE     _ne.mode    #    //
+                            h.param.MASTER_MODE     _ne.mode    #    //
+                            h.slaver_inf        e[xi]
+                            h.master_inf        _ne
+                        end
+                
+                        @interconnect_up_streams << _ne 
+                    end    
+                else
+                    @interconnect_up_streams << e
+                end
             else
                 raise TdlError.new("When use `<<` for axi4's M2S ,argvs must be axi4 too.\nOtherwise use `naxi4_mix_interconnect_M2S` directly")
             end
@@ -218,10 +245,19 @@ class Axi4
                 else
                     mode_str = "ONLY_READ_to_BOTH"
                 end
-                require_hdl 'axi4_direct_B1.sv'
-                # Axi4.axi4_direct_a1(mode:mode_str,slaver:lo,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
-                belong_to_module.Instance('axi4_direct_B1',"axi4_direct_a1_long_to_wide_#{sub_name}_#{globle_random_name_flag()}") do |h|
-                    # h.param.MODE    mode_str    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+                # require_hdl 'axi4_direct_B1.sv'
+                # # Axi4.axi4_direct_a1(mode:mode_str,slaver:lo,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
+                # belong_to_module.Instance('axi4_direct_B1',"axi4_direct_a1_long_to_wide_#{sub_name}_#{globle_random_name_flag()}") do |h|
+                #     # h.param.MODE    mode_str    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+                #     h.slaver_inf        lo
+                #     h.master_inf        "#{sub_name}[#{index}]".to_nq
+                # end
+
+                require_hdl 'axi4_direct_verc.sv'
+                belong_to_module.Instance('axi4_direct_verc',"axi4_direct_a1_long_to_wide_#{sub_name}_#{globle_random_name_flag()}") do |h|
+                    h.param.MODE            mode_str    # //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
+                    h.param.SLAVER_MODE     (wr_lg ? "ONLY_WRITE" : "ONLY_READ")    #    //
+                    h.param.MASTER_MODE     "BOTH"    #    //
                     h.slaver_inf        lo
                     h.master_inf        "#{sub_name}[#{index}]".to_nq
                 end
@@ -252,10 +288,11 @@ class Axi4
         @_long_slim_to_wide.each do |e|
             mode_str = e.mode + "_to_BOTH"
             # Axi4.axi4_direct_a1(mode:mode_str,slaver:e,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
+            require_hdl 'axi4_direct_B1.sv'
             belong_to_module.Instance('axi4_direct_B1',"axi4_direct_a1_inst_long_to_wide_#{sub_name}") do |h|
                 # h.param.MODE    mode_str    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
-                h.slaver        e
-                h.master        "#{sub_name}[#{index}]".to_nq
+                h.slaver_inf        e
+                h.master_inf        "#{sub_name}[#{index}]".to_nq
             end
             index = index + 1
         end
@@ -311,8 +348,8 @@ class Axi4
 "\naxi4_direct_B1 /* #(
     .MODE       (\"#{_str}\")    //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
 )*/ iterconnect_direct_A1_#{name}_instMM(
-/* axi_inf.slaver */  .slaver   (sub_axi_#{name}_inf[0]),
-/* axi_inf.master */  .master   (#{name})
+/* axi_inf.slaver */  .slaver_inf   (sub_axi_#{name}_inf[0]),
+/* axi_inf.master */  .master_inf   (#{name})
 );\n"
         end
 

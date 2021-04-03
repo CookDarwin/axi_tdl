@@ -11,7 +11,7 @@ module ClassHDL
 
         def instance(as_type= :cond)
             if cond.is_a? ClassHDL::OpertorChain
-                head_str = "if(#{cond.instance(:cond)})begin"
+                head_str = "if(#{cond.instance(:cond, belong_to_module)})begin"
             else 
                 head_str = "if(#{cond.to_s})begin"
             end
@@ -20,7 +20,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        rel_str = ClassHDL.compact_op_ch(oc.instance(as_type))
+                        rel_str = ClassHDL.compact_op_ch(oc.instance(as_type, belong_to_module))
                         sub_str.push "    #{rel_str};"
                     end
                 else 
@@ -36,7 +36,7 @@ module ClassHDL
     class BlockELSIF < BlockIF
         def instance(as_type= :cond)
             if cond.is_a? ClassHDL::OpertorChain
-                head_str = "else if(#{cond.instance(:cond)})begin"
+                head_str = "else if(#{cond.instance(:cond, belong_to_module)})begin"
             else 
                 head_str = "else if(#{cond.to_s})begin"
             end
@@ -45,7 +45,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type, belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )
@@ -66,7 +66,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type, belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )
@@ -135,7 +135,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type, belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )
@@ -168,7 +168,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type, belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )

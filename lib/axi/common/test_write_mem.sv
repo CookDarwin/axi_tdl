@@ -15,7 +15,7 @@ initial begin
     BRAM[0][2][3] = 14;
     BRAM[0][2][4] = 15;
 
-    $writememh("/home/myw357/work/FPGA/acce_20201211/git_repo/wmy/axi/common/mem_format.coe",BRAM);
+    $writememh("./mem_format.coe",BRAM);
 
 end
 

@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps

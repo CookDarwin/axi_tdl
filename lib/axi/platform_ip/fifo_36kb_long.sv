@@ -53,7 +53,7 @@ localparam DIV =    ((DSIZE>=37) && (DSIZE<=72)) ? 512 :
                     ((DSIZE>=5 ) && (DSIZE<=9 )) ? 4096 :
                     ((DSIZE>=1 ) && (DSIZE<=4 )) ? 8192 : 8192;
 
-localparam KNUM = DEPTH/DIV;
+localparam KNUM = DEPTH/DIV + (DEPTH/DIV == 0);
 
 // FIFO_DUALCLOCK_MACRO: Dual Clock First-In, First-Out (FIFO) RAM Buffer
 //                       Artix-7

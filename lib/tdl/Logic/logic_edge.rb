@@ -1,7 +1,7 @@
 
 
 class Logic     ## EDGE METHOD
-    def raising(cnt:1,clock:nil,reset:nil)
+    def raising(cnt:1,clock:nil,reset: 1.b1 )
 
         # if cnt==1 && clock == nil && reset==nil && @raising_record
         #     return @raising_record

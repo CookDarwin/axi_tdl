@@ -5,7 +5,11 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
+<<<<<<< HEAD
 created: xxxx.xx.xx
+=======
+created: 2021-04-03 12:04:15 +0800
+>>>>>>> 91ef261... belong_to_module ex
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -47,10 +51,18 @@ axis_sim_master_model #(
     .LOOP      ("TRUE" ),
     .RAM_DEPTH (246    )
 )sim_model_inst_origin_inf(
+<<<<<<< HEAD
 /* input                 */.load_trigger (1'b0                                                                                  ),
 /* input                 */.total_length (246                                                                                   ),
 /* input                 */.mem_file     ("/var/lib/gems/2.5.0/gems/axi_tdl-0.0.10/lib/tdl/auto_script/tmp/origin_inf_R560.coe" ),
 /* axi_stream_inf.master */.out_inf      (origin_inf                                                                            )
+=======
+/* input                 */.enable       (/*unused */                                                                  ),
+/* input                 */.load_trigger (1'b0                                                                         ),
+/* input                 */.total_length (246                                                                          ),
+/* input                 */.mem_file     ("/home/wmy367/work/gem/axi_tdl/lib/tdl/auto_script/tmp/origin_inf_R1699.coe" ),
+/* axi_stream_inf.master */.out_inf      (origin_inf                                                                   )
+>>>>>>> 91ef261... belong_to_module ex
 );
 axis_sim_verify_by_coe #(
     .RAM_DEPTH   (21    ),

@@ -271,16 +271,6 @@ class Tdl
         puts(pagination("SUMMARY"))
         puts "#{TopModule.sim ? 'SIM' : 'SYNTH'} RUN SPEND #{Time.now - $__start_time__} sec @ TIME : #{Time.now}"
 
-        ## ----------- 
-        # TopModule.current.ref_modules.uniq.each do |e| 
-        #     unless  e.is_a? ClassHDL::ClearSdlModule
-        #         puts "#{e.real_sv_path}: #{e.module_name}"
-        #     end
-        # end
-        ## ===========
-        # File.open("/home/myw357/work/FPGA/mammo_tcp_20210315/tmp.tcl", "w") do |f|
-        #     f.puts SdlModule.call_module('test_mac_1g_verb').gen_dev_wave_tcl
-        # end
     end
 
 end

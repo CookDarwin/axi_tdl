@@ -7,6 +7,9 @@ module ClassHDL
         def initialize(belong_to_module)
             @opertor_chains = []
             @belong_to_module = belong_to_module
+            unless @belong_to_module
+                raise TdlError.new("HDLAlwaysCombBlock must have belong_to_module")
+            end
         end
 
         def instance
@@ -17,7 +20,7 @@ module ClassHDL
                     str.push op.instance(:assign).gsub(/^./){ |m| "    #{m}"}
                 else 
                     unless op.slaver
-                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign))
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign, @belong_to_module))
                         str.push "    #{rel_str};"
                     end
                 end

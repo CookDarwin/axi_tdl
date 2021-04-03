@@ -13,7 +13,7 @@ module ClassHDL
             if @func_inst.return_type.is_a? StructMeta
                 @func_inst.return_type.struct_slots.each do |e|
                     self.define_singleton_method(e.name) do 
-                        TdlSpace::ArrayChain.new("#{@func_inst.name}.#{e.name}".to_nq)
+                        TdlSpace::ArrayChain.create(obj: "#{@func_inst.name}.#{e.name}".to_nq, belong_to_module: @func_inst.belong_to_module )
                     end
                 end
             end
@@ -90,7 +90,7 @@ module ClassHDL
                     str.push op.instance(:assign).gsub(/^./){ |m| "    #{m}"}
                 else 
                     unless op.slaver
-                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign))
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign,belong_to_module))
                         str.push "    #{rel_str};"
                     end
                 end
@@ -193,7 +193,7 @@ module ClassHDL
                 # pin,iostd = parse_pin_prop(pin_prop) if pin_prop
                 # RedefOpertor.with_normal_operators do
                 ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
-                    tmp = Logic.new(name:name,dsize:dsize,port:"input",dimension:dimension)
+                    tmp = Logic.new(name:name,dsize:dsize,port:"input",dimension:dimension, belong_to_module: self)
                     # add_to_new_module("@port_logics",tmp)
                     # add_method_to_itgt(name,tmp)
                     tmp
@@ -205,7 +205,7 @@ module ClassHDL
                 # pin,iostd = parse_pin_prop(pin_prop) if pin_prop
                 # RedefOpertor.with_normal_operators do
                 ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
-                    tmp = Logic.new(name:name,dsize:dsize,port:"output logic",dimension:dimension)
+                    tmp = Logic.new(name:name,dsize:dsize,port:"output logic",dimension:dimension, belong_to_module: self)
                     # add_to_new_module("@port_logics",tmp)
         
                     if block_given?

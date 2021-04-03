@@ -10,7 +10,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type, belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )
@@ -36,7 +36,7 @@ module ClassHDL
             opertor_chains.each do |oc|
                 unless oc.is_a? BlockIF
                     unless oc.slaver
-                        sub_str.push "    #{oc.instance(as_type)};"
+                        sub_str.push "    #{oc.instance(as_type,belong_to_module)};"
                     end
                 else 
                     sub_str.push( oc.instance(as_type).gsub(/^./){ |m| "    #{m}"} )
