@@ -175,7 +175,7 @@ ClockSameDomain CheckPClock_inst_#{@@_cpc_id}(
 );
 
 initial begin
-    wait(#{cc_done});
+    wait(#{cc_done}==1'b1);
     assert(#{cc_same})
     else begin
         $error(\"--- Error : `#{blm.module_name}` clock is not same, #{aclk}< %0f M> != #{bclk}<%0f M>\",1000000.0/#{cc_afreq}, 1000000.0/#{cc_bfreq});

@@ -12,3 +12,10 @@ Rake::TestTask.new(:test) do |t|
     # t.ruby_opts = ["-c"]
     # t.verbose = true
 end
+
+desc "编译TB"
+task :tb do 
+    require_relative "./lib/axi_tdl.rb"
+    puts AxiTdl::VERSION
+    require_relative "./lib/axi/techbench/tb_axi_stream_split_channel.rb"
+end

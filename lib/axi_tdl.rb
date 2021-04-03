@@ -1,5 +1,5 @@
-require "axi_tdl/version"
-require "tdl/tdl.rb"
+require_relative "./axi_tdl/version"
+require_relative "./tdl/tdl.rb"
 
 module AxiTdl
     AXI_PATH = File.expand_path(File.join(__dir__,"axi"))

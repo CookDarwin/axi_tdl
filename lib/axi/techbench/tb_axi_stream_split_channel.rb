@@ -1,4 +1,4 @@
-require 'axi_tdl'
+# require 'axi_tdl'
 require_sdl 'axi_stream_split_channel.rb'
 
 TdlBuild.tb_axi_stream_split_channel(__dir__) do 
