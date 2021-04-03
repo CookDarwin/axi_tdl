@@ -170,6 +170,9 @@ module ClassHDL
         def initialize(sdlm,args={})
             @chain = []
             @sdlm = sdlm
+            unless @sdlm 
+                raise TdlError.new("ImplicitPortBase<#{args.to_s}> dont have belong_to_module")
+            end
             @up_args = args
         end
 
@@ -298,7 +301,7 @@ module ClassHDL
             if sub_type.is_a? StructMeta
                 @sub_type.struct_slots.each do |e|
                     obj.define_singleton_method(e.name) do 
-                        TdlSpace::ArrayChain.new("#{obj.name}.#{e.name}".to_nq)
+                        TdlSpace::ArrayChain.create(obj: "#{obj.name}.#{e.name}".to_nq, belong_to_module: obj.belong_to_module)
                     end
                 end
             end
@@ -380,27 +383,27 @@ class SdlModule
 
     def >>(*args)
         str = "{>>{#{args.map{|e| e.to_s }.join(',')}}}"
-        TdlSpace::ArrayChain.new(str)
+        TdlSpace::ArrayChain.create(obj: str, belong_to_module: self)
     end
 
     def <<(*args)
         str = "{<<{#{args.map{|e| e.to_s }.join(',')}}}"
-        TdlSpace::ArrayChain.new(str)
+        TdlSpace::ArrayChain.create(obj: str, belong_to_module: self)
     end
 
     def logic_bind_(*args)
         str = "{#{args.map{|e| e.to_s }.join(',')}}"
-        TdlSpace::ArrayChain.new(str)
+        TdlSpace::ArrayChain.create(obj: str, belong_to_module: self)
     end
 
     def clog2(arg)
         str = "$clog2(#{arg.to_s})"
-        TdlSpace::ArrayChain.new(str)
+        TdlSpace::ArrayChain.create(obj: str, belong_to_module: self)
     end
 
     def bits(arg)
         str = "$bits(#{arg.to_s})"
-        TdlSpace::ArrayChain.new(str)
+        TdlSpace::ArrayChain.create(obj: str, belong_to_module: self)
     end
 
 end

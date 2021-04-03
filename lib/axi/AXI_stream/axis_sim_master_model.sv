@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-28 14:46:59 +0800
+created: 2021-04-03 12:04:15 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -14,6 +14,7 @@ module axis_sim_master_model #(
     parameter  LOOP      = "TRUE",
     parameter  RAM_DEPTH = 10000
 )(
+    input                   enable,
     input                   load_trigger,
     input [31:0]            total_length,
     input [4095:0]          mem_file,
@@ -30,6 +31,7 @@ data_c_sim_master_model #(
     .LOOP      (LOOP      ),
     .RAM_DEPTH (RAM_DEPTH )
 )data_c_sim_master_model_inst(
+/* input             */.enable       (enable       ),
 /* input             */.load_trigger (load_trigger ),
 /* input             */.total_length (total_length ),
 /* input             */.mem_file     (mem_file     ),

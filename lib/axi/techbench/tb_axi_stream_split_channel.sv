@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-28 14:46:59 +0800
+created: 2021-04-03 12:04:15 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -47,6 +47,7 @@ axis_sim_master_model #(
     .LOOP      ("TRUE" ),
     .RAM_DEPTH (246    )
 )sim_model_inst_origin_inf(
+/* input                 */.enable       (/*unused */                                                                  ),
 /* input                 */.load_trigger (1'b0                                                                         ),
 /* input                 */.total_length (246                                                                          ),
 /* input                 */.mem_file     ("/home/wmy367/work/gem/axi_tdl/lib/tdl/auto_script/tmp/origin_inf_R1699.coe" ),

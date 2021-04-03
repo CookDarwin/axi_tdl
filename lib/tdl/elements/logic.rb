@@ -21,7 +21,7 @@ class Logic < SignalElm
     # attr_reader :dsize
     attr_accessor :name,:dsize,:id,:ghost,:type
     attr_reader :dimension,:port
-    def initialize(name:"tmp",dsize:1,port: false,default: nil,msb_high: true,dimension: [],type: "logic")
+    def initialize(name:"tmp",dsize:1,port: false,default: nil,msb_high: true,dimension: [],type: "logic",belong_to_module: nil)
         @name   = name
         # @id = GlobalParam.CurrTdlModule.BindEleClassVars.Logic.id
         @dsize = dsize
@@ -37,31 +37,12 @@ class Logic < SignalElm
             yield
         end
 
-        # if @port && (@port != :origin)
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Logic.ports << self if @id != 0
-        # else
-        #     # @@inst_stack << method(:inst).to_proc
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Logic.inst_stack << lambda{ inst() }
-        # end
-        # define_method(:signal) do |h,l|
-        #     if h
-        #         hh = h
-        #     else
-        #         hh = dsize-1
-        #     end
-        #
-        #     if l
-        #         ll = l
-        #     else
-        #         l = 0
-        #     end
-        #
-        #     if dsize == 1
-        #         "#{name}_id#{@id}"
-        #     else
-        #         "#{name}_id#{@id}[#{hh}:#{ll}]"
-        #     end
-        # end
+        @belong_to_module = belong_to_module
+
+        unless @belong_to_module
+            raise TdlError.new("Logic<#{@name}> be not belong_to_module")
+        end
+
     end
 
     def copy(name:@name.to_s,dsize:@dsize,port:@port,default:@default,msb_high:@msb_high,dimension:@dimension,type:@type,belong_to_module:@belong_to_module)
@@ -98,12 +79,9 @@ class Logic < SignalElm
             b.slaver = true
         end
 
-        # RedefOpertor.with_normal_operators do
-        #     TdlSpace::ArrayChain.new(self,a,b)
-        # end
-        # end
+        
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
-            TdlSpace::ArrayChain.new(self,a,b)
+            TdlSpace::ArrayChain.create(obj: self,lchain: a, end_slice: b, belong_to_module: belong_to_module)
         end
     end
 

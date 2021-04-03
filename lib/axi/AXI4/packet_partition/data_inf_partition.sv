@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -31,7 +31,7 @@ logic one_long_stream;
 logic fifo_wr;
 logic [IDSIZE+4-1:0]  curr_id ;
 logic [LSIZE-1:0]  curr_length ;
-logic [(data_in.DSIZE-IDSIZE)-LSIZE-1:0]  curr_addr ;
+logic [(data_in.DSIZE - IDSIZE)-LSIZE-1:0]  curr_addr ;
 logic [LSIZE-1:0]  wr_length ;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_full;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_empty;

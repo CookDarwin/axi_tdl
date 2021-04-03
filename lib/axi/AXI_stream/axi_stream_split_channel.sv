@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-28 14:46:59 +0800
+created: 2021-04-03 12:04:15 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -67,7 +67,7 @@ ClockSameDomain CheckPClock_inst_0(
 );
 
 initial begin
-    wait(cc_done_0==1'b1);
+    wait(cc_done_0);
     assert(cc_same_0)
     else begin
         $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != first_inf.aclk<%0f M>",1000000.0/cc_afreq_0, 1000000.0/cc_bfreq_0);
@@ -92,7 +92,7 @@ ClockSameDomain CheckPClock_inst_1(
 );
 
 initial begin
-    wait(cc_done_1==1'b1);
+    wait(cc_done_1);
     assert(cc_same_1)
     else begin
         $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != end_inf.aclk<%0f M>",1000000.0/cc_afreq_1, 1000000.0/cc_bfreq_1);

@@ -53,7 +53,7 @@ initial begin
     case(MODE)
     "BOTH_to_BOTH","BOTH_to_ONLY_READ","BOTH_to_ONLY_WRITE":
         assert(slaver.MODE =="BOTH")
-        else $error("SLAVER AXIS MODE<%s> != BOTH",slaver.MODE);
+        else $error("SLAVER AXIS MODE<%0s> != BOTH",slaver.MODE);
     "ONLY_READ_to_BOTH":
         assert(slaver.MODE == "ONLY_READ")
         else $error("SLAVER AXIS MODE != ONLY_READ");

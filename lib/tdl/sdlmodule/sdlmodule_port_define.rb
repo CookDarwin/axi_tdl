@@ -65,7 +65,7 @@ class SdlModule
         if value.is_a? Float
             type = :real
         end
-        tmp = Parameter.new(name:name.to_s,value:value,port:true,type:type,show:show)
+        tmp = Parameter.new(name:name.to_s,value:value,port:true,type:type,show:show, belong_to_module: self)
         add_to_new_module("@port_params",tmp)
         add_method_to_itgt(name,tmp)
         tmp
@@ -87,7 +87,7 @@ class SdlModule
         #     tmp
         # end
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
-            tmp = Logic.new(name:name,dsize:dsize,port:"input",dimension:dimension)
+            tmp = Logic.new(name:name,dsize:dsize,port:"input",dimension:dimension, belong_to_module: self)
             add_to_new_module("@port_logics",tmp)
             add_method_to_itgt(name,tmp)
             tmp
@@ -109,7 +109,7 @@ class SdlModule
         #     tmp
         # end
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
-            tmp = Logic.new(name:name,dsize:dsize,port:"output",dimension:dimension,type: 'logic')
+            tmp = Logic.new(name:name,dsize:dsize,port:"output",dimension:dimension,type: 'logic', belong_to_module: self)
             add_to_new_module("@port_logics",tmp)
 
             if block_given?
@@ -136,7 +136,7 @@ class SdlModule
         #     tmp
         # end
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
-            tmp = Logic.new(name:name,dsize:dsize,port:"inout",dimension:dimension,type: '' )
+            tmp = Logic.new(name:name,dsize:dsize,port:"inout",dimension:dimension,type: '' , belong_to_module: self)
             add_to_new_module("@port_logics",tmp)
 
             if block_given?
@@ -150,7 +150,7 @@ class SdlModule
     def Clock(name,freqM:100,port: :input,pin:[],iostd:[],dsize:1,pin_prop:nil)
         port_name_chk(name)
         pin,iostd = parse_pin_prop(pin_prop) if pin_prop
-        a = Clock.new(name:name,freqM:freqM,port:port,dsize:dsize)
+        a = Clock.new(name:name,freqM:freqM,port:port,dsize:dsize, belong_to_module: self)
         add_to_new_module("@port_clocks",a)
 
         if block_given?
@@ -164,7 +164,7 @@ class SdlModule
     def Reset(name,port: :input,active:"low",pin:[],iostd:[],dsize:1,pin_prop:nil)
         port_name_chk(name)
         pin,iostd = parse_pin_prop(pin_prop) if pin_prop
-        a = Reset.new(name:name,active:active.to_s.downcase,port:port,dsize:dsize)
+        a = Reset.new(name:name,active:active.to_s.downcase,port:port,dsize:dsize, belong_to_module: self)
         add_to_new_module("@port_resets",a)
         # define_method(name){ a }
         add_method_to_itgt(name,a)

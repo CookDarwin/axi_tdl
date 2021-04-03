@@ -43,6 +43,8 @@ class SdlModule
     end
 
     def gen_dev_wave_tcl ## 返回一个[]
+        return ['','',''] unless TopModule.sim
+
         dve_tcl_hash = {}
         track_signals_hash.each do |flag, base_ele_bhash|
             base_elms = []
@@ -50,6 +52,7 @@ class SdlModule
             intf_elms_name = []
             base_ele_bhash.each do |ele, sub_filter_block|
                 _ref_paths = ele.path_refs(&@__track_filter_block__)
+                _ref_paths.uniq!
 
                 if sub_filter_block
                     _ref_paths = _ref_paths.select do |e| 
@@ -143,6 +146,8 @@ class SdlModule
 
                 sub_hash.each do |ele, sub_filter_block|
                     _root_refs = ele.path_refs(&filter_block)
+                    _root_refs.uniq!
+                    
                     if sub_filter_block 
                         _root_refs.select! do |e| sub_filter_block.call(e) end
                     end    

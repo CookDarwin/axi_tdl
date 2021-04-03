@@ -4,10 +4,15 @@ class MailBox < BaseElm
     # include AlwaysBlock
     # include RedefOpertor
     attr_accessor :ghost
-    def initialize(name:'mbox',depth:100)
+    def initialize(name:'mbox',depth:100, belong_to_module: nil )
         @name = name
 
         @depth = depth
+
+        @belong_to_module = belong_to_module
+        unless @belong_to_module 
+            raise TdlError.new("Clock<#{name}> dnot have belong_to_module")
+        end
 
     end
 

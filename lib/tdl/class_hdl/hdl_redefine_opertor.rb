@@ -47,6 +47,20 @@ module ClassHDL
                 @tree << arg 
             end  
             @belong_to_module = belong_to_module
+            unless @belong_to_module
+                raise TdlError.new("OpertorChain must have belong_to_module")
+            end
+        end
+
+        def instance_inspect
+            str = ["self belong_to_module:#{belong_to_module.module_name}"]
+            index = 0
+            @tree.each do |node|
+                bl = "#{node[0].respond_to?(:belong_to_module) ? "belong_to_module:#{node[0].belong_to_module.module_name }" : '' }"
+                str << "{{ tree[#{index}][1]node[1]SYMB{#{node[1].to_s}} tree[#{index}][0]node[0]#{node[0].to_s} #{node[0].class} #{bl}}}"
+                index += 1
+            end
+            str.join(" ")
         end
 
         ClassHDL::OP_SYMBOLS.each do |os|
@@ -103,17 +117,20 @@ module ClassHDL
             # self.nege = true
             # return self
             self.slaver = true
-            new_op = OpertorChain.new(["~(#{self.instance})".to_nq])
+            bel = belong_to_module || ( @tree[0][0].respond_to?(:belong_to_module) && @tree[0][0].belong_to_module )
+            new_op = OpertorChain.new(["~(#{self.instance(:assign, bel)})".to_nq])
         end
 
         def brackets
             self.slaver = true
-            new_op = OpertorChain.new(["(#{self.instance})".to_nq], belong_to_module)
+            bel = ( @tree[0][0].respond_to?(:belong_to_module) && @tree[0][0].belong_to_module )
+            new_op = OpertorChain.new(["(#{self.instance(:assign, belong_to_module || bel)})".to_nq], belong_to_module)
         end
 
         def clog2
             self.slaver = true
-            new_op = OpertorChain.new(["$clog2(#{self.instance})".to_nq],belong_to_module)
+            bel = belong_to_module || ( @tree[0][0].respond_to?(:belong_to_module) && @tree[0][0].belong_to_module )
+            new_op = OpertorChain.new(["$clog2(#{self.instance(:aasign, bel)})".to_nq],belong_to_module)
         end
 
         def self.define_op_flag(ruby_op,hdl_op)
@@ -143,10 +160,13 @@ module ClassHDL
 
 
         def to_s 
-            instance(type=:cond)
+            instance(type=:cond,belong_to_module || ( @tree[0][0].respond_to?(:belong_to_module) && @tree[0][0].belong_to_module ) )
         end
 
-        def instance(type=:assign)
+        def instance(type=:assign,block_belong_to_module=nil,show=nil)
+            unless block_belong_to_module
+                raise TdlError.new("OpertorChain must has block_belong_to_module")
+            end
             AssignDefOpertor.with_rollback_opertors(:old) do 
                 str = ''
                 # both_symb_used = false
@@ -160,39 +180,75 @@ module ClassHDL
                                 sb = " = "
                             end 
                         else 
-                            # if(node[1].respond_to?(:belong_to_module) && node[1].belong_to_module && node[1].belong_to_module != belong_to_module)
-                            #     sb = "#{node[1].root_ref.to_s}"
-                            # else
-                                sb = "#{node[1].to_s}"
-                            # end
+
+                            sb = "#{node[1].to_s}"
                         end
                     else
-                        # if(node[1].respond_to?(:belong_to_module) && node[1].belong_to_module && node[1].belong_to_module != belong_to_module)
-                        #     sb = "#{node[1].root_ref.to_s}"
-                        # else
-                            sb = "#{node[1].to_s}"
-                        # end
+                        sb = "#{node[1].to_s}"
+                    end
+
+                    if cnt==1 && show 
+                        puts "tree[1][1]<#{node[1]}> 使用 #{sb}"
                     end
                     
                     unless node[0].is_a? OpertorChain
                         ## 判断是不是属于 Var <= "String" 形式
                         if (@tree.length == 2) && node[0].instance_of?(String) && !@slaver
                             str += (sb + '"' + node[0].to_s + '"')
+                            if show 
+                                puts "tree 长度等于2; tree[#{cnt}][0] is string; op is not slaver"
+                            end
                         elsif node[0].instance_of?(String)
                             # "如果是字符串 则原始输出"
                             str += (sb + '"' + node[0].to_s + '"')
+                            if show 
+                                puts "tree[#{cnt}][0] is string"
+                            end
                         else 
                             # str += (sb + node[0].to_s)
-                            if(node[0].respond_to?(:root_ref) && node[0].respond_to?(:belong_to_module) && node[0].belong_to_module && (node[0].belong_to_module != belong_to_module) && node[0].belong_to_module.top_tb_ref? )
+                            if block_belong_to_module
+                                if (node[0].respond_to?(:root_ref) && node[0].respond_to?(:belong_to_module) && node[0].belong_to_module && (node[0].belong_to_module != block_belong_to_module) && node[0].belong_to_module.top_tb_ref? )
+                                    
+                                    str += (sb + node[0].root_ref)
+
+                                    if show 
+                                        puts "tree[#{cnt}][0].belong_to_module<#{node[0].belong_to_module.module_name}> != block_belong_to_module<#{block_belong_to_module.module_name}>"
+                                    end
+                                    ## 反向添加到 TestUnitModule
+                                    if block_belong_to_module.is_a?(TestUnitModule)
+                                        block_belong_to_module.add_root_ref_ele(node[0])
+                                        if show 
+                                            puts "block_belong_to_module<#{block_belong_to_module.module_name}> is TestUnitModule"
+                                        end
+                                    end
+                                else  
+                                    str += (sb + node[0].to_s)
+                                    if show
+                                        mmm =  node[0].respond_to?(:belong_to_module) && node[0].belong_to_module.module_name
+                                        puts "tree[#{cnt}][0]<#{node[0].class}>: ref_root<#{node[0].respond_to?(:root_ref).to_s}> belong_to_module<#{mmm}> block_belong_to_module<#{block_belong_to_module.module_name}> ...."
+                                    end
+                                end
+                            elsif(node[0].respond_to?(:root_ref) && node[0].respond_to?(:belong_to_module) && node[0].belong_to_module && (node[0].belong_to_module != belong_to_module) && node[0].belong_to_module.top_tb_ref? )
                                 # sb = "#{node[1].root_ref.to_s}"
                                 str += (sb + node[0].root_ref)
+
+                                if show 
+                                    puts "tree[#{cnt}][0].belong_to_module<#{node[0].belong_to_module.module_name}> != op.belong_to_module<#{belong_to_module.module_name}>"
+                                end
+
                                 ## 反向添加到 TestUnitModule
                                 if belong_to_module.is_a?(TestUnitModule)
                                     belong_to_module.add_root_ref_ele(node[0])
+                                    if show 
+                                        puts "tree[#{cnt}][0]: op.belong_to_module<#{belong_to_module.module_name}> is TestUnitModule"
+                                    end
                                 end
                             else
                                 # sb = "#{node[1].to_s}"
                                 str += (sb + node[0].to_s)
+                                if show 
+                                    puts "tree[#{cnt}][0]: op.belong_to_module<#{belong_to_module.module_name}> ..."
+                                end
                             end
                         end
                     else 
@@ -203,13 +259,17 @@ module ClassHDL
                         # if node[0].tree.length>2 && ["&","|","<",">"].include?(node[0].tree[1][1])
 
                         # else
+                    
                         if sb =~/(\||&){2,2}/
-                            str += " #{sb}#{node[0].instance(:slaver).to_s}"
+                            str += " #{sb}#{node[0].instance(:slaver,block_belong_to_module || belong_to_module).to_s}"
                         else
-                            str += "#{sb}(#{node[0].instance(:slaver).to_s})"
+                            str += "#{sb}(#{node[0].instance(:slaver,block_belong_to_module || belong_to_module).to_s})"
                         end
-                        # end
-                        # str += "#{sb}(#{"Node"})"
+                        
+                        if show 
+                            puts "tree[#{cnt}][0] is op, block_belong_to_module<#{block_belong_to_module.to_s}> op.belong_to_module<#{belong_to_module.to_s}>"
+                        end
+
                     end
                     cnt += 1
                 end
@@ -235,8 +295,10 @@ module ClassHDL
 
     module AssignDefOpertor
         @@included_class = []
-        @@curr_assign_block = HDLAssignBlock.new(nil) ##HDLAssignBlock ##HDLAlwaysCombBlock
-        @@curr_assign_block_stack = [HDLAssignBlock.new(nil) ]
+        @@curr_assign_block = HDLAssignBlock.new(true) ##HDLAssignBlock ##HDLAlwaysCombBlock
+        # @@curr_assign_block = nil
+        @@curr_assign_block_stack = [HDLAssignBlock.new(true) ]
+        # @@curr_assign_block_stack = []
         @@curr_opertor_stack = [:old]
 
         def self.curr_opertor_stack
@@ -296,7 +358,18 @@ module ClassHDL
                         b.slaver = true 
                     end
                     ## 当 进行 X < Y 等运算时OpertorChain 需要获取 assign block的 belong_to_module
-                    new_op = OpertorChain.new(nil,@@curr_assign_block && @@curr_assign_block.belong_to_module) 
+                    if @@curr_assign_block 
+                        bblm = @@curr_assign_block.belong_to_module
+                    elsif self.respond_to?(:belong_to_module)
+                        bblm = self.belong_to_module
+                    elsif b.respond_to?(:belong_to_module)
+                        bblm = b.belong_to_module
+                        
+                    else
+                        bblm = nil 
+                    end
+
+                    new_op = OpertorChain.new(nil, bblm) 
                     new_op.tree.push([self])
                     new_op.tree.push([b,symb])
                     if @@curr_assign_block
@@ -511,7 +584,7 @@ class BaseElm
                             
                             @_array_chain_hash_[name.to_s] = rel
                         end
-                        TdlSpace::ArrayChain.new(@_array_chain_hash_[name.to_s],[])
+                        TdlSpace::ArrayChain.create(obj: @_array_chain_hash_[name.to_s], lchain:[], belong_to_module: self.belong_to_module)
                     end
                 end
             end
@@ -576,9 +649,8 @@ module TdlSpace
             end
             ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
                 unless b 
-                    ArrayChain.new(obj,chain+[a])
+                    ArrayChain.create(obj: obj,lchain: chain+[a],belong_to_module: belong_to_module)
                 else 
-                    # ArrayChain.new(&obj,chain,[a,b])
                     @end_slice = [a,b]
                     self
                 end
@@ -610,7 +682,7 @@ module TdlSpace
         end
 
         def ~
-            ArrayChain.new("~#{self.to_s}")
+            ArrayChain.create(obj: "~#{self.to_s}", belong_to_module: belong_to_module)
         end
     end 
 end

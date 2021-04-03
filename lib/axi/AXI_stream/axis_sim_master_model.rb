@@ -3,6 +3,7 @@ require_hdl 'data_c_sim_master_model.sv'
 TdlBuild.axis_sim_master_model(__dir__) do 
     parameter.LOOP       "TRUE"
     parameter.RAM_DEPTH  10000
+    input               - 'enable'
     input               - 'load_trigger'
     input[32]           - 'total_length'
     input[512*8]        - 'mem_file' # {axis_tvalid, axis_tuser, axis_tkeep, axis_tlast, axis_tdata}
@@ -13,6 +14,7 @@ TdlBuild.axis_sim_master_model(__dir__) do
     data_c_sim_master_model.data_c_sim_master_model_inst do |h| #(
         h.param.LOOP        param.LOOP
         h.param.RAM_DEPTH   param.RAM_DEPTH
+        h.input.enable              enable
         h.input.load_trigger        load_trigger
         h.input[32].total_length    total_length
         h.input[512*8].mem_file     mem_file

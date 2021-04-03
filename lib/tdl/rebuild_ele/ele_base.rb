@@ -128,7 +128,7 @@ module TdlSpace
                 define_method(tdl_key) do 
                     rel = self.instance_variable_get("@_#{tdl_key}_")
                     unless rel 
-                        "#{inst_name}.#{hdl_key}".to_nq
+                        TdlSpace::ArrayChain.create(obj: "#{inst_name}.#{hdl_key}".to_nq, belong_to_module: belong_to_module)
                     else 
                         rel 
                     end
@@ -152,9 +152,9 @@ module TdlSpace
                 define_method('clock') do 
                     rel = self.instance_variable_get("@_#{tdl_key}_")
                     if !dimension || dimension.empty?
-                        rel || TdlSpace::ArrayChain.new("#{self.inst_name}.#{hdl_key}")
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
                     else  
-                        rel || TdlSpace::ArrayChain.new("#{self.inst_name}[0].#{hdl_key}")
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}[0].#{hdl_key}", belong_to_module: belong_to_module)
                     end
                 end
 
@@ -171,7 +171,7 @@ module TdlSpace
              self.class_exec(tdl_key) do |tdl_key|
                 define_method('reset') do 
                     rel = self.instance_variable_get("@_#{tdl_key}_")
-                    rel || TdlSpace::ArrayChain.new("#{self.inst_name}.#{hdl_key}")
+                    rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
                 end
 
                 define_method("reset=") do |arg|
@@ -200,7 +200,7 @@ module TdlSpace
             self.class_exec(tdl_key) do |tdl_key|
                 define_method(tdl_key) do 
                     rel = self.instance_variable_get("@_#{tdl_key}_") || default_value
-                    rel || TdlSpace::ArrayChain.new("#{self.inst_name}.#{hdl_key}")
+                    rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
                 end
 
                 define_method("#{tdl_key}=") do |arg|
@@ -215,7 +215,7 @@ module TdlSpace
                 _io_map(e,e,nil,'sdata',nil)
                 self.class_exec(e) do |e|
                     define_method(e) do 
-                        TdlSpace::ArrayChain.new("#{self.inst_name}.#{e}")
+                        TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{e}", belong_to_module: belong_to_module)
                     end
                 end
             end
@@ -225,7 +225,7 @@ module TdlSpace
             _io_map(name,name,nil,'pdata',dimension)
             self.class_exec(name) do |e|
                 define_method(e) do 
-                    TdlSpace::ArrayChain.new("#{self.inst_name}.#{e}")
+                    TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{e}", belong_to_module: belong_to_module)
                 end
             end
         end
@@ -374,7 +374,7 @@ module TdlSpace
                     e.slaver = true
                 end 
             end
-            TdlSpace::ArrayChain.new(self,a)
+            TdlSpace::ArrayChain.create(obj: self,lchain: a, belong_to_module: belong_to_module)
         end
 
         def instance(exp_len: nil)

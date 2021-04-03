@@ -8,14 +8,20 @@ module ClassHDL
         def initialize(belong_to_module)
             @opertor_chains = []
             @belong_to_module = belong_to_module
+            unless @belong_to_module 
+                raise TdlError.new("HDLAssignBlock must have belong_to_module")
+            end
         end
 
         def instance
+            unless @belong_to_module.is_a?(SdlModule) 
+                raise TdlError.new("HDLAssignBlock must have belong_to_module")
+            end
             str = []
             opertor_chains.each do |op|
                 
                 unless op.slaver
-                    sub_str = op.instance(:assign)
+                    sub_str = op.instance(:assign,belong_to_module)
                     # if sub_str =~ /^(?<head>[\w\.\[\]\:]+\s*)(?<eq><?=\s*)\((?<body>.+)\)$/
                     #     rel_str = $~[:head] + $~[:eq] + $~[:body]
                     # else 

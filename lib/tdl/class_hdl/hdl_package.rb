@@ -121,20 +121,19 @@ module ClassHDL
                 ex_down_code = "//------>> EX CODE <<-------------------\n" + ex_down_code + "//------<< EX CODE >>-------------------\n"
             end
     
-            # str = module_head+"module #{@module_name}" + build_params(ex_param) + build_ports(ex_port) + ex_up_code + gen_lite_str() + draw + ex_down_code + "\nendmodule\n"
-            # unless GlobalParam.sim
-                module_name_str = @module_name
-            # else
-            #     module_name_str = @module_name+"_sim"
-            # end
+
+            module_name_str = @module_name
     
+    
+            # str = module_head+"package #{module_name_str};\n"  + build_params(ex_param) + ex_up_code + draw + ex_down_code + "\nendpackage:#{module_name_str}\n" + add_sub_module_file_paths
             str = "package #{module_name_str};\n"  + build_params(ex_param) + ex_up_code + draw + ex_down_code + "\nendpackage:#{module_name_str}\n" + add_sub_module_file_paths
-    
+
             create_vivado_tcl if @create_tcl
             create_constraints_file if @create_sdc
     
-            return [module_head_verb, str]
+            return [module_head_verb,str]
         end
+
 
     end
 

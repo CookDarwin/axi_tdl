@@ -63,7 +63,7 @@ module ClassHDL
                     str.push op.instance(:always_ff).gsub(/^./){ |m| "    #{m}"}
                 else 
                     unless op.slaver
-                        rel_str = ClassHDL.compact_op_ch(op.instance(:always_ff))
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:always_ff, belong_to_module))
                         str.push "    #{rel_str};"
                     end
                 end
@@ -143,7 +143,7 @@ module ClassHDL
                     str.push op.instance(:assign).gsub(/^./){ |m| "    #{m}"}
                 else 
                     unless op.slaver
-                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign))
+                        rel_str = ClassHDL.compact_op_ch(op.instance(:assign, belong_to_module))
                         str.push "    #{rel_str};"
                     end
                 end

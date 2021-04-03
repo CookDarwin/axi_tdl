@@ -5,7 +5,7 @@ class Clock < SignalElm
     attr_reader :name
     attr_accessor :id,:ghost,:port,:dsize,:freqM,:jitter
 
-    def initialize(name:"system_clock",freqM:100.0,port:false,dsize:1,jitter: 0.01)
+    def initialize(name:"system_clock",freqM:100.0,port:false,dsize:1,jitter: 0.01, belong_to_module: nil)
         name_legal?(name)
         # @id = GlobalParam.CurrTdlModule.BindEleClassVars.Clock.id
         @name = name
@@ -13,14 +13,10 @@ class Clock < SignalElm
         @port = port
         @dsize = dsize
         @jitter = jitter
-        # if @port
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Clock.ports << self if @id != 0
-        # else
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Clock.inst_stack << method(:inst).to_proc
-        # end
-        # if @id == 0
-        #     raise TdlError.new(" ID ")
-        # end
+        @belong_to_module = belong_to_module
+        unless @belong_to_module 
+            raise TdlError.new("Clock<#{name}> dnot have belong_to_module")
+        end
     end
 
     # def port_length
@@ -175,7 +171,7 @@ ClockSameDomain CheckPClock_inst_#{@@_cpc_id}(
 );
 
 initial begin
-    wait(#{cc_done}==1'b1);
+    wait(#{cc_done});
     assert(#{cc_same})
     else begin
         $error(\"--- Error : `#{blm.module_name}` clock is not same, #{aclk}< %0f M> != #{bclk}<%0f M>\",1000000.0/#{cc_afreq}, 1000000.0/#{cc_bfreq});

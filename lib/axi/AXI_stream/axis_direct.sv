@@ -43,7 +43,7 @@ CheckPClock CheckPClock_inst(
 );
 
 initial begin
-    @(posedge cc_done);
+    wait(cc_done);
     assert(cc_same)
     else begin
         $error("`axis_direct` clock is not same");

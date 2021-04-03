@@ -5,7 +5,7 @@ class Reset < SignalElm
     attr_reader :name,:active
     attr_accessor :id,:ghost,:port,:dsize
 
-    def initialize(name:"system_rst",active:"LOW",port:false,dsize:1)
+    def initialize(name:"system_rst",active:"LOW",port:false,dsize:1, belong_to_module: nil)
         name_legal?(name)
         # @id = GlobalParam.CurrTdlModule.BindEleClassVars.Reset.id
         @dsize = dsize
@@ -15,14 +15,10 @@ class Reset < SignalElm
         if @active.eql?("low") && @active.eql?("high")
             raise TdlError.new("RESET ACTIVE PARA #{@active} ERROR")
         end
-        # if @port
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Reset.ports << self if @id != 0
-        # else
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Reset.inst_stack << method(:inst).to_proc
-        # end
-        # if @id == 2
-        #     raise TdlError.new("____________")
-        # end
+        @belong_to_module = belong_to_module
+        unless @belong_to_module 
+            raise TdlError.new("Reset<#{name}> dnot have belong_to_module")
+        end
     end
 
     # def signal

@@ -13,6 +13,7 @@ module data_c_sim_master_model #(
     parameter   LOOP        = "TRUE",
     parameter   RAM_DEPTH   = 10000
 )(
+    input               enable,
     input               load_trigger,
     input [31:0]        total_length,
     input[512*8-1:0]    mem_file,
@@ -46,24 +47,26 @@ end
 always@(posedge out_inf.clock) begin 
     if(~out_inf.rst_n) index     <= 0;
     else begin 
-        if(out_inf.ready) begin 
-            if(index >= total_length_lock-1)begin 
-                if(LOOP == "TRUE" || LOOP == "ON")begin 
-                    index <= 0;
+        if(enable)begin 
+            if(out_inf.ready) begin 
+                if(index >= total_length_lock-1)begin 
+                    if(LOOP == "TRUE" || LOOP == "ON")begin 
+                        index <= 0;
+                    end else begin 
+                        index   <= total_length_lock-1;
+                        disable_coe <= 1'b1;
+                    end 
                 end else begin 
-                    index   <= total_length_lock-1;
-                    disable_coe <= 1'b1;
+                    index <= index + 1;
                 end 
             end else begin 
-                index <= index + 1;
+                index <= index;
             end 
-        end else begin 
-            index <= index;
-        end 
+        end
     end 
 end 
 
 assign out_inf.data     = BRAM[index][out_inf.DSIZE-1:0];
-assign out_inf.valid    = BRAM[index][out_inf.DSIZE] && ~disable_coe; 
+assign out_inf.valid    = BRAM[index][out_inf.DSIZE] && ~disable_coe && enable; 
 
 endmodule

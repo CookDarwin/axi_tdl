@@ -1,6 +1,6 @@
 
 require 'minitest/autorun'
-require 'tdl.rb'
+# require 'tdl.rb'
 
 class CptHDLTest < Minitest::Test
 

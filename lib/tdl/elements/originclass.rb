@@ -8,8 +8,9 @@ module TdlSpace
     end
 
     class ArrayChain
-        attr_reader :obj,:chain,:end_slice
-        def initialize(obj="tmp",lchain=[],end_slice=false)
+        attr_reader :obj,:chain,:end_slice,:belong_to_module
+        def initialize(obj="tmp",lchain=[],end_slice=false,belong_to_module=nil)
+            @belong_to_module=belong_to_module
             @obj = obj
             if !end_slice
                 if lchain.is_a? Array
@@ -25,48 +26,19 @@ module TdlSpace
             else
                 raise TdlError.new("数组下标类型出错")
             end
+
+            unless @belong_to_module
+                raise TdlError.new "ArrayChain<#{obj.to_s}> 必须添加 belong_to_module"
+            end
         end
 
-        # def [](a,b=false)
-        #     if a.is_a? ClassHDL::OpertorChain
-        #         a.slaver = true
-        #     end
-    
-        #     if b.is_a? ClassHDL::OpertorChain
-        #         b.slaver = true
-        #     end
+        def self.create(obj: "tmp",lchain: [],end_slice: false,belong_to_module: nil)
+            ArrayChain.new(obj, lchain, end_slice, belong_to_module)
+        end
 
-        #     if @end_slice
-        #         raise TdlError.new("数组下标已经被用片选[#{@end_slice[0]},#{@end_slice[1]}]终结")
-        #     end
-        #     RedefOpertor.with_normal_operators do
-        #         unless b 
-        #             ArrayChain.new(obj,chain+[a])
-        #         else 
-        #             # ArrayChain.new(&obj,chain,[a,b])
-        #             @end_slice = [a,b]
-        #             self
-        #         end
-        #     end
-        # end
-
-        # def to_s
-        #     RedefOpertor.with_normal_operators do
-        #         str = ""
-        #         chain.each do |e|
-        #             unless e.is_a? ArrayChainSignalMethod
-        #                 str += "[#{e.to_s}]"
-        #             else 
-        #                 str += ".#{e.name.to_s}"
-        #             end
-        #         end
-        #         if @end_slice
-        #             str += "[#{@end_slice[0]}:#{@end_slice[1]}]"
-        #         end
-
-        #         "#{obj.to_s}#{str}".to_nq
-        #     end
-        # end
+        def root_ref(&block)
+            "#{belong_to_module.root_ref(&block)}.#{to_s}".to_nq
+        end
 
         def inspect
             self.to_s
@@ -86,9 +58,7 @@ module TdlSpace
             end
             ## 判断 obj是否响应方法
             if @obj.respond_to?(method) && !method.to_s.eql?("inst_name")
-                # ArrayChain.new(@obj.to_s,lchain=@chain + [ArrayChainSignalMethod.new(method)])
-                # ArrayChain.new(@obj.to_s,lchain=@chain.dup.concat([ArrayChainSignalMethod.new(method)]))
-                ArrayChain.new(@obj,lchain=@chain.dup.concat([ArrayChainSignalMethod.new(method)]))
+                ArrayChain.create(obj: @obj,lchain:@chain.dup.concat([ArrayChainSignalMethod.new(method)]) ,belong_to_module: belong_to_module)
             else 
             
                 # raise TdlError.new("ArrayChain 没有末尾方法 #{method} #{arg}")
@@ -212,7 +182,7 @@ class BaseElm < AxiTdl::SdlModuleActiveBaseElm
                             
                             @_array_chain_hash_[name.to_s] = rel
                         end
-                        TdlSpace::ArrayChain.new(@_array_chain_hash_[name.to_s],[])
+                        TdlSpace::ArrayChain.create(obj: @_array_chain_hash_[name.to_s],lchain:[],belong_to_module: self.belong_to_module)
                     end
                 end
             end
@@ -484,7 +454,7 @@ class InfElm
 
         return signal if @dimension.empty?
         
-        TdlSpace::ArrayChain.new(self,a,b)
+        TdlSpace::ArrayChain.create(obj: self,lchain: a, end_slice: b, belong_to_module: belong_to_module)
     end
 
     def self.same_name_socket(way,mix,inf_array,base_new_inf=nil,belong_to_module=nil)

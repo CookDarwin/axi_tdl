@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -20,7 +20,7 @@ module axi4_dpram_cache #(
 //==========================================================================
 //-------- define ----------------------------------------------------------
 
-cm_ram_inf #(.DSIZE(a_inf.DSIZE),.RSIZE(a_inf.ASIZE),.MSIZE(a_inf.DSIZE/8)) xram_inf();
+cm_ram_inf #(.DSIZE(a_inf.DSIZE),.RSIZE(a_inf.ASIZE),.MSIZE((a_inf.DSIZE / 8))) xram_inf();
 axi_stream_inf #(.DSIZE(a_inf.ASIZE+a_inf.DSIZE+1),.USIZE(1)) a_axis_inf (.aclk(a_inf.axi_aclk),.aresetn(a_inf.axi_aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(a_inf.DSIZE),.USIZE(1)) a_axis_rd_inf (.aclk(a_inf.axi_aclk),.aresetn(a_inf.axi_aresetn),.aclken(1'b1)) ;
 data_inf_c #(.DSIZE(a_inf.ASIZE+1)) a_datac_rd_inf (.clock(a_inf.axi_aclk),.rst_n(a_inf.axi_aresetn)) ;

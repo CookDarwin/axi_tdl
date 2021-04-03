@@ -74,7 +74,7 @@ class SdlModule
             if e.is_a? String 
                 next 
             end
-            tmp = e.new(name:"#{head}_NC")
+            tmp = e.new(name:"#{head}_NC",belong_to_module: self)
             tmp.belong_to_module = self
             tmp.ghost = true
             instance_variable_set("@#{head}_NC",tmp)
@@ -127,16 +127,6 @@ class SdlModule
         @@allmodule << self
         @module_name = name
         @real_sv_path = File.join(@out_sv_path,"#{@module_name}.sv") if @out_sv_path
-        # @port_clocks = []
-        # @port_resets = []
-        # @port_params = []
-        # @port_logics = []
-        # @port_datainfs = []
-        # @port_datainf_c_s = []
-        # @port_videoinfs = []
-        # @port_axisinfs = []
-        # @port_axi4infs = []
-        # @port_axilinfs = []
 
         @port_clocks        = Hash.new
         @port_resets        = Hash.new
@@ -164,52 +154,16 @@ class SdlModule
             # self.instance_variable_set("#{head_str}_NC",tmp)
         end
         create_ghost
-        # @super_modules = []
-        # @Logic_collect = []
-        # @Logic_inst = []
-        # @Logic_draw = []
-        #
-        # @Clock_collect = []
-        # @Clock_inst = []
-        # @Clock_draw = []
-        #
-        # @Reset_collect = []
-        # @Reset_inst = []
-        # @Reset_draw = []
-        #
-        # @Parameter_collect = []
-        # @Parameter_inst = []
-        # @Parameter_draw = []
-        #
-        # @DataInf_collect = []
-        # @DataInf_inst = []
-        # @DataInf_draw = []
-        #
-        # @DataInf_C_collect = []
-        # @DataInf_C_inst = []
-        # @DataInf_C_draw = []
-        #
-        # @AxiStream_collect = []
-        # @AxiStream_inst = []
-        # @AxiStream_draw = []
-        #
-        # @AxiLite_collect = []
-        # @AxiLite_inst = []
-        # @AxiLite_draw = []
-        #
-        # @VideoInf_collect = []
-        # @VideoInf_inst = []
-        # @VideoInf_draw = []
-        #
-        # @Axi4_collect = []
-        # @Axi4_inst = []
-        # @Axi4_draw = []
+
         if block_given?
             yield(self)
         end
 
         @instanced_and_parent_module ||= Hash.new
         @instance_and_children_module ||= Hash.new
+
+        ## 记录当前模块被例化的 具体对象
+        @instances =[]
     end
 
     public
@@ -472,4 +426,60 @@ class SdlModule
             puts (fstr % [_indexs[xi], _names[xi], _paths[xi]])
         end
     end
+end
+
+class SdlModule 
+
+    ## 获取信号的绝对路径
+    def path_refs(&block)
+        collects = []
+        if self != TopModule.current.techbench
+            @instances.each do |it|
+                it.origin.parents_inst_tree do |tree|
+                    ll = ["$root"]
+                    rt = tree.reverse
+                    rt.each_index do |index|
+                        if rt[index].respond_to? :module_name
+                            ll << rt[index].module_name 
+                        else 
+                            ll << rt[index].inst_name
+                        end
+                    end
+                    # ll << it.inst_name
+                    new_name = ll.join('.').to_nq
+                    if block_given?
+                        if yield(new_name)
+                            collects << new_name
+                        end 
+                    else
+                        collects << new_name
+                    end
+                end
+            end
+        else
+            collects = ["$root.#{self.module_name}".to_nq]
+        end
+        collects
+    end
+
+    ## 定义获取 信号的绝对路径
+    def root_ref(&block)
+        ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
+            rels = path_refs(&block)
+            if block_given?
+                sst = "block given"
+            else
+                sst = "no block"
+            end
+
+            if rels.size == 1
+                rels[0]
+            elsif rels.size == 0
+                raise TdlError.new "#{module_name} Cant find root ref {#{sst}}"
+            else
+                raise TdlError.new "#{module_name} Find multi root refs {#{sst}} \n#{rels.join("\n")}\n"
+            end
+        end
+    end
+
 end

@@ -448,6 +448,9 @@ class SdlModule
         # @ports = (@port_clocks + @port_resets + @port_logics + @port_datainfs + @port_datainf_c_s + @port_videoinfs + @port_axisinfs + @port_axi4infs + @port_axilinfs)
         @instance_cnt ||= 0
         inst_p = SdlInst.new(origin:self,name:name)
+     
+        @instances ||= []
+        @instances << inst_p
 
         @port_params.each do |k,v|
             inst_p.inst_param_hash[k.to_s] = nil

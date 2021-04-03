@@ -20,6 +20,9 @@ module ClassHDL
         def initialize(belong_to_module)
             @belong_to_module = belong_to_module
             super("genblk#{globle_random_name_flag()}")
+            unless @belong_to_module
+                raise TdlError.new("GenerateBlock must have belong_to_module")
+            end
         end
 
 
@@ -41,7 +44,7 @@ module ClassHDL
         def IF(cond,&block)
             if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? HDLAssignGenerateBlock
                 if cond.respond_to?(:instance)
-                    head_str = "\nif(#{cond.instance(:cond)})begin\n"
+                    head_str = "\nif(#{cond.instance(:cond, @belong_to_module)})begin\n"
                 else 
                     head_str = "\nif(#{cond})begin\n"
                 end

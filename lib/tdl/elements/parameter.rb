@@ -6,7 +6,7 @@ class Parameter < BaseElm
     include BaseModule
     attr_accessor :name,:value,:id,:ghost,:type,:vcs_string
 
-    def initialize(name: "P",value:100,local:false,port:false,show:true,type:nil)
+    def initialize(name: "P",value:100,local:false,port:false,show:true,type:nil,belong_to_module: nil)
         @name = name
         @local = local
         # @id = GlobalParam.CurrTdlModule.BindEleClassVars.Parameter.id
@@ -14,11 +14,10 @@ class Parameter < BaseElm
         @show = show
         @value = value
         @type = type
-        # if @port
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Parameter.ports << self
-        # else
-        #     GlobalParam.CurrTdlModule.BindEleClassVars.Parameter.inst_stack << method(:inst)
-        # end
+        @belong_to_module = belong_to_module
+        unless @belong_to_module 
+            raise TdlError.new("Parameter<#{name}> dnot have belong_to_module")
+        end
     end
 
     def inst

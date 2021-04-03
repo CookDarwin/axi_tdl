@@ -26,6 +26,13 @@ module odata_pool_axi4_A3 #(
 
 `include "define_macro.sv"
 
+initial begin 
+    assert (addr_size_inf.DSIZE == 64) 
+    else  begin 
+        $display("addr_size_inf.DSIZE<%0d> != 64",addr_size_inf.DSIZE);
+    end 
+end 
+
 logic           fifo_empty;
 logic           fifo_full;
 logic [31:0]    fifo_addr;
