@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 14:03:22 +0800
+created: 2021-04-16 17:01:07 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -24,7 +24,7 @@ module axis_sim_master_model #(
 //==========================================================================
 //-------- define ----------------------------------------------------------
 
-data_inf_c #(.DSIZE(out_inf.DSIZE + out_inf.KSIZE + out_inf.USIZE + 1)) out_inf_dc (.clock(out_inf.aclk),.rst_n(out_inf.aresetn)) ;
+data_inf_c #(.DSIZE(out_inf.DSIZE + out_inf.KSIZE + out_inf.USIZE + 1),.FreqM(1.0)) out_inf_dc (.clock(out_inf.aclk),.rst_n(out_inf.aresetn)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 data_c_sim_master_model #(

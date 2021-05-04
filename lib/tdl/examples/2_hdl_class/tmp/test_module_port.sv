@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 13:47:03 +0800
+created: 2021-05-04 20:03:33 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -21,7 +21,7 @@ module test_module_port (
 //==========================================================================
 //-------- define ----------------------------------------------------------
 
-data_inf_c #(.DSIZE(test_data_inf_c.DSIZE)) inherited_inf (.clock(test_data_inf_c.clock),.rst_n(test_data_inf_c.rst_n)) ;
+data_inf_c #(.DSIZE(test_data_inf_c.DSIZE),.FreqM(test_data_inf_c.FreqM)) inherited_inf (.clock(test_data_inf_c.clock),.rst_n(test_data_inf_c.rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 test_module_port_sub test_module_port_sub_inst(

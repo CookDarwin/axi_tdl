@@ -16,7 +16,8 @@ module axi4_wr_burst_track #(
     axi_inf.mirror_wr axi4_mirror
 );
 
-import GlobalPkg::*;
+// import GlobalPkg::*;
+import SystemPkg::*;
 
 logic LSIZE =
 (axi4_mirror.IDSIZE>= 37                          )?  9 :         //

@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: XXXX.XX.XX
+created: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -53,11 +53,11 @@ logic fifo_rd_en;
 logic fifo_empty;
 logic fifo_full;
 logic stream_en;
-axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) split_out (.aclk(axis_in.aclk),.aresetn(axis_in.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) fifo_axis (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(axi_wr.IDSIZE + axi_wr.ASIZE + axi_wr.LSIZE),.USIZE(1)) id_add_len_in (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
-axi_inf #(.DSIZE(axi_wr.DSIZE),.IDSIZE(axi_wr.IDSIZE),.ASIZE(axi_wr.ASIZE),.LSIZE(axi_wr.LSIZE),.MODE(axi_wr.MODE),.ADDR_STEP(axi_wr.ADDR_STEP)) axi_wr_vcs_cp_R1342 (.axi_aclk(axi_wr.axi_aclk),.axi_aresetn(axi_wr.axi_aresetn)) ;
-axi_stream_inf #(.DSIZE(axis_in.DSIZE),.USIZE(1)) pipe_axis (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(axis_in.DSIZE),.FreqM(axis_in.FreqM),.USIZE(1)) split_out (.aclk(axis_in.aclk),.aresetn(axis_in.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(axis_in.DSIZE),.FreqM(axis_in.FreqM),.USIZE(1)) fifo_axis (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(axi_wr.IDSIZE + axi_wr.ASIZE + axi_wr.LSIZE),.FreqM(1.0),.USIZE(1)) id_add_len_in (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
+axi_inf #(.DSIZE(axi_wr.DSIZE),.IDSIZE(axi_wr.IDSIZE),.ASIZE(axi_wr.ASIZE),.LSIZE(axi_wr.LSIZE),.MODE(axi_wr.MODE),.ADDR_STEP(axi_wr.ADDR_STEP),.FreqM(axi_wr.FreqM)) axi_wr_vcs_cp_R555 (.axi_aclk(axi_wr.axi_aclk),.axi_aresetn(axi_wr.axi_aresetn)) ;
+axi_stream_inf #(.DSIZE(axis_in.DSIZE),.FreqM(axis_in.FreqM),.USIZE(1)) pipe_axis (.aclk(axi_wr.axi_aclk),.aresetn(axi_wr.axi_aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axis_length_split_with_addr #(
@@ -91,16 +91,16 @@ independent_clock_fifo #(
 /* output */.full     (fifo_full                                                                )
 );
 axi4_wr_auxiliary_gen_without_resp axi4_wr_auxiliary_gen_without_resp_inst(
-/* output                        */.stream_en     (stream_en           ),
-/* axi_stream_inf.slaver         */.id_add_len_in (id_add_len_in       ),
-/* axi_inf.master_wr_aux_no_resp */.axi_wr_aux    (axi_wr_vcs_cp_R1342 )
+/* output                        */.stream_en     (stream_en          ),
+/* axi_stream_inf.slaver         */.id_add_len_in (id_add_len_in      ),
+/* axi_inf.master_wr_aux_no_resp */.axi_wr_aux    (axi_wr_vcs_cp_R555 )
 );
 vcs_axi4_comptable #(
     .ORIGIN ("master_wr_aux_no_resp" ),
     .TO     ("master_wr"             )
-)vcs_axi4_comptable_axi_wr_aux_R700_axi_wr_inst(
-/* input  */.origin (axi_wr_vcs_cp_R1342 ),
-/* output */.to     (axi_wr              )
+)vcs_axi4_comptable_axi_wr_aux_R478_axi_wr_inst(
+/* input  */.origin (axi_wr_vcs_cp_R555 ),
+/* output */.to     (axi_wr             )
 );
 axis_valve_with_pipe #(
     .MODE ("OUT" )

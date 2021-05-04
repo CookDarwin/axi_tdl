@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-20 12:08:00 +0800
+created: 2021-05-04 20:03:33 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -20,7 +20,7 @@ module sub_md1 (
 logic  clock;
 logic  rst_n;
 logic [10-1:0]  cnt ;
-data_inf_c #(.DSIZE(8)) inter_tf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(8),.FreqM(axis_out.FreqM)) inter_tf (.clock(clock),.rst_n(rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 

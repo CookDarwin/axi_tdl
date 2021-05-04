@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 13:47:04 +0800
+created: 2021-05-04 20:03:33 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,7 +23,7 @@ module test_module (
 logic [axi_wr_inf.ASIZE-1:0]  addr ;
 logic [(axi_wr_inf.IDSIZE - 4)-1:0]  id ;
 logic [24-1:0]  length ;
-axi_inf #(.DSIZE(axi_wr_inf.DSIZE),.IDSIZE((axi_wr_inf.IDSIZE - 4)),.ASIZE(axi_wr_inf.ASIZE),.LSIZE(24),.MODE("ONLY_WRITE"),.ADDR_STEP(8192)) pre_axi_wr_inf (.axi_aclk(axi_wr_inf.axi_aclk),.axi_aresetn(axi_wr_inf.axi_aresetn)) ;
+axi_inf #(.DSIZE(axi_wr_inf.DSIZE),.IDSIZE((axi_wr_inf.IDSIZE - 4)),.ASIZE(axi_wr_inf.ASIZE),.LSIZE(24),.MODE("ONLY_WRITE"),.ADDR_STEP(8192),.FreqM(1.0)) pre_axi_wr_inf (.axi_aclk(axi_wr_inf.axi_aclk),.axi_aresetn(axi_wr_inf.axi_aresetn)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axi_stream_cache_35bit cache_inst(

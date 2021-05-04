@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: XXXX.XX.XX
+created: 2021-04-16 17:01:06 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,7 +23,7 @@ logic  clock;
 logic  rst_n;
 logic [16-1:0]  insert_seed ;
 logic [16-1:0]  next_split_len ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_insert (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_insert (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axis_insert_copy axis_insert_copy_inst(

@@ -138,7 +138,7 @@ require_relative "./exlib/logic_verify.rb"
 $argvs_hash = {}
 $argvs_hash = Parser.parse($TdlARGV || ARGV) 
 TopModule.sim = $argvs_hash[:sim]
-
+TopModule.itgt_implicit_reject = $argvs_hash[:itgt_implicit_reject]
 class Tdl
 
     def self.comment(c="-",info="_____")

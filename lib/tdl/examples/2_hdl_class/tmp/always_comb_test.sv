@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: xxxx.xx.xx
+created: 2021-05-04 20:03:33 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -15,8 +15,8 @@ module always_comb_test ();
 //-------- define ----------------------------------------------------------
 logic [1-1:0]  tmp0[9-1:0][2-1:0] ;
 logic tmp1;
-data_inf_c #(.DSIZE(8)) a_inf (.clock(dclk),.rst_n(drstn)) ;
-data_inf_c #(.DSIZE(18)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
+data_inf_c #(.DSIZE(8),.FreqM(101)) a_inf (.clock(dclk),.rst_n(drstn)) ;
+data_inf_c #(.DSIZE(18),.FreqM(101)) c_inf [2:0][6:0][7:0] (.clock(dclk),.rst_n(drstn)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 

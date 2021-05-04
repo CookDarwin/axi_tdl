@@ -25,7 +25,7 @@ module wide_fifo #(
 );
 
 
-import GlobalPkg::*;
+import SystemPkg::*;
 generate
 if(FAMIRY == "kintexu" || FAMIRY == "ultrascale")begin
 fifo_ku #(

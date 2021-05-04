@@ -215,6 +215,7 @@ class TestUnitModule < SdlModule ##TestUnitModule 是在编译完 TopModule TB�
             to_down_pass    <= 1.b0
             initial_exec("wait(from_up_pass)")
             initial_exec("$root.#{TopModule.current.techbench.module_name}.test_unit_region = \"#{module_name}\"")
+            initial_exec("$display(\"--------------- Current test_unit <%0s> --------------------\", \"#{module_name}\")")
             block.call ## collect __root_ref_eles__ at here
             to_down_pass    <= 1.b1
         end

@@ -671,39 +671,42 @@ class ItegrationVerb
                 end
             end
             ## 先从 已经加入的隐性itgt搜索
-            @top_module.implicit_itgt_collect.each do |i|
-                explort_attrs = i.class.get_itgt_var('itegration_explort_collect')
-                if ((explort_attrs & container_attrs).sort == container_attrs.sort && i.flag_match(flag_attrs))
-                    # puts "Itgt Good"
-                    mark = true
-                    unless self.respond_to? e
-                        define_singleton_method(e) do
-                            ## 如果从其他模块调用则出发 dynac_active
-                            ItegrationVerbAgent.new(i)
+            ## 去除隐性引入
+            unless TopModule.itgt_implicit_reject
+                @top_module.implicit_itgt_collect.each do |i|
+                    explort_attrs = i.class.get_itgt_var('itegration_explort_collect')
+                    if ((explort_attrs & container_attrs).sort == container_attrs.sort && i.flag_match(flag_attrs))
+                        # puts "Itgt Good"
+                        mark = true
+                        unless self.respond_to? e
+                            define_singleton_method(e) do
+                                ## 如果从其他模块调用则出发 dynac_active
+                                ItegrationVerbAgent.new(i)
+                            end
+                            i.link_eval
+                            i.child_inst_itgt << self
                         end
-                        i.link_eval
-                        i.child_inst_itgt << self
+                        break
                     end
-                    break
                 end
-            end
-            next if mark    ## 找到了 就处理下一个Link
-            ## 如果没有找到 再从 ItegrationVerb children里面找到比加入
-            @@child.each do |c|
-                explort_attrs = c.get_itgt_var('itegration_explort_collect')
-                # puts explort_attrs
-                if ((explort_attrs & container_attrs).sort == container_attrs.sort && c.flag_match(flag_attrs))
-                    # puts "Child Good"
-                    isp = @top_module.add_itegration(c.to_s,nickname:'implicit',implicit:true)
-                    @top_module.implicit_itgt_collect << isp
-                    ## 如果是隐性添加，先不要加入pin_map
-                    define_singleton_method(e) do
-                        ItegrationVerbAgent.new(isp)
+                next if mark    ## 找到了 就处理下一个Link
+                ## 如果没有找到 再从 ItegrationVerb children里面找到比加入
+                @@child.each do |c|
+                    explort_attrs = c.get_itgt_var('itegration_explort_collect')
+                    # puts explort_attrs
+                    if ((explort_attrs & container_attrs).sort == container_attrs.sort && c.flag_match(flag_attrs))
+                        # puts "Child Good"
+                        isp = @top_module.add_itegration(c.to_s,nickname:'implicit',implicit:true)
+                        @top_module.implicit_itgt_collect << isp
+                        ## 如果是隐性添加，先不要加入pin_map
+                        define_singleton_method(e) do
+                            ItegrationVerbAgent.new(isp)
+                        end
+                        isp.link_eval
+                        isp.child_inst_itgt << self
+                        mark = true
+                        break
                     end
-                    isp.link_eval
-                    isp.child_inst_itgt << self
-                    mark = true
-                    break
                 end
             end
 
@@ -736,18 +739,21 @@ class ItegrationVerb
             next if mark    ## 找到了 就处理下一个Link
             ##
             ## 如果没有找到 再从 ItegrationVerb children里面找到比加入
-            @@child.each do |c|
-                explort_attrs = c.get_itgt_var('itegration_explort_collect')
-                if (explort_attrs & container_attrs).sort == container_attrs.sort
-                    isp = @top_module.add_itegration(c.to_s,nickname:'implicit',implicit:true)
-                    @top_module.implicit_itgt_collect << isp
-                    ## 如果是隐性添加，先不要加入pin_map
+            ## 去除隐性引入
+            unless TopModule.itgt_implicit_reject
+                @@child.each do |c|
+                    explort_attrs = c.get_itgt_var('itegration_explort_collect')
+                    if (explort_attrs & container_attrs).sort == container_attrs.sort
+                        isp = @top_module.add_itegration(c.to_s,nickname:'implicit',implicit:true)
+                        @top_module.implicit_itgt_collect << isp
+                        ## 如果是隐性添加，先不要加入pin_map
 
-                    define_singleton_method(e) do
-                        ItegrationVerbAgent.new(isp)
+                        define_singleton_method(e) do
+                            ItegrationVerbAgent.new(isp)
+                        end
+                        mark = true
+                        break
                     end
-                    mark = true
-                    break
                 end
             end
 

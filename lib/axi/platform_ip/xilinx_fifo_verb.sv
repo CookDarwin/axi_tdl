@@ -30,7 +30,7 @@ module xilinx_fifo_verb #(
     output [LSIZE-1:0]  wrcount
 );
 
-import GlobalPkg::*;
+import  SystemPkg::*;
 
 parameter LLSIZE =
 (DSIZE>= 37             )?  9 :         //

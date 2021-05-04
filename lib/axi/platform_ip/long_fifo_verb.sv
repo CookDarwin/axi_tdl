@@ -26,7 +26,7 @@ module long_fifo_verb #(
     output              empty
 );
 
-import GlobalPkg::FAMIRY;
+import SystemPkg::FAMIRY;
 
 localparam  NUM = DSIZE/4 + (DSIZE%4 != 0);
 

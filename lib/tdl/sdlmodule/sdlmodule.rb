@@ -483,3 +483,59 @@ class SdlModule
     end
 
 end
+
+## 迭代 本模块及本模块的子模块
+class SdlModule 
+
+    def all_ref_sdlmodules(&block) 
+        sdlms = instance_and_children_module.values.uniq
+        sdlms = sdlms.map do |e|
+            if e.instance_and_children_module.any? 
+                e.all_ref_sdlmodules(&block)
+            else 
+                e 
+            end
+        end
+        sdlms = sdlms.unshift(self)
+        sdlms = sdlms.flatten
+        sdlms.map(&block)
+    end
+
+end
+
+### 有时候 sdlmodule 引用的是 HDL文件，为了能够 正常引用到 需要特殊处理
+class SdlModule
+    def contain_hdl(*hdl_names)
+        __contain_hdl__(false,*hdl_names)
+    end
+
+    def __contain_hdl__(recreate,*hdl_names)
+        hdl_names = hdl_names.map do |e| 
+
+            if e.include?("/") || e.include?("\\")
+                e 
+            else  
+                
+                ee = find_first_hdl_path(e)
+                if recreate && !ee 
+                    raise TdlError.new("Cant find #{e} in tdl_paths")
+                end
+                ee || e
+            end
+        end 
+        unless recreate
+            @__contain_hdl__ ||= []
+            @__contain_hdl__ += hdl_names
+        else 
+            @__contain_hdl__ = hdl_names
+        end
+        @__contain_hdl__.uniq!
+        @__contain_hdl__
+    end
+
+    def require_hdl(*hdl_path)
+        hdl_path.each do |hp|
+            __require_hdl__(hp,self)
+        end
+    end
+end

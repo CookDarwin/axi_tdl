@@ -5,10 +5,9 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 13:47:04 +0800
+created: 2021-05-04 20:03:48 +0800
 madified:
 ***********************************************/
-`timescale 1ns/1ps
 `timescale 1ns/1ps
 
 module tb_exp_test_unit();

@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-03-20 23:48:13 +0800
+created: 2021-05-04 20:03:49 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -28,6 +28,7 @@ initial begin
     to_down_pass = 1'b0;
     wait(from_up_pass);
     $root.tb_test_tttop_sim.test_unit_region = "test_clock_bb";
+    $display("--------------- Current test_unit <%0s> --------------------", "test_clock_bb");
     to_down_pass = 1'b1;
 end
 

@@ -340,6 +340,7 @@ endmodule\n"
     end
 
     define_global("sim",nil)
+    define_global("itgt_implicit_reject",nil)
 
 end
 ## 添加 itegration verb
@@ -437,6 +438,9 @@ class TopModule
                 SdlModule.gen_dev_wave_tcl File.join(sdlm.vcs_path,"dve.tcl")
             end
             sdlm.create_xdc
+
+            ## 全局contain_hdl 引入到 TopModule
+            sdlm.contain_hdl(*$__contain_hdl__)
         else 
             sdlm.origin_sv = true 
         end

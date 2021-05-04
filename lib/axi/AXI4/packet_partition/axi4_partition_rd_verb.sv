@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: XXXX.XX.XX
+created: 2021-04-16 17:26:51 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,10 +23,10 @@ logic  clock;
 logic  rst_n;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_empty;
 (* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_full;
-data_inf_c #(.DSIZE(long_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE)) pre_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
-data_inf_c #(.DSIZE(short_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE)) post_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
-data_inf_c #(.DSIZE(1)) partition_pulse_inf (.clock(clock),.rst_n(rst_n)) ;
-data_inf_c #(.DSIZE(1)) wait_last_inf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(long_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE),.FreqM(long_inf.FreqM)) pre_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(short_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE),.FreqM(long_inf.FreqM)) post_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(1),.FreqM(long_inf.FreqM)) partition_pulse_inf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(1),.FreqM(long_inf.FreqM)) wait_last_inf (.clock(clock),.rst_n(rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 data_inf_partition #(

@@ -432,11 +432,16 @@ module TdlSpace
                 vv = rel || v[1]
                 # vv = self.send(k) || v[1]
                 ## 不例化 FreqM，FreqM只是为了SDL兼容
-                if vv && k.to_s != 'freqM'
+                # if vv && k.to_s != 'freqM'
+                if vv 
                     if vv.instance_of?(String)
                         str << ".#{v[0]}(\"#{vv}\")"
                     else
-                        str << ".#{v[0]}(#{vv})"
+                        if k.to_s == 'freqM'
+                            str << ".#{v[0]}(#{(respond_to?(:clock) && self.clock.is_a?(Clock) && self.clock.freqM ) || vv})"
+                        else 
+                            str << ".#{v[0]}(#{vv})"
+                        end
                     end
                 end
             end

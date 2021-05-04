@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 14:05:10 +0800
+created: 2021-05-04 20:03:49 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -18,7 +18,7 @@ module test_tttop_sim (
 //-------- define ----------------------------------------------------------
 logic  clock_100M;
 logic  rstn_100M;
-axi_stream_inf #(.DSIZE(16),.USIZE(1)) x_origin_inf (.aclk(clock_100M),.aresetn(rstn_100M),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(16),.FreqM(100),.USIZE(1)) x_origin_inf (.aclk(clock_100M),.aresetn(rstn_100M),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 simple_clock simple_clock_inst(

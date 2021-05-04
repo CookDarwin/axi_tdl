@@ -41,6 +41,7 @@ class ConstraintsVerb
             pulltype = ([pulltype] * pin_name.size ) unless pulltype.is_a? Array
             drive = ([drive] * pin_name.size ) unless drive.is_a? Array
 
+            pin_name = ((pin_name.is_a?(Array) && pin_name) || [pin_name] )
             pin_name.each_index do |index|
                 @package_pin_and_IOSTANDARD << [port_name[index],pin_name[index].to_s.upcase,iostandard[index].to_s.upcase,pulltype[index].to_s,drive[index].to_s]
 

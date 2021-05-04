@@ -4,8 +4,8 @@ ___________    Cook Darwin   __________
 _______________________________________
 descript:
 author : Cook.Darwin
-Version: VERA.0.0
-creaded: XXXX.XX.XX
+Version: VERC.0.0
+created: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -39,13 +39,13 @@ logic [4-1:0]  int_cut_len ;
 logic [4-1:0]  shift_sel_pre ;
 logic fifo_wr_en_lat;
 logic [4-1:0]  shift_sel ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_post (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) sub_origin_inf [2:0] (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_cut_mix (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss_E0 (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_ss_E0_CH (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(out_inf.DSIZE),.USIZE(1)) out_inf_branchR774 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_post (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) sub_origin_inf [2:0] (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_ss (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_cut_mix (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_ss_E0 (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_ss_E0_CH (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(out_inf.DSIZE),.FreqM(out_inf.FreqM),.USIZE(1)) out_inf_branchR655 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axis_pipe_sync_seam #(
@@ -122,7 +122,7 @@ axis_connect_pipe_right_shift_verb #(
 axis_head_cut_verb last_cut_inst(
 /* input                 */.length   (16'd1               ),
 /* axi_stream_inf.slaver */.axis_in  (origin_inf_ss_E0_CH ),
-/* axi_stream_inf.master */.axis_out (out_inf_branchR774  )
+/* axi_stream_inf.master */.axis_out (out_inf_branchR655  )
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
@@ -136,7 +136,7 @@ axis_direct  axis_direct_out_inf_inst0 (
 );
 
 axis_direct  axis_direct_out_inf_inst1 (
-/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR774),
+/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR655),
 /*  axi_stream_inf.master*/ .master (sub_out_inf[1])
 );
 

@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 14:03:22 +0800
+created: 2021-04-16 17:01:05 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,8 +23,8 @@ logic  clock;
 logic  rst_n;
 logic addr;
 logic new_last;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) origin_inf_add_last (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.USIZE(1)) sub_origin_inf [1:0] (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_add_last (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) sub_origin_inf [1:0] (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axi_stream_interconnect_S2M #(
@@ -55,22 +55,22 @@ axis_direct  axis_direct_end_inf_inst0 (
 );
 //-------- CLOCKs Total 3 ----------------------
 //--->> CheckClock <<----------------
-logic cc_done_0,cc_same_0;
-integer cc_afreq_0,cc_bfreq_0;
-ClockSameDomain CheckPClock_inst_0(
-/*  input         */      .aclk     (origin_inf.aclk),
-/*  input         */      .bclk     (first_inf.aclk),
-/*  output logic  */      .done     (cc_done_0),
-/*  output logic  */      .same     (cc_same_0),
-/*  output integer */     .aFreqK   (cc_afreq_0),
-/*  output integer */     .bFreqK   (cc_bfreq_0)
+logic cc_done_7,cc_same_7;
+integer cc_afreq_7,cc_bfreq_7;
+ClockSameDomain CheckPClock_inst_7(
+/*  input         */      .aclk     (origin_inf.aclk        ),
+/*  input         */      .bclk     (first_inf.aclk         ),
+/*  output logic  */      .done     (cc_done_7),
+/*  output logic  */      .same     (cc_same_7),
+/*  output integer */     .aFreqK   (cc_afreq_7),
+/*  output integer */     .bFreqK   (cc_bfreq_7)
 );
 
 initial begin
-    wait(cc_done_0);
-    assert(cc_same_0)
+    wait(cc_done_7);
+    assert(cc_same_7)
     else begin
-        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != first_inf.aclk<%0f M>",1000000.0/cc_afreq_0, 1000000.0/cc_bfreq_0);
+        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != first_inf.aclk<%0f M>",1000000.0/cc_afreq_7, 1000000.0/cc_bfreq_7);
         repeat(10)begin 
             @(posedge origin_inf.aclk);
         end
@@ -80,22 +80,22 @@ end
 //---<< CheckClock >>----------------
 
 //--->> CheckClock <<----------------
-logic cc_done_1,cc_same_1;
-integer cc_afreq_1,cc_bfreq_1;
-ClockSameDomain CheckPClock_inst_1(
-/*  input         */      .aclk     (origin_inf.aclk),
-/*  input         */      .bclk     (end_inf.aclk),
-/*  output logic  */      .done     (cc_done_1),
-/*  output logic  */      .same     (cc_same_1),
-/*  output integer */     .aFreqK   (cc_afreq_1),
-/*  output integer */     .bFreqK   (cc_bfreq_1)
+logic cc_done_8,cc_same_8;
+integer cc_afreq_8,cc_bfreq_8;
+ClockSameDomain CheckPClock_inst_8(
+/*  input         */      .aclk     (origin_inf.aclk        ),
+/*  input         */      .bclk     (end_inf.aclk           ),
+/*  output logic  */      .done     (cc_done_8),
+/*  output logic  */      .same     (cc_same_8),
+/*  output integer */     .aFreqK   (cc_afreq_8),
+/*  output integer */     .bFreqK   (cc_bfreq_8)
 );
 
 initial begin
-    wait(cc_done_1);
-    assert(cc_same_1)
+    wait(cc_done_8);
+    assert(cc_same_8)
     else begin
-        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != end_inf.aclk<%0f M>",1000000.0/cc_afreq_1, 1000000.0/cc_bfreq_1);
+        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != end_inf.aclk<%0f M>",1000000.0/cc_afreq_8, 1000000.0/cc_bfreq_8);
         repeat(10)begin 
             @(posedge origin_inf.aclk);
         end

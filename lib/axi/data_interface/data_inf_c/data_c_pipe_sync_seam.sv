@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: XXXX.XX.XX
+created: 2021-04-16 17:01:05 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,8 +23,8 @@ module data_c_pipe_sync_seam #(
 //==========================================================================
 //-------- define ----------------------------------------------------------
 
-data_inf_c #(.DSIZE(in_inf.DSIZE)) in_inf_array[LAT-1:0] (.clock(in_inf.clock),.rst_n(in_inf.rst_n)) ;
-data_inf_c #(.DSIZE(out_inf.DSIZE)) out_inf_array[LAT-1:0] (.clock(out_inf.clock),.rst_n(out_inf.rst_n)) ;
+data_inf_c #(.DSIZE(in_inf.DSIZE),.FreqM(in_inf.FreqM)) in_inf_array[LAT-1:0] (.clock(in_inf.clock),.rst_n(in_inf.rst_n)) ;
+data_inf_c #(.DSIZE(out_inf.DSIZE),.FreqM(out_inf.FreqM)) out_inf_array[LAT-1:0] (.clock(out_inf.clock),.rst_n(out_inf.rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 

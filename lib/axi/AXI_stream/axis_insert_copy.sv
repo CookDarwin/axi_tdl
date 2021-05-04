@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: XXXX.XX.XX
+created: 2021-04-16 17:01:06 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -22,7 +22,7 @@ module axis_insert_copy (
 logic  clock;
 logic  rst_n;
 logic insert_tri;
-axi_stream_inf #(.DSIZE(in_inf.DSIZE),.USIZE(1)) in_inf_valve (.aclk(in_inf.aclk),.aresetn(in_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(in_inf.DSIZE),.FreqM(in_inf.FreqM),.USIZE(1)) in_inf_valve (.aclk(in_inf.aclk),.aresetn(in_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axis_connect_pipe axis_connect_pipe_inst(

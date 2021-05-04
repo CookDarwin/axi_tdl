@@ -258,7 +258,7 @@ class Axi4
                     h.param.MODE            mode_str    # //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
                     h.param.SLAVER_MODE     (wr_lg ? "ONLY_WRITE" : "ONLY_READ")    #    //
                     h.param.MASTER_MODE     "BOTH"    #    //
-                    h.slaver_inf        lo
+                    h.slaver_inf        (lo.respond_to?(:dimension) && lo.dimension[0]==1 && lo[0])  || lo
                     h.master_inf        "#{sub_name}[#{index}]".to_nq
                 end
 
