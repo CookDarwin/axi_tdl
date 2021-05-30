@@ -31,8 +31,8 @@ TdlBuild.data_inf_partition(__dir__) do
     logic   - 'tail_len'
     logic   - 'one_long_stream'
     logic   - 'fifo_wr'
-    debugLogic   - 'fifo_full'
-    debugLogic   - 'fifo_empty'
+    logic   - 'fifo_full'
+    logic   - 'fifo_empty'
 
     always_comb do 
         CASE ps.C do 
@@ -267,8 +267,12 @@ TdlBuild.data_inf_partition(__dir__) do
     end
 
     ### Track 
-    debugLogic[10]  - 'st5_cnt'
-    debugLogic      - 'track_st5'
+    # debugLogic[10]  - 'st5_cnt'
+    # debugLogic      - 'track_st5'
+
+    logic[10]  - 'st5_cnt'
+    logic      - 'track_st5'
+
     always_ff(posedge.clock,negedge.rst_n) do 
         IF ~rst_n do
             st5_cnt     <= 0.A 

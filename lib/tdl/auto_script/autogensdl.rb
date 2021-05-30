@@ -2,13 +2,12 @@
 
 class AutoGenSdl
     attr_accessor :bad
-    def initialize(filename="",out_file_path=@@auto_path,info=true)
+    def initialize(filename="",out_file_path=@@auto_path,encoding='utf-8')
         @expand_path = File.expand_path(filename)
         sf = File.open(filename,"r")
-        fstr = sf.read.force_encoding("utf-8")
+        fstr = sf.read.force_encoding(encoding)
         sf.close
         @bad = true
-
         # return if exist_origin_sdl(filename,@expand_path)
         # fstr.gsub!(/\/\/\s*\(\*\s*show\s*=\s*"false"\s*\*\)/,"(* show = \"false\" *)")
         # SDL ignore `show`

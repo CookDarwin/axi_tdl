@@ -1,5 +1,5 @@
 $__contain_hdl__ = []
-def __require_hdl__(hdl_path,current_sdlm=nil)
+def __require_hdl__(hdl_path,current_sdlm=nil,encoding='utf-8')
     basename = File.basename(hdl_path,".*")
     unless SdlModule.exist_module? basename
         ## 检测是不是全路径, 或当前路径查得到
@@ -12,7 +12,7 @@ def __require_hdl__(hdl_path,current_sdlm=nil)
                     raise TdlError.new("Cant find <#{hdl_path}> in tdl paths !!!")    
                 end
 
-                AutoGenSdl.new(rel,File.join(__dir__,"tmp")).auto_rb
+                AutoGenSdl.new(rel,File.join(__dir__,"tmp"),encoding=encoding).auto_rb
 
                 ## 如果是 在非 sdlmodule 内引用需要添加contain_hdl
                 # if !(current_sdlm.is_a?(SdlModule))
@@ -65,6 +65,6 @@ def find_first_hdl_path(basename)
     return nil
 end
 
-def require_hdl(hdl_path)
-    __require_hdl__(hdl_path,nil)
+def require_hdl(hdl_path,encoding='utf-8')
+    __require_hdl__(hdl_path,nil,encoding)
 end

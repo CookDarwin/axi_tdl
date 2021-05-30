@@ -70,7 +70,7 @@ module ClassHDL
         def ELSIF(cond,&block)
             if ClassHDL::AssignDefOpertor.curr_assign_block.is_a? HDLAssignGenerateBlock
                 if cond.respond_to?(:instance)
-                    head_str = "else if(#{cond.instance(:cond)})begin\n"
+                    head_str = "else if(#{cond.instance(:cond,@belong_to_module)})begin\n"
                 else 
                     head_str = "else if(#{cond})begin\n"
                 end

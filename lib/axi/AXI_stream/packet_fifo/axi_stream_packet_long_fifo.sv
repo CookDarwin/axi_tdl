@@ -21,6 +21,8 @@ module axi_stream_packet_long_fifo #(
     axi_stream_inf.master      axis_out
 );
 
+assign axis_out.axis_tuser  = '0;
+
 //--->> NATIVE FIFO IP <<------------------------------
 // (* dont_touch = "true" *)
 logic   data_fifo_full;

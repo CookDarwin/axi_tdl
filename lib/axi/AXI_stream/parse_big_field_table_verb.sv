@@ -26,6 +26,8 @@ module parse_big_field_table_verb #(
     axi_stream_inf.mirror                   cm_mirror
 );
 
+localparam  VSIZE = $clog2(FIELD_LEN);
+
 import SystemPkg::*;
 
 initial begin 
@@ -78,13 +80,13 @@ always_ff@(posedge clock,negedge rst_n)begin
     else begin 
         if(parse_stream.axis_tvalid && parse_stream.axis_tready && parse_stream.axis_tlast)
                 region_valid    <= 1'b1;
-        else if(parse_stream.axis_tvalid && parse_stream.axis_tready && parse_stream.axis_tcnt == (FIELD_LEN-1'b1))
+        else if(parse_stream.axis_tvalid && parse_stream.axis_tready && parse_stream.axis_tcnt[VSIZE:0] == (FIELD_LEN-1'b1))
                 region_valid    <= 1'b0;
         else    region_valid    <= region_valid;
     end
 end
 
-localparam  VSIZE = $clog2(FIELD_LEN);
+
 logic[DSIZE-1:0]    value_array [0:FIELD_LEN-1];
 
 always_ff@(posedge clock,negedge rst_n)begin 
@@ -107,7 +109,7 @@ always_ff@(posedge clock,negedge rst_n)begin
             if(out_valid)
                     out_valid    <= 1'b0;
             else    out_valid    <= 1'b1;
-        else if(parse_stream.axis_tvalid && parse_stream.axis_tready && parse_stream.axis_tcnt == (FIELD_LEN-1'b1))
+        else if(parse_stream.axis_tvalid && parse_stream.axis_tready && parse_stream.axis_tcnt[VSIZE:0] == (FIELD_LEN-1'b1))
                 out_valid    <= 1'b1;
         else if(region_valid)
                 out_valid   <= 1'b0;

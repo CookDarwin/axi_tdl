@@ -4,7 +4,7 @@ require "tdl/tdl.rb"
 module AxiTdl
     AXI_PATH = File.expand_path(File.join(__dir__,"axi"))
     TDL_PATH = File.expand_path(File.join(__dir__,"tdl"))
-    PUBLIC_ATOM_PATH = File.expand_path(File.join(__dir__,"tdl"))
+    PUBLIC_ATOM_PATH = File.expand_path(File.join(__dir__,"public_atom_module"))
 end
 
 
@@ -37,7 +37,7 @@ TopModule.contain_hdl("CheckPClock.sv","edge_generator.v","ClockSameDomain.sv","
 ### 这里引入可能不合适
 TopModule.contain_hdl('axis_full_to_data_c.sv','data_c_pipe_inf.sv','data_c_to_axis_full.sv')
 TopModule.contain_hdl('axi_stream_interconnect_M2S_A1.sv', 'data_c_pipe_intc_M2S_best_last.sv',"data_pipe_interconnect_S2M_verb.sv","data_valve.sv")
-TopModule.contain_hdl('axis_direct_A1.sv',"axis_direct.sv")
+TopModule.contain_hdl('axis_direct_A1.sv',"axis_direct.sv", 'axi4_direct_A1.sv')
 TopModule.contain_hdl 'axi_stream_interconnect_M2S.sv','data_pipe_interconnect_M2S_verb.sv'
 # TopModule.contain_hdl('simple_data_pipe.sv')
 TopModule.contain_hdl('long_fifo_verb.sv',"long_fifo_4bit.sv","long_fifo_4bit_SL8192.sv","long_fifo_4bit_8192.sv","wide_fifo.sv","wide_fifo_7series.sv")

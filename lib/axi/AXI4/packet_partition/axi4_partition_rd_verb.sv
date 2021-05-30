@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-16 17:26:51 +0800
+creaded:
 madified:
 ***********************************************/
 `timescale 1ns/1ps
