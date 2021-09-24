@@ -14,8 +14,8 @@ TdlBuild.axi4_dpram_cache(__dir__) do
     cm_ram_inf(dsize: a_inf.dsize,rsize: a_inf.asize,msize: a_inf.DSIZE/8)           - 'xram_inf'
 
     initial do 
-        assert(a_inf.ASIZE == b_inf.ASIZE,"a_inf.ASIZE != b_inf.ASIZE")
-        assert(a_inf.DSIZE == b_inf.DSIZE,"a_inf.ASIZE != b_inf.ASIZE")
+        assert(a_inf.ASIZE == b_inf.ASIZE,"a_inf.ASIZE<%0d> != b_inf.ASIZE<%0d>", a_inf.ASIZE, b_inf.ASIZE)
+        assert(a_inf.DSIZE == b_inf.DSIZE,"a_inf.ASIZE<%0d> != b_inf.ASIZE<%0d>", a_inf.DSIZE, b_inf.DSIZE)
     end
 
     full_axi4_to_axis.full_axi4_to_axis_ainst do |h|

@@ -1,16 +1,19 @@
 # require_relative "../prj_lib"
 require_hdl "axis_length_split_with_addr.sv"
-require_hdl 'axi_stream_wide_fifo.sv'
-new_m = SdlModule.new(name:File.basename(__FILE__,".rb"),out_sv_path:__dir__)
-new_m.target_class = AxiStream
+require_hdl 'axi_stream_long_fifo_verb.sv'
+require_shdl 'axi4_wr_auxiliary_gen_without_resp','axis_valve_with_pipe'
 
-new_m.instance_exec do
-    Input               :addr,dsize:32
-    Input               :max_length,dsize:32
-    # AxiStream().slaver  :axis_in
-    # Axi4().master_wr    :axi_wr
+TdlBuild.long_axis_to_axi4_wr(__dir__) do
+    parameter.BYTE_DEPTH    8192*2
+
+    input[32]               - :addr
+    input[32]               - :max_length
     port.axis.slaver        - 'axis_in'
     port.axi4.master_wr     - 'axi_wr'
+
+    Initial do 
+        assert(axis_in.DSIZE == axi_wr.DSIZE, "STREAM DSIZE<%d> should eql AXI4 DSIZE<%d>",axis_in.DSIZE, axi_wr.DSIZE)
+    end
 
     Def().logic(name: "addr_cur",dsize:32)
 
@@ -23,26 +26,11 @@ new_m.instance_exec do
         h.axis_out              axis_in.copy(name: 'split_out')
     end
 
-
-    # split_out = AxiStream.axis_length_split_with_addr(
-    #     addr_step: axi_wr.ADDR_STEP,
-    #     length:max_length,
-    #     up_stream:axis_in,
-    #     origin_addr:addr,
-    #     band_addr:addr_cur,
-    #     belong_to_module: self)
-
-    # AxiStream.axi_stream_wide_fifo(
-    #     depth:          4,
-    #     axis_in:        split_out,
-    #     axis_out:       split_out.copy(name:'fifo_axis',clock:axi_wr.axi_aclk,reset:axi_wr.axi_aresetn,dsize:axis_in.DSIZE),
-    #     belong_to_module:self
-    # )
-
-    axi_stream_wide_fifo.axi_stream_wide_fifo_inst do |h|
-        h.parameter.DEPTH           4
-        h.axis_in                   split_out
-        h.axis_out                  split_out.copy(name:'fifo_axis',clock:axi_wr.axi_aclk,reset:axi_wr.axi_aresetn,dsize:axis_in.DSIZE)
+    axi_stream_long_fifo_verb.axi_stream_long_fifo_verb_inst do |h|
+        h.param.DEPTH           4
+        h.param.BYTE_DEPTH      param.BYTE_DEPTH
+        h.port.axis.slaver.axis_in      split_out
+        h.port.axis.master.axis_out     split_out.copy(name:'fifo_axis',clock:axi_wr.axi_aclk,reset:axi_wr.axi_aresetn,dsize:axis_in.DSIZE)
     end
 
     Def().logic(name: :id,dsize:axi_wr.idsize)
@@ -118,33 +106,8 @@ new_m.instance_exec do
         axi_wr.axi_wvalid     <= pipe_axis.axis_tvalid
         axi_wr.axi_wlast      <= pipe_axis.axis_tlast
         pipe_axis.axis_tready <= axi_wr.axi_wready
-        axi_wr.axi_bready     <= "1'b1".to_nq
+        axi_wr.axi_bready     <= 1.b1
     end
 
-    self.ex_up_code =
-%Q{
-//int     MAX_LENGTH;
-//assign     MAX_LENGTH     =   (axis_in.DSIZE <= 8)?  2**11 :
-//                                (axis_in.DSIZE <= 16)? 2**10 :
-//                                (axis_in.DSIZE <= 32)? 2**9  :
-//                                (axis_in.DSIZE <= 64)? 2**8  :
-//                                (axis_in.DSIZE <= 128)? 2**7 :
-//                                (axis_in.DSIZE <= 256)? 2**6 :
-//                                (axis_in.DSIZE <= 512)? 2**5 :  2**4;
-
-initial begin
-    assert(#{axis_in}.DSIZE == #{axi_wr}.DSIZE)
-    else begin
-        $error("STREAM DSIZE should eql AXI4 DSIZE");
-        $finish;
-    end
-//    assert(#{axi_wr}.LSIZE >= $clog2(MAX_LENGTH))
-//    else begin
-//        $error("AXIS LSIZE is too smaller");
-//        $finish;
-//    end
+    
 end
-}
-end
-
-new_m.gen_sv_module

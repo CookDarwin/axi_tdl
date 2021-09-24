@@ -60,7 +60,7 @@ if(TO=="mirror")begin
         assign to.axi_rvalid   = origin.axi_rvalid ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end
@@ -85,7 +85,7 @@ end else if(TO=="mirror_rd")begin
         assign  to.axi_rvalid   = origin.axi_rvalid ;
     end else begin
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end 
     end
@@ -131,7 +131,7 @@ end else if(ORIGIN=="slaver")begin
         assign    origin.axi_rvalid   = to.axi_rvalid ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end 
@@ -173,7 +173,7 @@ end  else if(ORIGIN == "master_rd")begin
         assign     origin.axi_rvalid  = to.axi_rvalid  ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end 
@@ -239,7 +239,7 @@ end else if(ORIGIN=="master")begin
         assign   origin.axi_rvalid  = to.axi_rvalid   ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end
@@ -261,7 +261,7 @@ end else if(ORIGIN == "master_wr_aux_no_resp")begin
         assign   origin.axi_wready   = to.axi_wready ;
     end else begin
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end 
@@ -285,7 +285,7 @@ end else if(ORIGIN == "master_rd_aux")begin
         assign   origin.axi_rvalid  = to.axi_rvalid   ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end 
@@ -313,13 +313,39 @@ end else if(ORIGIN=="master_wr")begin
         assign    origin.axi_bvalid   = to.axi_bvalid ;
     end else begin 
         initial begin
-            $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
+            $stop;
+        end
+    end 
+end else if(ORIGIN=="slaver_rd")begin 
+    if(TO=="slaver")begin 
+        assign    to.axi_arid     = origin.axi_arid   ;
+        assign    to.axi_araddr   = origin.axi_araddr ;
+        assign    to.axi_arlen    = origin.axi_arlen  ;
+        assign    to.axi_arsize   = origin.axi_arsize ;
+        assign    to.axi_arburst  = origin.axi_arburst;
+        assign    to.axi_arlock   = origin.axi_arlock ;
+        assign    to.axi_arcache  = origin.axi_arcache;
+        assign    to.axi_arprot   = origin.axi_arprot ;
+        assign    to.axi_arqos    = origin.axi_arqos  ;
+        assign    to.axi_arvalid  = origin.axi_arvalid;
+        assign    origin.axi_arready    = to.axi_arready;
+
+        assign    to.axi_rready             = origin.axi_rready ;
+        assign    origin.axi_rid            = to.axi_rid    ;
+        assign    origin.axi_rresp          = to.axi_rresp  ;
+        assign    origin.axi_rlast          = to.axi_rlast  ;
+        assign    origin.axi_rdata          = to.axi_rdata  ;
+        assign    origin.axi_rvalid         = to.axi_rvalid ;
+    end else begin 
+        initial begin
+            $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
             $stop;
         end
     end 
 end else begin 
     initial begin
-        $error("vcs_axi4_comptable ORIGIN[%s] => [%s] ERROR",ORIGIN,TO);
+        $error("vcs_axi4_comptable ORIGIN[%0s] => [%0s] ERROR",ORIGIN,TO);
         $stop;
     end
 end

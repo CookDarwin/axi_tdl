@@ -41,7 +41,7 @@ class DataInf_C < TdlSpace::TdlBaseInterface
     def inherited(name: nil,clock: nil,reset: nil,dsize: nil,freqM: nil,dimension:[])
         a = nil 
         unless name 
-            name = "#{inst_name}_inherited#{globle_random_name_flag()}"
+            name = "#{inst_name}_inherited#{belong_to_module._auto_name_incr_index_()}"
         end
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
             append_name = name_copy(name)
@@ -71,7 +71,7 @@ class DataInf_C < TdlSpace::TdlBaseInterface
 
     def branch(name: nil,clock:@clock,reset:@reset,dsize:@dsize,freqM:nil)
         unless name 
-            name = "#{inst_name}_branch#{globle_random_name_flag()}"
+            name = "#{inst_name}_branch#{belong_to_module._auto_name_incr_index_()}"
         end
         a =  inherited(name: name,clock: clock,reset: reset,dsize: dsize,freqM: freqM)
         self << a

@@ -36,6 +36,7 @@ def __require_hdl__(hdl_path,current_sdlm=nil,encoding='utf-8')
                 raise TdlError.new("path<#{hdl_path}> error!!!")
             end
         end
+        
         require_relative File.join(__dir__,"tmp","#{basename}_sdl.rb")
     end
 end

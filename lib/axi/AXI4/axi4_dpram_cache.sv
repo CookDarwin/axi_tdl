@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-16 17:01:03 +0800
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -70,11 +70,11 @@ common_ram_wrapper #(
 //-------- expression ------------------------------------------------------
 initial begin
     assert(a_inf.ASIZE==b_inf.ASIZE)else begin
-        $error("a_inf.ASIZE != b_inf.ASIZE");
+        $error("a_inf.ASIZE<%0d> != b_inf.ASIZE<%0d>",a_inf.ASIZE,b_inf.ASIZE);
         $stop;
     end
     assert(a_inf.DSIZE==b_inf.DSIZE)else begin
-        $error("a_inf.ASIZE != b_inf.ASIZE");
+        $error("a_inf.ASIZE<%0d> != b_inf.ASIZE<%0d>",a_inf.DSIZE,b_inf.DSIZE);
         $stop;
     end
 end

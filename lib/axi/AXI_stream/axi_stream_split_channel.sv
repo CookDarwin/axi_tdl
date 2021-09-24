@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded: 
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -55,22 +55,22 @@ axis_direct  axis_direct_end_inf_inst0 (
 );
 //-------- CLOCKs Total 3 ----------------------
 //--->> CheckClock <<----------------
-logic cc_done_6,cc_same_6;
-integer cc_afreq_6,cc_bfreq_6;
-ClockSameDomain CheckPClock_inst_6(
+logic cc_done_8,cc_same_8;
+integer cc_afreq_8,cc_bfreq_8;
+ClockSameDomain CheckPClock_inst_8(
 /*  input         */      .aclk     (origin_inf.aclk        ),
 /*  input         */      .bclk     (first_inf.aclk         ),
-/*  output logic  */      .done     (cc_done_6),
-/*  output logic  */      .same     (cc_same_6),
-/*  output integer */     .aFreqK   (cc_afreq_6),
-/*  output integer */     .bFreqK   (cc_bfreq_6)
+/*  output logic  */      .done     (cc_done_8),
+/*  output logic  */      .same     (cc_same_8),
+/*  output integer */     .aFreqK   (cc_afreq_8),
+/*  output integer */     .bFreqK   (cc_bfreq_8)
 );
 
 initial begin
-    wait(cc_done_6);
-    assert(cc_same_6)
+    wait(cc_done_8);
+    assert(cc_same_8)
     else begin
-        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != first_inf.aclk<%0f M>",1000000.0/cc_afreq_6, 1000000.0/cc_bfreq_6);
+        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != first_inf.aclk<%0f M>",1000000.0/cc_afreq_8, 1000000.0/cc_bfreq_8);
         repeat(10)begin 
             @(posedge origin_inf.aclk);
         end
@@ -80,22 +80,22 @@ end
 //---<< CheckClock >>----------------
 
 //--->> CheckClock <<----------------
-logic cc_done_7,cc_same_7;
-integer cc_afreq_7,cc_bfreq_7;
-ClockSameDomain CheckPClock_inst_7(
+logic cc_done_9,cc_same_9;
+integer cc_afreq_9,cc_bfreq_9;
+ClockSameDomain CheckPClock_inst_9(
 /*  input         */      .aclk     (origin_inf.aclk        ),
 /*  input         */      .bclk     (end_inf.aclk           ),
-/*  output logic  */      .done     (cc_done_7),
-/*  output logic  */      .same     (cc_same_7),
-/*  output integer */     .aFreqK   (cc_afreq_7),
-/*  output integer */     .bFreqK   (cc_bfreq_7)
+/*  output logic  */      .done     (cc_done_9),
+/*  output logic  */      .same     (cc_same_9),
+/*  output integer */     .aFreqK   (cc_afreq_9),
+/*  output integer */     .bFreqK   (cc_bfreq_9)
 );
 
 initial begin
-    wait(cc_done_7);
-    assert(cc_same_7)
+    wait(cc_done_9);
+    assert(cc_same_9)
     else begin
-        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != end_inf.aclk<%0f M>",1000000.0/cc_afreq_7, 1000000.0/cc_bfreq_7);
+        $error("--- Error : `axi_stream_split_channel` clock is not same, origin_inf.aclk< %0f M> != end_inf.aclk<%0f M>",1000000.0/cc_afreq_9, 1000000.0/cc_bfreq_9);
         repeat(10)begin 
             @(posedge origin_inf.aclk);
         end
@@ -114,8 +114,11 @@ always_ff@(posedge clock,negedge rst_n) begin
         new_last <= 1'b0;
     end
     else begin
-        if(origin_inf.axis_tvalid && origin_inf.axis_tready)begin
-            new_last <= origin_inf.axis_tcnt==(split_len-2);
+        if(origin_inf.axis_tvalid && origin_inf.axis_tready && origin_inf.axis_tlast)begin
+            new_last <= 1'b0;
+        end
+        else if(origin_inf.axis_tvalid && origin_inf.axis_tready)begin
+            new_last <= (origin_inf.axis_tcnt==(split_len-2));
         end
         else begin
             new_last <= new_last;

@@ -70,6 +70,9 @@ initial begin
     "ONLY_READ_to_ONLY_READ":
         assert(slaver_inf.MODE == "ONLY_READ" && SLAVER_MODE=="ONLY_READ")
         else $error("SLAVER AXIS MODE != ONLY_READ");
+    "ONLY_WRITE_TO_ONLY_WRITE":
+        assert(slaver_inf.MODE == "ONLY_WRITE" && SLAVER_MODE=="ONLY_WRITE")
+        else $error("SLAVER AXIS MODE != ONLY_WRITE");
     default:
         assert(slaver_inf.MODE == "_____")
         else $error("SLAVER AXIS MODE ERROR")  ;
@@ -88,6 +91,9 @@ initial begin
     "ONLY_READ_to_ONLY_READ":
         assert(master_inf.MODE == "ONLY_READ" && MASTER_MODE=="ONLY_READ")
         else $error("MASTER AXIS MODE != ONLY_READ");
+    "ONLY_WRITE_TO_ONLY_WRITE":
+        assert(master_inf.MODE == "ONLY_WRITE" && MASTER_MODE=="ONLY_WRITE")
+        else $error("MASTER AXIS MODE != ONLY_WRITE");
     default:
         assert(master_inf.MODE == "_____")
         else $error("MASTER AXIS MODE ERROR");

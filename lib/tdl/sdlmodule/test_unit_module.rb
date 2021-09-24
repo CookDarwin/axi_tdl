@@ -20,7 +20,9 @@ class SdlModule
         @__track_signals_hash__[flag] ||= Hash.new
 
         if @__track_signals_hash__[flag].has_key?(base_ele)
-            raise TdlError.new(" `#{module_name}.#{base_ele.to_s}` Cant be tracked again!!!")
+            # raise TdlError.new(" `#{module_name}.#{base_ele.to_s}` Cant be tracked again!!!")
+            puts "WAINNING: `#{module_name}.#{base_ele.to_s}` Cant be tracked again!!!"
+            return 
         end
 
         @__track_signals_hash__[flag][base_ele] = block

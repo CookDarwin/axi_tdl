@@ -27,7 +27,7 @@ class AxiStream
         return AxiTdl::EthernetStreamDefAtom.new(belong_to_module: @belong_to_module, stream: self, start: start, length: length)
     end
 
-    def x_all_bits_slice(name: "slice_#{globle_random_name_flag()}", start: 8*4,length:32)
+    def x_all_bits_slice(name: "slice_#{@belong_to_module._auto_name_incr_index_()}", start: 8*4,length:32)
         raise TdlError.new("#{name} is not ethernet stream, before used it must be call to_eth") unless @__ethernet_type__
         # @belong_to_module.logic[length]     - name
         @belong_to_module.instance_exec(self,name,start,length,@__ethernet_type__) do |_targget_axis, _name, _start, _length, _ethernet_type|

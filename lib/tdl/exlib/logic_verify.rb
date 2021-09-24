@@ -59,7 +59,7 @@ class Logic
         raise TdlError.new(" posedge negedge both nil") unless (posedge || negedge )
         # raise TdlError.new "file cant be empty"  unless file
 
-        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","#{self.name}_#{globle_random_name_flag}.coe")
+        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","#{self.name}_#{@belong_to_module._auto_name_incr_index_}.coe")
         _len = 1000
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
             require_hdl 'logic_sim_model.sv'

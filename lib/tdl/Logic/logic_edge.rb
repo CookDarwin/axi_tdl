@@ -1,7 +1,7 @@
 
 
 class Logic     ## EDGE METHOD
-    def raising(cnt:1,clock:nil,reset: 1.b1 )
+    def raising(name: nil, cnt: 1,clock: nil,reset: 1.b1 )
 
         # if cnt==1 && clock == nil && reset==nil && @raising_record
         #     return @raising_record
@@ -26,11 +26,19 @@ class Logic     ## EDGE METHOD
                 # GlobalParam.CurrTdlModule.BindEleClassVars.Logic.expression << lambda{ head_str }
                 belong_to_module.Logic_draw << head_str
                 inst_edge(@clock,@reset)
-                if cnt>1
-                    inst_raise_edge_cnt(cnt-1)
-                    str = inst_cnt_edge_signal(cnt-1,:raise)
-                else
-                    str = "#{signal}_raising"
+                unless name 
+                    if cnt>1
+                        inst_raise_edge_cnt(cnt-1)
+                        str = inst_cnt_edge_signal(cnt-1,:raise)
+                    else
+                        str = "#{signal}_raising"
+                    
+                    end
+                else 
+                    if cnt>1
+                        inst_raise_edge_cnt(cnt-1)
+                    end
+                    str = name 
                 end
                 # @@logic_expression << lambda{ end_str }
                 # GlobalParam.CurrTdlModule.BindEleClassVars.Logic.expression << lambda{ end_str }

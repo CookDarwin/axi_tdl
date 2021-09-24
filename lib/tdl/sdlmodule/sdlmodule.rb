@@ -411,7 +411,11 @@ class SdlModule
         ref_modules.each do |e| 
             _indexs << index 
             _names << e.module_name
-            _paths << File.expand_path(e.real_sv_path)
+            begin 
+                _paths << File.expand_path(e.real_sv_path)
+            rescue 
+                _paths << " ___ dont have a path !!!!! ____"
+            end
             index += 1
             if e.module_name.size > max_size
                 max_size = e.module_name.size 
@@ -538,4 +542,16 @@ class SdlModule
             __require_hdl__(hp,self)
         end
     end
+end
+
+## 定义自动变量递增
+class SdlModule
+
+    def _auto_name_incr_index_(flag='R')
+        @__auto_name_incr_index__ ||= 0
+        index = @__auto_name_incr_index__
+        @__auto_name_incr_index__ += 1
+        return "#{flag}#{"%04d" % index}" 
+    end
+
 end

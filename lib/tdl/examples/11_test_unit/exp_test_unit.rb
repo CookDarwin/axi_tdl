@@ -31,10 +31,11 @@ TopModule.exp_test_unit(__dir__) do
         # add_to_dve_wave(TdlTestPoint.sub_md1.tp_inter_tf)
     
         test_unit_init do 
-            sub_md1.enable   <= 1.b1 
-            initial_exec("#(1us)")
-            sub_md1.enable   <= 1.b0 
-            initial_exec("#(500us)")
+            sub_md0.cnt      <= sub_md1.enable + 1
+            # sub_md1.enable   <= 1.b1 
+            # initial_exec("#(1us)")
+            # sub_md1.enable   <= 1.b0 
+            # initial_exec("#(500us)")
         end
     
     end

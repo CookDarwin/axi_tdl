@@ -81,7 +81,7 @@ module VCSCompatable
     # end
 
     def self.common_instance(sdlmodule,inst_name,inst_modport,cn_modport)
-        vcs_cpt_inf = cn_modport.inherited(name: "#{cn_modport.name}_vcs_cp_#{globle_random_name_flag()}")
+        vcs_cpt_inf = cn_modport.inherited(name: "#{cn_modport.name}_vcs_cp_#{sdlmodule._auto_name_incr_index_()}")
         if vcs_cpt_inf.is_a? Axi4 
             # vcs_cpt_inf.origin_freqM   = cn_modport.FreqM
             vcs_cpt_inf.addr_step = cn_modport.ADDR_STEP 
@@ -90,7 +90,7 @@ module VCSCompatable
     
         if inst_modport.modport_type.to_s =~ /master/ || inst_modport.modport_type.to_s == "out_mirror"
             # puts "+++++++ Match Master ModPort ++++++ #{sdlmodule.module_name}"
-            sdlmodule.Instance(inst_name,"#{inst_name}_#{inst_modport.name}_#{globle_random_name_flag()}_#{cn_modport.name}_inst") do |h|
+            sdlmodule.Instance(inst_name,"#{inst_name}_#{inst_modport.name}_#{sdlmodule._auto_name_incr_index_()}_#{cn_modport.name}_inst") do |h|
                 h[:ORIGIN]  = "#{inst_modport.modport_type}"
                 h[:TO]      = "#{cn_modport.modport_type}" 
                 h[:origin]  = vcs_cpt_inf
@@ -98,7 +98,7 @@ module VCSCompatable
             end
         elsif inst_modport.modport_type.to_s =~ /slaver/ || inst_modport.modport_type.to_s =~ /mirror/
             # puts "+++++++ Match Slaver ModPort ++++++"
-            sdlmodule.Instance(inst_name,"#{inst_name}_#{inst_modport.name}_#{globle_random_name_flag()}_#{cn_modport.name}_inst") do |h|
+            sdlmodule.Instance(inst_name,"#{inst_name}_#{inst_modport.name}_#{sdlmodule._auto_name_incr_index_()}_#{cn_modport.name}_inst") do |h|
                 h[:TO]      = "#{inst_modport.modport_type}"
                 h[:ORIGIN]  = "#{cn_modport.modport_type}" 
                 h[:to]      = vcs_cpt_inf

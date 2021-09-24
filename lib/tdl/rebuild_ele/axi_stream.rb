@@ -62,7 +62,7 @@ class AxiStream < TdlSpace::TdlBaseInterface
     def inherited(name: nil ,clock: nil,reset: nil,dsize: nil,freqM: nil,dimension:[])
         a = nil 
         unless name 
-            name = "#{inst_name}_inherited#{globle_random_name_flag()}"
+            name = "#{inst_name}_inherited#{belong_to_module._auto_name_incr_index_()}"
         end
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
             append_name = name_copy(name)
@@ -88,7 +88,7 @@ class AxiStream < TdlSpace::TdlBaseInterface
 
     ## =======================
     def self.leave_empty(curr_type: :master,dsize:8,clock:"",reset:"",belong_to_module:nil)
-        nc = belong_to_module.axi_stream_inf(dsize:dsize,clock:clock,reset:reset) - "empty_axis_#{globle_random_name_flag()}"
+        nc = belong_to_module.axi_stream_inf(dsize:dsize,clock:clock,reset:reset) - "empty_axis_#{belong_to_module._auto_name_incr_index_()}"
         # puts belong_to_module.module_name
         if curr_type.to_sym == :slaver
             # self.axis_master_empty(master:nc)
@@ -109,7 +109,7 @@ class AxiStream < TdlSpace::TdlBaseInterface
 
     def branch(name: nil,clock:@clock,reset:@reset,dsize:@dsize,freqM:nil)
         unless name 
-            name = "#{inst_name}_branch#{globle_random_name_flag()}"
+            name = "#{inst_name}_branch#{belong_to_module._auto_name_incr_index_()}"
         end
         a =  inherited(name: name,clock: clock,reset: reset,dsize: dsize,freqM: freqM)
         self << a

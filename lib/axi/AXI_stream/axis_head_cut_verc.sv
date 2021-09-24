@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERC.0.0
-creaded:
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -45,7 +45,7 @@ axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) or
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_cut_mix (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_ss_E0 (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
 axi_stream_inf #(.DSIZE(origin_inf.DSIZE),.FreqM(origin_inf.FreqM),.USIZE(1)) origin_inf_ss_E0_CH (.aclk(origin_inf.aclk),.aresetn(origin_inf.aresetn),.aclken(1'b1)) ;
-axi_stream_inf #(.DSIZE(out_inf.DSIZE),.FreqM(out_inf.FreqM),.USIZE(1)) out_inf_branchR325 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
+axi_stream_inf #(.DSIZE(out_inf.DSIZE),.FreqM(out_inf.FreqM),.USIZE(1)) out_inf_branchR0000 (.aclk(out_inf.aclk),.aresetn(out_inf.aresetn),.aclken(1'b1)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 axis_pipe_sync_seam #(
@@ -122,7 +122,7 @@ axis_connect_pipe_right_shift_verb #(
 axis_head_cut_verb last_cut_inst(
 /* input                 */.length   (16'd1               ),
 /* axi_stream_inf.slaver */.axis_in  (origin_inf_ss_E0_CH ),
-/* axi_stream_inf.master */.axis_out (out_inf_branchR325  )
+/* axi_stream_inf.master */.axis_out (out_inf_branchR0000 )
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
@@ -136,7 +136,7 @@ axis_direct  axis_direct_out_inf_inst0 (
 );
 
 axis_direct  axis_direct_out_inf_inst1 (
-/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR325),
+/*  axi_stream_inf.slaver*/ .slaver (out_inf_branchR0000),
 /*  axi_stream_inf.master*/ .master (sub_out_inf[1])
 );
 

@@ -19,7 +19,7 @@ module ClassHDL
         attr_accessor :block_index
         def initialize(belong_to_module)
             @belong_to_module = belong_to_module
-            super("genblk#{globle_random_name_flag()}")
+            super("genblk#{belong_to_module._auto_name_incr_index_}")
             unless @belong_to_module
                 raise TdlError.new("GenerateBlock must have belong_to_module")
             end

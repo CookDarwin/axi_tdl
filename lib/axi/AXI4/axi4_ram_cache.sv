@@ -5,36 +5,35 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-09-24 23:32:18 +0800
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
 
-module test_tttop (
-    input global_sys_clk
+module axi4_ram_cache #(
+    parameter  INIT_FILE = ""
+)(
+    axi_inf.slaver   a_inf
 );
 
 //==========================================================================
 //-------- define ----------------------------------------------------------
-logic  clock_100M;
-logic  rstn_100M;
-axi_stream_inf #(.DSIZE(16),.FreqM(100),.USIZE(1)) x_origin_inf (.aclk(clock_100M),.aresetn(rstn_100M),.aclken(1'b1)) ;
+
+axi_inf #(.DSIZE(a_inf.DSIZE),.IDSIZE(a_inf.IDSIZE),.ASIZE(a_inf.ASIZE),.LSIZE(a_inf.LSIZE),.MODE(a_inf.MODE),.ADDR_STEP(a_inf.ADDR_STEP),.FreqM(a_inf.FreqM)) b_inf (.axi_aclk(a_inf.axi_aclk),.axi_aresetn(a_inf.axi_aresetn)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
-simple_clock simple_clock_inst(
-/* input clock  */.sys_clk (global_sys_clk ),
-/* output clock */.clock   (clock_100M     ),
-/* output reset */.rst_n   (rstn_100M      )
-);
-a_test_md a_test_md_inst(
-/* input clock           */.clock      (clock_100M   ),
-/* input reset           */.rst        (~rstn_100M   ),
-/* axi_stream_inf.master */.origin_inf (x_origin_inf )
+axi4_dpram_cache #(
+    .INIT_FILE (INIT_FILE )
+)axi4_dpram_cache_inst(
+/* axi_inf.slaver */.a_inf (a_inf ),
+/* axi_inf.slaver */.b_inf (b_inf )
 );
 //==========================================================================
 //-------- expression ------------------------------------------------------
-assign x_origin_inf.axis_tvalid = 1'b0;
-assign x_origin_inf.axis_tdata = '0;
-assign x_origin_inf.axis_tlast = 1'b0;
+assign b_inf.axi_awvalid = 1'b0;
+assign b_inf.axi_arvalid = 1'b0;
+assign b_inf.axi_wvalid = 1'b0;
+assign b_inf.axi_rready = 1'b1;
+assign b_inf.axi_bready = 1'b1;
 
 endmodule

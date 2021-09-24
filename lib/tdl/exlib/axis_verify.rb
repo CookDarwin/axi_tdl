@@ -130,7 +130,7 @@ class AxiStream
 
     def to_simple_sim_master_coe(enable: 1.b1, length: [10,200], gap_len: [0,10], data: [ (0...100) ] , vld_perc: [50, 100], loop_coe: true)
         # raise TdlError.new "file cant be empty"  unless file
-        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","coe_#{self.name}_#{globle_random_name_flag}.coe")
+        file = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","coe_#{self.name}_#{@belong_to_module._auto_name_incr_index_}.coe")
         _sps = nil
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
             require_sdl 'axis_sim_master_model.rb'
@@ -218,7 +218,7 @@ class AxiStream
     def simple_verify_by_coe(file)
         unless File.file?(file)
             if file.is_a?(String)
-                wfile = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","#{self.name}_#{globle_random_name_flag}.coe")
+                wfile = File.join(AxiTdl::TDL_PATH,"./auto_script/tmp/","#{self.name}_#{@belong_to_module._auto_name_incr_index_}.coe")
                 File.open(wfile,'w') do |f|
                     f.puts file
                 end

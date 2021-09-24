@@ -68,7 +68,7 @@ class Axi4
                 e.band_params_from(self)
                 
                 ## e is a Vector 
-                if e.dimension[0].is_a?(Integer) && e.dimension[0] > 1
+                if e.dimension && e.dimension[0].is_a?(Integer) && e.dimension[0] > 1
                     # require_hdl 'axi4_direct_B1.sv'
                     require_hdl 'axi4_direct_verc.sv'
 
@@ -189,8 +189,10 @@ class Axi4
                 @_long_slim_to_wide << new_master
             else
                 if !(e.dsize.eql? self.dsize)
+                    require_hdl 'axi4_long_to_axi4_wide_verb.sv'
+                    TopModule.contain_hdl 'axi4_direct_verb.sv'
                     # puts "#{e.dsize} == #{self.dsize} #{e.dsize != self.dsize} #{e.dsize.class}"
-                    new_master = self.copy(mode:e.mode,idsize:e.idsize)
+                    new_master = self.copy(name: "#{e.name}_renew_dir",mode:e.mode,idsize:e.idsize)
                     # new_master.axi4_data_convert(up_stream: e)
                     # @_long_slim_to_wide << Axi4.axi4_pipe(up_stream:new_master)
 
@@ -245,20 +247,13 @@ class Axi4
                 else
                     mode_str = "ONLY_READ_to_BOTH"
                 end
-                # require_hdl 'axi4_direct_B1.sv'
-                # # Axi4.axi4_direct_a1(mode:mode_str,slaver:lo,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
-                # belong_to_module.Instance('axi4_direct_B1',"axi4_direct_a1_long_to_wide_#{sub_name}_#{globle_random_name_flag()}") do |h|
-                #     # h.param.MODE    mode_str    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
-                #     h.slaver_inf        lo
-                #     h.master_inf        "#{sub_name}[#{index}]".to_nq
-                # end
-
+                
                 require_hdl 'axi4_direct_verc.sv'
-                belong_to_module.Instance('axi4_direct_verc',"axi4_direct_a1_long_to_wide_#{sub_name}_#{globle_random_name_flag()}") do |h|
+                belong_to_module.Instance('axi4_direct_verc',"axi4_direct_a1_long_to_wide_#{sub_name}_#{belong_to_module._auto_name_incr_index_}") do |h|
                     h.param.MODE            mode_str    # //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
                     h.param.SLAVER_MODE     (wr_lg ? "ONLY_WRITE" : "ONLY_READ")    #    //
                     h.param.MASTER_MODE     "BOTH"    #    //
-                    h.slaver_inf        (lo.respond_to?(:dimension) && lo.dimension[0]==1 && lo[0])  || lo
+                    h.slaver_inf        (lo.respond_to?(:dimension) && (lo.dimension.nil? || lo.dimension[0]==1) && lo[0])  || lo
                     h.master_inf        "#{sub_name}[#{index}]".to_nq
                 end
 
@@ -268,14 +263,14 @@ class Axi4
                 require_hdl 'axi4_combin_wr_rd_batch.sv'
                 if wr_lg
                     # Axi4.axi4_combin_wr_rd_batch(wr_slaver:lo,rd_slaver:los,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
-                    belong_to_module.Instance(:axi4_combin_wr_rd_batch,"axi4_combin_wr_rd_batch_inst_#{sub_name}") do |h|
+                    belong_to_module.Instance(:axi4_combin_wr_rd_batch,"axi4_combin_wr_rd_batch_inst_#{sub_name}_#{belong_to_module._auto_name_incr_index_}") do |h|
                         h.wr_slaver         lo
                         h.rd_slaver         los
                         h.master            "#{sub_name}[#{index}]".to_nq
                     end 
                 else
                     # Axi4.axi4_combin_wr_rd_batch(wr_slaver:los,rd_slaver:lo,master:"#{sub_name}[#{index}]",belong_to_module:belong_to_module)
-                    belong_to_module.Instance(:axi4_combin_wr_rd_batch,"axi4_combin_wr_rd_batch_inst_#{sub_name}") do |h|
+                    belong_to_module.Instance(:axi4_combin_wr_rd_batch,"axi4_combin_wr_rd_batch_inst_#{sub_name}_#{belong_to_module._auto_name_incr_index_}") do |h|
                         h.wr_slaver         los
                         h.rd_slaver         lo
                         h.master            "#{sub_name}[#{index}]".to_nq

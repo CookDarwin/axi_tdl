@@ -31,7 +31,7 @@ assign wr_ready = rd_ready;
 initial begin
     assert(ISIZE < OSIZE)
     else begin
-        $error("ISIZE MUST BE MORE SMALLER THAN OSIZE\n");
+        $error("ISIZE<%d> MUST BE MORE SMALLER THAN OSIZE<%d>\n",ISIZE,OSIZE);
         $stop;
     end
 end

@@ -81,7 +81,7 @@ cross_clk_sync #(
         if wclk.nil? || rclk.nil?
             raise TdlError.new("\n #{self.to_s} BROADEN_AND_CROSS_CLK <clock = nil> \n")
         end
-        new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{globle_random_name_flag()}",dsize:1)
+        new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{belong_to_module._auto_name_incr_index_()}",dsize:1)
         large_name_len(phase,len,wclk,wreset,rclk,rreset)
 body =
 "
@@ -89,7 +89,7 @@ broaden_and_cross_clk #(
     .PHASE     (#{align_signal(phase)}),  //POSITIVE NEGATIVE
     .LEN       (#{align_signal(len)}),
     .LAT       (#{align_signal(lat)})
-)#{new_l.signal}_inst_#{globle_random_name_flag()}(
+)#{new_l.signal}_inst_#{belong_to_module._auto_name_incr_index_()}(
 /* input    */  .rclk       (#{align_signal(rclk,q_mark=false)}),
 /* input    */  .rd_rst_n   (#{align_signal(rreset,q_mark=false)}),
 /* input    */  .wclk       (#{align_signal(wclk,q_mark=false)}),
@@ -125,7 +125,7 @@ module  CtrlLogic
 latency #(
     .LAT    (#{num}),
     .DSIZE  (1)
-)#{new_l.signal}_lat_#{globle_random_name_flag()}(
+)#{new_l.signal}_lat_#{belong_to_module._auto_name_incr_index_()}(
     #{clock},
     #{reset_str},
     #{self.to_s},
@@ -145,13 +145,13 @@ latency #(
 
         # new_l = Logic.new(name:"crock_clk",dsize:self.dsize)
         # new_l = self.logic(name:"crock_clk",dsize:self.dsize)
-        new_l = belong_to_module.Def().logic(name:name || "crock_clk_#{globle_random_name_flag()}",dsize:dsize)
+        new_l = belong_to_module.Def().logic(name:name || "crock_clk_#{belong_to_module._auto_name_incr_index_()}",dsize:dsize)
         str = %Q{
 //----->> #{self.to_s} cross clock <<------------------
 cross_clk_sync #(
 	.LAT   (2      ),
 	.DSIZE (#{dsize})
-)#{new_l.signal}_cross_clk_inst__#{globle_random_name_flag()}(
+)#{new_l.signal}_cross_clk_inst__#{belong_to_module._auto_name_incr_index_()}(
 /* input              */ .clk       (#{align_signal(clock)}),
 /* input              */ .rst_n     (#{align_signal(reset)}),
 /* input [DSIZE-1:0]  */ .d         (#{align_signal(self)}),
@@ -168,7 +168,7 @@ cross_clk_sync #(
         if wclk.nil? || rclk.nil?
             raise TdlError.new("\n #{self.to_s} BROADEN_AND_CROSS_CLK <clock = nil> \n")
         end
-        new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{globle_random_name_flag()}",dsize:1)
+        new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{belong_to_module._auto_name_incr_index_()}",dsize:1)
         large_name_len(phase,len,wclk,wreset,rclk,rreset)
 body =
 "
@@ -176,7 +176,7 @@ broaden_and_cross_clk #(
 	.PHASE     (#{align_signal(phase)}),  //POSITIVE NEGATIVE
 	.LEN       (#{align_signal(len)}),
 	.LAT       (#{align_signal(lat)})
-)#{new_l.signal}_inst_#{globle_random_name_flag()}(
+)#{new_l.signal}_inst_#{belong_to_module._auto_name_incr_index_()}(
 /* input    */  .rclk       (#{align_signal(rclk,q_mark=false)}),
 /* input    */  .rd_rst_n   (#{align_signal(rreset,q_mark=false)}),
 /* input    */  .wclk       (#{align_signal(wclk,q_mark=false)}),

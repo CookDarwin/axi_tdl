@@ -10,6 +10,8 @@ Version: VERA.2.0 ###### Tue Jan 7 09:47:51 CST 2020
     data_inf_c replace valid ready
 Version: VERA.3.0 ###### Mon Sep 21 14:31:30 CST 2020
     add ex info
+Version: VERA.3.1 
+    use axi4_rd_auxiliary_gen_A2 
 creaded: 2017/3/1 下午6:12:34
 madified:
 ***********************************************/
@@ -75,10 +77,13 @@ assign  id      = '0;
 assign  addr    = fifo_addr[axi_master.ASIZE-1:0];
 assign  length  = fifo_size[axi_master.LSIZE:0];
 
+logic   ex_wait_nofull;
+
 assign addr_len_inf.axis_tdata  = {id,addr,length};
 
 `VCS_AXI4_CPT_LT(axi_master,master_rd,master_rd_aux,)
-axi4_rd_auxiliary_gen_A1 axi4_rd_auxiliary_gen_inst(
+axi4_rd_auxiliary_gen_A2 axi4_rd_auxiliary_gen_inst(
+/*        input                 */  .ex_wait_nofull (ex_wait_nofull ),
 /*    axi_stream_inf.slaver     */  .id_add_len_in  (addr_len_inf   ),      //tlast is not necessary
 /*    axi_inf.master_rd_aux     */  .axi_rd_aux     (`axi_master_vcs_cpt            )
 );
@@ -98,7 +103,7 @@ logic [out_axis.DSIZE+1-1:0]    axis_fifo_rd_data;
 
 logic   force_rd_en;
 
-logic   cmded_empty;
+logic   cmded_empty,cmded_full;
 
 independent_clock_fifo #(
     .DEPTH  (4  ),
@@ -113,12 +118,15 @@ independent_clock_fifo #(
 /*  output logic[DSIZE-1:0]  */   .rdata            (),
 /*  input                    */   .rd_en            (out_axis.axis_tvalid && out_axis.axis_tready && out_axis.axis_tlast),
 /*  output logic             */   .empty            (cmded_empty           ),
-/*  output logic             */   .full             ()
+/*  output logic             */   .full             (cmded_full            )
 );
 
 assign force_rd_en  = cmded_empty && !axis_fifo_empty;
+assign ex_wait_nofull = !cmded_full;
 //---<< forece rd_en >>---------------------------
 
+logic[axi_master.DSIZE-1:0] tmp_data;
+assign tmp_data = axi_master.axi_rdata;
 xilinx_fifo_verb #(
 //xilinx_fifo #(
     .DSIZE      (out_axis.DSIZE+1 )
@@ -127,7 +135,7 @@ xilinx_fifo_verb #(
 /*    input              */ .wr_rst     (!axi_master.axi_aresetn),
 /*    input              */ .rd_clk     (out_axis.aclk         ),
 /*    input              */ .rd_rst     (!out_axis.aresetn     ),
-/*    input [DSIZE-1:0]  */ .din        ({axi_master.axi_rlast,axi_master.axi_rdata}  ),
+/*    input [DSIZE-1:0]  */ .din        ({axi_master.axi_rlast,tmp_data}  ),
 /*    input              */ .wr_en      ((axi_master.axi_rvalid && axi_master.axi_rready) ),
 /*    input              */ .rd_en      (axis_fifo_rd_en  || force_rd_en     ),
 /*    output [DSIZE-1:0] */ .dout       (axis_fifo_rd_data     ),

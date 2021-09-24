@@ -125,9 +125,13 @@ class Axi4 < TdlSpace::TdlBaseInterface
         return new_obj
     end
 
-    def branch(name:@name,clock:@clock,reset:@reset,mode:@mode,dsize:@dsize,idsize:@idsize,asize:@asize,lsize:@lsize,addr_step:@addr_step,dimension:[],freqM:nil)
+    def branch(name: nil,clock:@clock,reset:@reset,mode:@mode,dsize:@dsize,idsize:@idsize,asize:@asize,lsize:@lsize,addr_step:@addr_step,dimension:[],freqM:nil)
         # puts "freqM :: ",freqM
-        a = inherited(name:name,clock:clock,reset:reset,mode:mode,dsize:dsize,idsize:idsize,asize:asize,lsize:lsize,addr_step:addr_step,dimension:dimension,freqM:freqM)
+        xx_name = name
+        ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
+            xx_name = name || "#{belong_to_module.module_name}_axi4_branch#{belong_to_module._auto_name_incr_index_()}"
+        end
+        a = inherited(name:xx_name,clock:clock,reset:reset,mode:mode,dsize:dsize,idsize:idsize,asize:asize,lsize:lsize,addr_step:addr_step,dimension:dimension,freqM:freqM)
         self << a
         return a
     end
