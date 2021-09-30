@@ -13,8 +13,6 @@ gui_set_time_units 1ps
 ## ==== [add_signal] ===== ##
 
 
-
-
 ## 创建波形窗口
 if {![info exists useOldWindow]} { 
     set useOldWindow true
@@ -44,8 +42,6 @@ gui_wv_zoom_timerange -id ${Wave.3} 0 1000000000
 ## === [add_signal_wave] === ##
 
 
-
-
 gui_seek_criteria -id ${Wave.3} {Any Edge}
 
 
@@ -61,8 +57,6 @@ gui_list_set_filter -id ${Wave.3} -list { {Buffer 1} {Input 1} {Others 1} {Linka
 gui_list_set_filter -id ${Wave.3} -text {*}
 ##gui_list_set_insertion_bar  -id ${Wave.3} -group ${Group2}  -position in
 ## === [add_bar] === ##
-
-
 
 
 gui_marker_move -id ${Wave.3} {C1} 560248001

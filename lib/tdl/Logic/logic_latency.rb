@@ -77,12 +77,14 @@ cross_clk_sync #(
         return new_l
     end
 
-    def broaden_and_cross_clk(phase: "POSITIVE",len:4,lat:2,wclk: nil,rreset: "1'b1".to_nq,rclk: nil,wreset: "1'b1".to_nq,name: nil)
-        if wclk.nil? || rclk.nil?
-            raise TdlError.new("\n #{self.to_s} BROADEN_AND_CROSS_CLK <clock = nil> \n")
-        end
-        new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{belong_to_module._auto_name_incr_index_()}",dsize:1)
-        large_name_len(phase,len,wclk,wreset,rclk,rreset)
+    def broaden_and_cross_clk(phase: "POSITIVE",len:4,lat:2,wclk: nil,rclk: nil,wreset: "1'b1".to_nq,rreset: "1'b1".to_nq,name: nil)
+        new_l = nil
+        ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
+            if wclk.nil? || rclk.nil?
+                raise TdlError.new("\n #{self.to_s} BROADEN_AND_CROSS_CLK <clock = nil> \n")
+            end
+            new_l = belong_to_module.Def().logic(name:name || "broaden_and_cross_clk_#{belong_to_module._auto_name_incr_index_()}",dsize:1)
+            large_name_len(phase,len,wclk,wreset,rclk,rreset)
 body =
 "
 broaden_and_cross_clk #(
@@ -98,7 +100,8 @@ broaden_and_cross_clk #(
 /* output   */  .q          (#{align_signal(new_l,q_mark=false)})
 );
 "
-        belong_to_module.Logic_draw << page(tag:"BROADEN_AND_CROSS_CLK",body:body)
+            belong_to_module.Logic_draw << page(tag:"BROADEN_AND_CROSS_CLK",body:body)
+        end
 
         return new_l
     end
