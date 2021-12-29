@@ -127,7 +127,7 @@ assign addr_s = addr_cur;
 assign len_s = split_out.axis_tcnt;
 assign id_add_len_in.axis_tvalid = ~fifo_empty;
 assign id_add_len_in.axis_tdata = fifo_rdata;
-assign id_add_len_in.axis_tlast = "1'b1";
+assign id_add_len_in.axis_tlast = 1'b1;
 assign fifo_rd_en = id_add_len_in.axis_tready;
 
 assign axi_wr.axi_wdata = pipe_axis.axis_tdata;

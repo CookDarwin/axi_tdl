@@ -46,7 +46,7 @@ assign axi_in.axi_awready   = !auxiliary_fifo_full;
 
 logic   stream_fifo_empty;
 
-axi_stream_inf #(.DSIZE(axi_in.ASIZE+axi_in.LSIZE+axi_in.IDSIZE)) id_add_len_in(.aclk(axi_in.axi_aclk),.aresetn(axi_in.axi_aresetn),.aclken(1'b1));
+axi_stream_inf #(.DSIZE(axi_in.ASIZE+axi_in.LSIZE+axi_in.IDSIZE)) id_add_len_in(.aclk(axi_out.axi_aclk),.aresetn(axi_out.axi_aresetn),.aclken(1'b1));
 
 assign id_add_len_in.axis_tdata     = auxiliary_fifo_rd_data;
 assign id_add_len_in.axis_tvalid    = !auxiliary_fifo_empty && !stream_fifo_empty;
@@ -54,10 +54,11 @@ assign id_add_len_in.axis_tlast     = 1'b1;
 assign auxiliary_fifo_rd_en         = id_add_len_in.axis_tready && !stream_fifo_empty;
 
 logic axi_stream_en;
-
+`VCS_AXI4_CPT_LT(axi_out,master_wr_aux_no_resp,master_wr,Aux_Write)
 axi4_wr_auxiliary_gen_without_resp axi4_wr_auxiliary_gen_without_resp_inst(
 /*    axi_stream_inf.slaver          */     .id_add_len_in      (id_add_len_in  ),      //tlast is not necessary
-/*    axi_inf.master_wr_aux_no_resp  */     .axi_wr_aux         (axi_out        ),
+// /*    axi_inf.master_wr_aux_no_resp  */     .axi_wr_aux         (axi_out        ),
+/*    axi_inf.master_wr_aux_no_resp  */     .axi_wr_aux         (`axi_out_vcs_cptAux_Write        ),
 /*    output logic                   */     .stream_en          (axi_stream_en  )
 );
 //---<< AUXILIARY >>------------------

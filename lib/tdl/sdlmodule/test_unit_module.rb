@@ -65,9 +65,9 @@ class SdlModule
                 if _ref_paths.size == 1
                     # rels[0]
                 elsif _ref_paths.size == 0
-                    raise TdlError.new "#{ele.to_s} Cant find root ref"
+                    raise TdlError.new "#{self.module_name}.#{ele.to_s} Cant find root ref "
                 else
-                    raise TdlError.new "#{ele.to_s} Find multi root refs \n#{_ref_paths.join("\n")}\n"
+                    raise TdlError.new "#{self.module_name}.#{ele.to_s} Find multi root refs \n#{_ref_paths.join("\n")}\n"
                 end
 
 

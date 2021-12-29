@@ -26,6 +26,7 @@ module TdlSpace
             end
             new_dla = self.class.new(@belong_to_module)
             new_dla.chain = @chain + a
+            new_dla.instance_variable_set("@type",self.instance_variable_get("@type"))
             new_dla
         end
 

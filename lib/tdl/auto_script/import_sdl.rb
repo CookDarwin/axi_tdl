@@ -60,6 +60,9 @@ def __require_shdl__(shdl_name,encoding='utf-8')
             end
 
             require_relative File.join(__dir__,"tmp","#{shdl_name}_sdl.rb")
+
+            TopModule.contain_hdl rel 
+
             return 
         end
 

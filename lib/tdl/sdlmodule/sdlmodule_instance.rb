@@ -415,7 +415,7 @@ end
 class SdlInstPortSugar < SdlInstSimplePortSugar
     
 
-    @@ml = [:input,:in,:output,:out,:inout,:mirror,:mirror_out,:master,:slaver,:master_wr,:slaver_wr,:master_rd,:slaver_rd,:master_rd_aux,:mirror_rd,:mirror_wr,:master_wr_aux,:master_wr_aux_no_resp]
+    @@ml = [:input,:in,:output,:out,:inout,:mirror,:mirror_out,:master,:slaver,:master_wr,:slaver_wr,:master_rd,:slaver_rd,:master_rd_aux,:mirror_rd,:out_mirror,:mirror_wr,:master_wr_aux,:master_wr_aux_no_resp]
     # @@ml += ['data_inf_c','data_inf','axi_stream_inf','axi4','axi_inf','axis','data_c']
     @@ml.each do |e|
         define_method(e) do |*args|

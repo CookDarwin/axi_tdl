@@ -128,7 +128,11 @@ module TdlSpace
                 define_method(tdl_key) do 
                     rel = self.instance_variable_get("@_#{tdl_key}_")
                     unless rel 
-                        TdlSpace::ArrayChain.create(obj: "#{inst_name}.#{hdl_key}".to_nq, belong_to_module: belong_to_module)
+                        if !dimension || dimension.empty?
+                            TdlSpace::ArrayChain.create(obj: "#{inst_name}.#{hdl_key}".to_nq, belong_to_module: belong_to_module)
+                        else 
+                            TdlSpace::ArrayChain.create(obj: "#{inst_name}[0].#{hdl_key}".to_nq, belong_to_module: belong_to_module)
+                        end
                     else 
                         rel 
                     end
@@ -171,7 +175,11 @@ module TdlSpace
              self.class_exec(tdl_key) do |tdl_key|
                 define_method('reset') do 
                     rel = self.instance_variable_get("@_#{tdl_key}_")
-                    rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
+                    if !dimension || dimension.empty?
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
+                    else 
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}[0].#{hdl_key}", belong_to_module: belong_to_module)
+                    end
                 end
 
                 define_method("reset=") do |arg|
@@ -200,7 +208,11 @@ module TdlSpace
             self.class_exec(tdl_key) do |tdl_key|
                 define_method(tdl_key) do 
                     rel = self.instance_variable_get("@_#{tdl_key}_") || default_value
-                    rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
+                    if !dimension || dimension.empty?
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}.#{hdl_key}", belong_to_module: belong_to_module)
+                    else 
+                        rel || TdlSpace::ArrayChain.create(obj:"#{self.inst_name}[0].#{hdl_key}", belong_to_module: belong_to_module)
+                    end
                 end
 
                 define_method("#{tdl_key}=") do |arg|

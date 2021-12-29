@@ -6,7 +6,7 @@ interface axi_inf #(
     parameter LSIZE     = 1,
     parameter DSIZE     = 32,
     `parameter_string MODE      = "BOTH",        //BOTH:0,ONLY_WRITE:1,ONLY_READ:2
-    parameter ADDR_STEP = 32'hFFFF_FFFF,            // 1024 : 0
+    parameter ADDR_STEP = 32'hFFFF_FFFF,            // 1024*2 地址递增 1 则 数据对于 数据移动 axi.DSIZE*2
     parameter real FreqM    = 1
 )(
     input bit axi_aclk      ,

@@ -13,8 +13,12 @@ madified:
 ***********************************************/
 `timescale 1ns/1ps
 `include "define_macro.sv"
-(* axi4 = "true" *)
-module axi4_direct_verc #(
+module axi4_direct_algin_addr_step #(
+    // parameter ABANDON = "MASTER";
+    parameter SLAVER_ADDR_STEP = 1024,
+    // parameter MASTER_ADDR_STEP = 1024,
+    parameter TERMENAL_ADDR_STEP = 1024,
+    parameter TERMENAL_DSIZE = 128,
     `parameter_string MODE  = "BOTH_to_BOTH",    //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
     `parameter_string SLAVER_MODE  = "BOTH",    //
     `parameter_string MASTER_MODE  = "BOTH",    //
@@ -24,9 +28,7 @@ module axi4_direct_verc #(
     `parameter_string IGNORE_ASIZE = "FALSE",   //(* show = "false" *)
     `parameter_string IGNORE_LSIZE = "FALSE"    //(* show = "false" *)
 )(
-    (* axi4_up = "true" *)
     axi_inf.slaver      slaver_inf,
-    (* axi4_down = "true" *)
     axi_inf.master      master_inf
 );
 
@@ -46,10 +48,10 @@ initial begin
         assert(slaver_inf.DSIZE == master_inf.DSIZE)
         else $error("SLAVER AXIS DSIZE != MASTER AXIS DSIZE");
     end
-    if(IGNORE_ASIZE == "FALSE")begin
-        assert(slaver_inf.ASIZE == master_inf.ASIZE)
-        else $error("SLAVER AXIS ASIZE != MASTER AXIS ASIZE");
-    end
+    // if(IGNORE_ASIZE == "FALSE")begin
+    //     assert(slaver_inf.ASIZE == master_inf.ASIZE)
+    //     else $error("SLAVER AXIS ASIZE != MASTER AXIS ASIZE");
+    // end
     if(IGNORE_LSIZE == "FALSE")begin
         assert(slaver_inf.LSIZE == master_inf.LSIZE)
         else $error("SLAVER AXIS LSIZE != MASTER AXIS LSIZE");
@@ -101,10 +103,22 @@ initial begin
 
 end
 
+localparam RF = $clog2(TERMENAL_DSIZE) - $clog2(slaver_inf.DSIZE) + $clog2(SLAVER_ADDR_STEP) - $clog2(TERMENAL_ADDR_STEP);
+
+localparam FR = $clog2(TERMENAL_DSIZE) + $clog2(SLAVER_ADDR_STEP);
+localparam FL = $clog2(slaver_inf.DSIZE) + $clog2(TERMENAL_ADDR_STEP);
+
 generate
     if( (MASTER_MODE=="ONLY_WRITE") || (MASTER_MODE=="BOTH" && (SLAVER_MODE=="ONLY_WRITE" || SLAVER_MODE=="BOTH") ) )begin
         assign master_inf.axi_awid     = slaver_inf.axi_awid   ;
-        assign master_inf.axi_awaddr   = slaver_inf.axi_awaddr ;
+        
+        if(FR == FL)
+            assign master_inf.axi_awaddr   = slaver_inf.axi_awaddr ;
+        else if(FR < FL)
+            assign master_inf.axi_awaddr   = slaver_inf.axi_awaddr << (FL - FR) ;
+        else if(FR > FL)
+            assign master_inf.axi_awaddr   = slaver_inf.axi_awaddr >> (FR - FL) ;
+        
         assign master_inf.axi_awlen    = slaver_inf.axi_awlen  ;
         assign master_inf.axi_awsize   = slaver_inf.axi_awsize ;
         assign master_inf.axi_awburst  = slaver_inf.axi_awburst;
@@ -130,7 +144,15 @@ endgenerate
 generate
     if( (MASTER_MODE=="ONLY_READ") || (MASTER_MODE=="BOTH" && (SLAVER_MODE=="ONLY_READ" || SLAVER_MODE=="BOTH") ) )begin
         assign master_inf.axi_arid     = slaver_inf.axi_arid   ;
-        assign master_inf.axi_araddr   = slaver_inf.axi_araddr ;
+        // assign master_inf.axi_araddr   = slaver_inf.axi_araddr ;
+
+        if(FR == FL)
+            assign master_inf.axi_araddr   = slaver_inf.axi_araddr ;
+        else if(FR < FL)
+            assign master_inf.axi_araddr   = slaver_inf.axi_araddr << (FL - FR) ;
+        else if(FR > FL)
+            assign master_inf.axi_araddr   = slaver_inf.axi_araddr >> (FR - FL) ;
+
         assign master_inf.axi_arlen    = slaver_inf.axi_arlen  ;
         assign master_inf.axi_arsize   = slaver_inf.axi_arsize ;
         assign master_inf.axi_arburst  = slaver_inf.axi_arburst;
