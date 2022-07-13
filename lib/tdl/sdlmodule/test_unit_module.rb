@@ -324,6 +324,11 @@ end
 class TopModule
     public 
     def add_test_unit(*args)
+        args.each do |e|
+            unless e.is_a? ItegrationTestUnit
+                raise TdlError.new(" add_test_unit args<#{e}> must be ItegrationTestUnit ")
+            end
+        end
         @_test_unit_collect_ ||= []
         @_test_unit_collect_ = @_test_unit_collect_ + args
     end
@@ -336,7 +341,7 @@ class TopModule
         ## 例化需要的itgt test unit
         # ItegrationVerb.test_unit_inst
         ItegrationVerb.test_unit_inst do |name|
-            args.include? name.to_s
+            args.include? name
         end
 
         self.techbench.instance_exec(args) do |args|
@@ -347,24 +352,15 @@ class TopModule
             logic[args.size]    - 'unit_pass_d'
 
             nqq  = args.size <= 1
-            args.each do |tu|
-                if tu.is_a? SdlModule
-                    _inst_name_ = tu.module_name
-                else
-                    _inst_name_ = tu.to_s 
-                end
-
-                # puts _inst_name_
-                # puts SdlModule.call_module(_inst_name_).class
-                tu_inst = Instance(_inst_name_,"test_unit_#{index}") do |h|
+            args.each do |itgt_testunit|
+                
+                tu_inst = Instance("tu_#{itgt_testunit.itgt}_#{itgt_testunit.name}","test_unit_#{index}") do |h|
                     h.input.from_up_pass            (nqq ? unit_pass_u : unit_pass_u[index])
                     h.output.logic.to_down_pass     (nqq ? unit_pass_d : unit_pass_d[index])
                 end
 
                 tu_inst.origin.be_instanced_by_sim
-                # TdlTestUnit.collect_unit tu_inst
-                # TopModule.current.test_unit.collect_unit tu_inst
-
+    
                 ## 添加dve wave 信号
                 # TopModule.current.test_unit.dve_wave(name: _inst_name_, signals: tu_inst.origin.dve_wave_signals )
 

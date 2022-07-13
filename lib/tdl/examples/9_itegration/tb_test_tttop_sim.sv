@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-03 14:05:10 +0800
+created: 2022-07-10 11:14:33 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -23,7 +23,7 @@ logic unit_pass_d;
 test_tttop_sim rtl_top(
 /* input clock */.global_sys_clk (gl_clk )
 );
-test_clock_bb test_unit_0(
+tu_ClockManage_test_clock_bb test_unit_0(
 /* input  */.from_up_pass (unit_pass_u ),
 /* output */.to_down_pass (unit_pass_d )
 );

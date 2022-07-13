@@ -48,22 +48,22 @@ for(genvar KK0=0;KK0 < LAT;KK0++)begin
 endgenerate
 //-------- CLOCKs Total 2 ----------------------
 //--->> CheckClock <<----------------
-logic cc_done_10,cc_same_10;
-integer cc_afreq_10,cc_bfreq_10;
-ClockSameDomain CheckPClock_inst_10(
+logic cc_done_9,cc_same_9;
+integer cc_afreq_9,cc_bfreq_9;
+ClockSameDomain CheckPClock_inst_9(
 /*  input         */      .aclk     (in_inf.clock           ),
 /*  input         */      .bclk     (out_inf.clock          ),
-/*  output logic  */      .done     (cc_done_10),
-/*  output logic  */      .same     (cc_same_10),
-/*  output integer */     .aFreqK   (cc_afreq_10),
-/*  output integer */     .bFreqK   (cc_bfreq_10)
+/*  output logic  */      .done     (cc_done_9),
+/*  output logic  */      .same     (cc_same_9),
+/*  output integer */     .aFreqK   (cc_afreq_9),
+/*  output integer */     .bFreqK   (cc_bfreq_9)
 );
 
 initial begin
-    wait(cc_done_10);
-    assert(cc_same_10)
+    wait(cc_done_9);
+    assert(cc_same_9)
     else begin
-        $error("--- Error : `data_c_pipe_sync_seam` clock is not same, in_inf.clock< %0f M> != out_inf.clock<%0f M>",1000000.0/cc_afreq_10, 1000000.0/cc_bfreq_10);
+        $error("--- Error : `data_c_pipe_sync_seam` clock is not same, in_inf.clock< %0f M> != out_inf.clock<%0f M>",1000000.0/cc_afreq_9, 1000000.0/cc_bfreq_9);
         repeat(10)begin 
             @(posedge in_inf.clock);
         end

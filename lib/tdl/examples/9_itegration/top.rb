@@ -8,5 +8,5 @@ TopModule.test_tttop(__dir__) do
     add_itegration('ClockManage',pins_map: :CM)
     add_itegration('ABlock')
 
-    add_test_unit('test_clock_bb')
+    add_test_unit(ClockManage.test_clock_bb)
 end

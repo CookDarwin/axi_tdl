@@ -49,15 +49,28 @@ gen_big_field_table #(
 end
 endgenerate
 
+logic   end_enable;
+always@(posedge end_inf.aclk) begin 
+    if(~end_inf.aresetn)
+            end_enable  <= 1'b0;
+    else begin 
+        if(origin_in.axis_tvalid && origin_in.axis_tready)
+                end_enable  <= (MODE=="BOTH" || MODE=="END");
+        else if(end_inf.axis_tvalid && end_inf.axis_tlast && end_inf.axis_tready)
+                end_enable  <= 1'b0;
+        else    end_enable  <= end_enable;
+    end 
+end
+
 generate
 if(MODE=="BOTH" || MODE=="END")begin
 gen_big_field_table #(
-    .MASTER_MODE    ("OFF"               ),
+    .MASTER_MODE    ("ON"               ),
     .DSIZE          (DSIZE              ),
     .FIELD_LEN      (END_FIELD_LEN      ),     //MAX 16*8
     .FIELD_NAME     (END_FIELD_NAME     )
 )gen_big_field_table_end(
-/*  input                       */  .enable     (enable         ),
+/*  input                       */  .enable     (end_enable     ),
 /*  input [DSIZE*FIELD_LEN-1:0] */  .value      (end_value      ),
 /*  axi_stream_inf.master       */  .cm_tb      (end_inf        )
 );

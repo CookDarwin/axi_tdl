@@ -470,17 +470,18 @@ class ItegrationVerb
             return 
         end
 
-        blocks.each do |b|
+        blocks.each do |key,valueItgtTU|
             # @top_module.techbench.instance_exec(self,&b.clone)
-            sdlm = TestUnitModule.new(name: b[0],out_sv_path: b[1])
+            sdlm = TestUnitModule.new(name: key ,out_sv_path: valueItgtTU.path )
             $_implicit_curr_itgt_.with_none_itgt do 
                 sdlm.input - "from_up_pass"
                 sdlm.output.logic - "to_down_pass"
             end
-            sdlm.instance_exec(self,&b[2])
+            sdlm.instance_exec(self,&valueItgtTU.block)
 
-            if b[1] && File.exist?(b[1])
+            if valueItgtTU.path && File.exist?(valueItgtTU.path)
                 sdlm.gen_sv_module
+                Tdl.Puts "[warnning]   #{key} path error !!!"
             else 
                 sdlm.origin_sv = true 
             end
@@ -491,27 +492,26 @@ class ItegrationVerb
     end
 
     def self.test_unit_inst(&filter_block)
-        # blocks = self.instance_variable_get("@_inst_test_unit_blocks_")
-        # blocks = instance_variable_get("@_inst_test_unit_blocks_") || []
-        blocks = @@_inst_test_unit_blocks_ || []
+        blocks = @@_inst_test_unit_blocks_ || {}
         return unless blocks
         return if blocks.empty?
         return unless TopModule.sim
 
         ItegrationVerb.curr_itgt_push nil
 
-        blocks.each do |b|
+        blocks.each do |key,valueItgtTU|
             # @top_module.techbench.instance_exec(self,&b.clone)
-            if !(block_given?) || filter_block.call(b[0])
-                sdlm = TestUnitModule.new(name: b[0],out_sv_path: b[1])
+            if !(block_given?) || filter_block.call(valueItgtTU)
+                sdlm = TestUnitModule.new(name: "tu_#{key}",out_sv_path: valueItgtTU.path)
                 $_implicit_curr_itgt_.with_none_itgt do 
                     sdlm.input - "from_up_pass"
                     sdlm.output.logic - "to_down_pass"
                 end
-                sdlm.instance_exec(nil,&b[2])
+                sdlm.instance_exec(nil,&valueItgtTU.block)
 
-                if b[1] && File.exist?(b[1])
+                if valueItgtTU.path && File.exist?(valueItgtTU.path)
                     sdlm.gen_sv_module
+                    Tdl.Puts "[warnning]   #{key} path error !!!"
                 else 
                     sdlm.origin_sv = true 
                 end
@@ -776,12 +776,17 @@ class ItegrationVerb
     end
 
     ## 添加测试用例
-    @@_inst_test_unit_blocks_ = []
+    @@_inst_test_unit_blocks_ = {}
     def self.def_test_unit(name,path,&block)
-        # @@_inst_test_unit_blocks_ = instance_variable_get("@_inst_test_unit_blocks_")
-        @@_inst_test_unit_blocks_ ||= []
-        @@_inst_test_unit_blocks_ << [name.to_s, path, block]
-        # instance_variable_set("@_inst_test_unit_blocks_",_inst_test_unit_blocks_)
+        @@_inst_test_unit_blocks_ ||= {}
+        # @@_inst_test_unit_blocks_ << [name.to_s, path, block]
+        itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: self)
+        @@_inst_test_unit_blocks_["#{self}_#{name.to_s}"] = itgt_testunit
+
+        self.define_singleton_method(name.to_s) do 
+            itgt_testunit
+        end
+
         @@_inst_test_unit_blocks_
     end
 

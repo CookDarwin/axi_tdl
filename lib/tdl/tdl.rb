@@ -90,6 +90,7 @@ require_relative "./exlib/constraints"
 require_relative "./exlib/constraints_verb"
 require_relative "./exlib/itegration"
 require_relative "./exlib/itegration_verb"
+require_relative "./exlib/itegration_test_unit"
 require_relative "./exlib/parse_argv"
 # require_relative "./tdlmodule_ex"
 # require_relative "./SDL/path_lib"     # require sdlmodule

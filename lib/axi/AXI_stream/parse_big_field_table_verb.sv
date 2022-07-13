@@ -17,9 +17,10 @@ madified:
 module parse_big_field_table_verb #(
     parameter   DSIZE         = 8,
     parameter   FIELD_LEN     = 16*8,     //MAX 16*8
-    parameter   TRY_PARSE     = "OFF"
+    parameter   TRY_PARSE     = "OFF",
+    parameter   START_INDEX   = 0
 )(
-    output logic[0:DSIZE*FIELD_LEN-1]       value,
+    output logic[START_INDEX:DSIZE*FIELD_LEN-1]       value,
     output logic                            out_valid,
     axi_stream_inf.slaver                   cm_tb_s,
     axi_stream_inf.master                   cm_tb_m,

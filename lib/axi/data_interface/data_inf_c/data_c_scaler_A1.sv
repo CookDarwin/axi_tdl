@@ -130,7 +130,8 @@ always_comb begin
         else    nstate  = END_EM_CN_EM_BUF;
     END_VD_CN_EM_BUF:
         case({m00_vld_rdy,end_vld_rdy})
-        2'b00:  nstate  = end_last? FSH_VD_CN_EM_BUF : END_VD_CN_EM_BUF;
+        // 2'b00:  nstate  = end_last? FSH_VD_CN_EM_BUF : END_VD_CN_EM_BUF;
+        2'b00:  nstate  = END_VD_CN_EM_BUF;
         2'b10:  nstate  = END_EM_CN_EM_BUF;
         2'b01:  nstate  = end_last? FSH_VD_CN_VD_BUF : END_VD_CN_VD_BUF;
         2'b11:  nstate  = end_last? FSH_VD_CN_EM_BUF : END_VD_CN_EM_BUF;

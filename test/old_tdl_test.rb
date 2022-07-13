@@ -83,15 +83,18 @@ class CptHDLTest < Minitest::Test
         require "10_random/exp_random"
     end
 
-    def test_tunit
-        TopModule.sim = true
-        require "11_test_unit/exp_test_unit"
-    end
+    ## dont test unit in old mode
+    # def test_tunit
+    #     TopModule.sim = true
+    #     require "11_test_unit/exp_test_unit"
+    # end
 
-    def test_tunit_1
-        TopModule.sim = false
-        require "11_test_unit/exp_test_unit"
-    end
+    # def test_tunit_1
+    #     TopModule.sim = false
+    #     require "11_test_unit/exp_test_unit"
+    # end
+
+
     # def test_hdl_class
         
     # end
