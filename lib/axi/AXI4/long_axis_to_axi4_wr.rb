@@ -2,6 +2,7 @@
 require_hdl "axis_length_split_with_addr.sv"
 require_hdl 'axi_stream_long_fifo_verb.sv'
 require_shdl 'axi4_wr_auxiliary_gen_without_resp','axis_valve_with_pipe'
+require_shdl 'independent_clock_fifo'
 
 TdlBuild.long_axis_to_axi4_wr(__dir__) do
     parameter.BYTE_DEPTH    8192*2

@@ -34,9 +34,10 @@ logic [DSIZE*16*8-1:0]   value_tmp;
 
 // assign  value_tmp   = {value,{(16*8-FIELD_LEN){1'b0}}};
 generate
-if(FIELD_LEN < 128)
+if(FIELD_LEN < 128)begin
     assign  value_tmp[DSIZE*16*8-1-:DSIZE*FIELD_LEN]   = value;
-else
+    assign  value_tmp[DSIZE*16*8-1-DSIZE*FIELD_LEN:0]   = '0;
+end else
     assign  value_tmp = value;
 endgenerate
 

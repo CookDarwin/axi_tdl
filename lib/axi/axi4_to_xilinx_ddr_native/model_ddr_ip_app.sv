@@ -115,8 +115,8 @@ task automatic write_cmd ();
 endtask:write_cmd
 
 task automatic write_data ();
-logic [ADDR_WIDTH-1:0]      addr;
-logic [DATA_WIDTH-1:0]      data;
+bit [ADDR_WIDTH-1:0]      addr;
+bit [DATA_WIDTH-1:0]      data;
     fork
         forever begin
             forever begin

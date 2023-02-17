@@ -228,7 +228,7 @@ class Axi4
             curr_quanti_len = e.dsize.real_data * (2**e.lsize.real_data)
             if(curr_quanti_len > root_quanti_len )
             # if(true )
-                new_master = self.copy(mode:e.mode,idsize:e.idsize+4)
+                new_master = self.copy(mode:e.mode,idsize:e.idsize+4,name: "#{self.name}_long_slim_to_wide_#{globle_random_name_flag('axi_intc')}" )
                 new_master.mode =  e.mode
 
                 require_hdl 'axi4_long_to_axi4_wide_B1.sv'
@@ -236,6 +236,8 @@ class Axi4
                 TopModule.contain_hdl 'axi4_packet_fifo_verb.sv'
                 TopModule.contain_hdl 'axi4_data_convert_verb.sv'
                 TopModule.contain_hdl 'data_c_pipe_force_vld.sv'
+                TopModule.contain_hdl 'axi4_packet_fifo_B1.sv','axi4_rd_packet_fifo_A1.sv','axi4_wr_packet_fifo_A1.sv','axi_stream_packet_fifo_B1F.sv'
+
 
                 belong_to_module.Instance(:axi4_long_to_axi4_wide_B1,"axi4_long_to_axi4_wide_B1_#{index}_inst") do |h|
                     h[:PARTITION]   = "ON"
@@ -254,6 +256,8 @@ class Axi4
                     TopModule.contain_hdl 'axi4_packet_fifo_verb.sv'
                     TopModule.contain_hdl 'axi4_data_convert_verb.sv'
                     TopModule.contain_hdl 'data_c_pipe_force_vld.sv'
+                    TopModule.contain_hdl 'axi4_packet_fifo_B1.sv','axi4_rd_packet_fifo_A1.sv','axi4_wr_packet_fifo_A1.sv','axi_stream_packet_fifo_B1F.sv'
+
                     # puts "#{e.dsize} == #{self.dsize} #{e.dsize != self.dsize} #{e.dsize.class}"
                     new_master = self.copy(name: "#{e.name}_renew_dir",mode:e.mode,idsize:e.idsize)
                     # new_master.axi4_data_convert(up_stream: e)

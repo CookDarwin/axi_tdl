@@ -109,8 +109,8 @@ axi4_partition_OD #(
     // .ADDR_STEP      (slaver_inf.DSIZE/(master_inf.DSIZE/8.0)  )
     // .ADDR_STEP      (4*slaver_inf.DSIZE/16.0  )
 )axi4_partition_inst(
-/*    axi_inf.slaver_inf */ .slaver_inf     (axi_inf_first_wc       ),
-/*    axi_inf.master_inf */ .master_inf     (axi_inf_pout           )
+/*    axi_inf.slaver_inf */ .slaver     (axi_inf_first_wc       ),
+/*    axi_inf.master_inf */ .master     (axi_inf_pout           )
 );
 
 axi4_data_convert_verb #(
@@ -133,9 +133,11 @@ end
 endgenerate
 
 
-axi4_packet_fifo_verb #(             //512
+// axi4_packet_fifo_verb #(             //512
+axi4_packet_fifo_B1 #(             //
     .PIPE       (PIPE   ),
     .DEPTH      (4      ),
+    .MAX_DATA_LEN   (1024*2),
     .SLAVER_MODE    (SLAVER_MODE ),    //
     .MASTER_MODE    (MASTER_MODE )   //
 )axi4_packet_fifo_inst(

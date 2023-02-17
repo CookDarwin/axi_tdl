@@ -2,6 +2,8 @@
 require_hdl 'axis_connect_pipe_right_shift_verb.sv'
 # require_hdl 'axi_stream_latency.sv'
 require_sdl 'axis_pipe_sync_seam.rb'
+require_shdl 'common_fifo'
+require_shdl 'axis_head_cut_verb'
 
 TdlBuild.axis_head_cut_verc(__dir__) do 
     parameter.BYTE_BITS     8

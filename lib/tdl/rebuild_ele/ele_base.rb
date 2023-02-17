@@ -668,6 +668,20 @@ module TdlSpace
             end
         end
 
+        ## Monkey 布丁, 
+        def force_name_copy(nstr)
+            
+            if nstr.to_s.eql?(inst_name.to_s)
+                @copy_id ||= 0
+                str = "#{nstr.to_s}_copy_#{@copy_id}"
+                @copy_id += 1
+                str
+            else
+                nstr.to_s
+            end
+            
+        end
+
         def use_which_freq_when_copy(argv_clock,argv_origin)
             if argv_clock == @clock && @clock
                 if @clock.respond_to? :freqM
