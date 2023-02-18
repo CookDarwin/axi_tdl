@@ -10,3 +10,4 @@
 lib/tdl/auto_script/tmp/
 /*.gem
 Gemfile.lock
+bk*.yml
