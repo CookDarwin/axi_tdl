@@ -12,7 +12,8 @@ madified:
 ***********************************************/
 `timescale 1ns/1ps
 module axi4_mix_interconnect_M2S #(
-    parameter NUM = 8
+    parameter NUM = 8,
+    parameter MASTER_IDSIZE = 8
 )(
     axi_inf.slaver slaver [NUM-1:0],
     axi_inf.master master
@@ -38,7 +39,8 @@ axi4_wr_interconnect_M2S_A1 #(     //axi4 dont support write burst out-of-order
 // );
 
 axi4_rd_mix_interconnect_M2S_A2 #(
-    .NUM    (NUM    )
+    .NUM            (NUM    ),
+    .MASTER_IDSIZE  (MASTER_IDSIZE)
 )axi4_rd_mix_interconnect_M2S_inst(
 /*    axi_inf.slaver_rd */  .slaver     (`slaver_vcs_cptRead ),      //[NUM-1:0],
 /*    axi_inf.master_rd */  .master     (`master_vcs_cptRead )

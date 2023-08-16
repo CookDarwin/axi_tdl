@@ -44,8 +44,10 @@ TdlBuild.axi4_partition_rd_verb(__dir__) do
         h.input.wr_en                   partition_pulse_inf.vld_rdy
         h.output['DSIZE'].rdata         ''.to_nq
         h.input.rd_en                   short_inf.axi_rvalid & short_inf.axi_rready & short_inf.axi_rlast
-        h.output.logic.empty            debugLogic.fifo_empty
-        h.output.logic.full             debugLogic.fifo_full
+        # h.output.logic.empty            debugLogic.fifo_empty
+        # h.output.logic.full             debugLogic.fifo_full
+        h.output.logic.empty            logic.fifo_empty
+        h.output.logic.full             logic.fifo_full
     end
 
     Assign do 

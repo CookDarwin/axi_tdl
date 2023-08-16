@@ -14,7 +14,8 @@ madified:
 ***********************************************/
 `timescale 1ns/1ps
 module axi4_rd_mix_interconnect_M2S_A2 #(
-    parameter NUM = 8
+    parameter NUM = 8,
+    parameter MASTER_IDSIZE = 8
 )(
     axi_inf.slaver_rd slaver [NUM-1:0],
     axi_inf.master_rd master
@@ -24,7 +25,8 @@ localparam NSIZE =  $clog2(NUM);
 import SystemPkg::*;
 
 // localparam LAZISE = slaver[0].IDSIZE;
-localparam LAZISE = master.IDSIZE - NSIZE;
+// localparam LAZISE = master.IDSIZE - NSIZE;
+localparam LAZISE = MASTER_IDSIZE - NSIZE;
 
 initial begin
     // assert(slaver[0].IDSIZE+NSIZE == master.IDSIZE)

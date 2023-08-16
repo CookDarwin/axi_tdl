@@ -4,8 +4,8 @@ ___________    Cook Darwin   __________
 _______________________________________
 descript:
 author : Cook.Darwin
-Version: 
-creaded: XXXX.XX.XX
+Version: VERA.0.0
+creaded: 
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -48,22 +48,22 @@ for(genvar KK0=0;KK0 < LAT;KK0++)begin
 endgenerate
 //-------- CLOCKs Total 2 ----------------------
 //--->> CheckClock <<----------------
-logic cc_done_10,cc_same_10;
-integer cc_afreq_10,cc_bfreq_10;
-ClockSameDomain CheckPClock_inst_10(
+logic cc_done_28,cc_same_28;
+integer cc_afreq_28,cc_bfreq_28;
+ClockSameDomain CheckPClock_inst_28(
 /*  input         */      .aclk     (in_inf.clock           ),
 /*  input         */      .bclk     (out_inf.clock          ),
-/*  output logic  */      .done     (cc_done_10),
-/*  output logic  */      .same     (cc_same_10),
-/*  output integer */     .aFreqK   (cc_afreq_10),
-/*  output integer */     .bFreqK   (cc_bfreq_10)
+/*  output logic  */      .done     (cc_done_28),
+/*  output logic  */      .same     (cc_same_28),
+/*  output integer */     .aFreqK   (cc_afreq_28),
+/*  output integer */     .bFreqK   (cc_bfreq_28)
 );
 
 initial begin
-    wait(cc_done_10);
-    assert(cc_same_10)
+    wait(cc_done_28);
+    assert(cc_same_28)
     else begin
-        $error("--- Error : `data_c_pipe_sync_seam` clock is not same, in_inf.clock< %0f M> != out_inf.clock<%0f M>",1000000.0/cc_afreq_10, 1000000.0/cc_bfreq_10);
+        $error("--- Error : `data_c_pipe_sync_seam` clock is not same, in_inf.clock< %0f M> != out_inf.clock<%0f M>",1000000.0/cc_afreq_28, 1000000.0/cc_bfreq_28);
         repeat(10)begin 
             @(posedge in_inf.clock);
         end
