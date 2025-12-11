@@ -328,7 +328,13 @@ class TopModule
             unless e.is_a? ItegrationTestUnit
                 raise TdlError.new(" add_test_unit args<#{e}> must be ItegrationTestUnit ")
             end
+
+            unless e.itgt.is_a? ItegrationVerb
+                puts e.itgt
+                raise TdlError.new(" add_test_unit args<#{e}.itgt> must be ItegrationVerb ")
+            end
         end
+
         @_test_unit_collect_ ||= []
         @_test_unit_collect_ = @_test_unit_collect_ + args
     end
@@ -340,8 +346,12 @@ class TopModule
         args = @_test_unit_collect_
         ## 例化需要的itgt test unit
         # ItegrationVerb.test_unit_inst
-        ItegrationVerb.test_unit_inst do |name|
-            args.include? name
+        args_names = args.map do |e| 
+            e.name 
+        end 
+
+        ItegrationVerb.test_unit_inst_verb do |name|
+            args_names.include? name
         end
 
         self.techbench.instance_exec(args) do |args|
@@ -354,7 +364,7 @@ class TopModule
             nqq  = args.size <= 1
             args.each do |itgt_testunit|
                 
-                tu_inst = Instance("tu_#{itgt_testunit.itgt}_#{itgt_testunit.name}","test_unit_#{index}") do |h|
+                tu_inst = Instance("tu_#{itgt_testunit.itgt.class}_#{itgt_testunit.itgt.nickname}#{itgt_testunit.name}","test_unit_#{index}") do |h|
                     h.input.from_up_pass            (nqq ? unit_pass_u : unit_pass_u[index])
                     h.output.logic.to_down_pass     (nqq ? unit_pass_d : unit_pass_d[index])
                 end

@@ -24,9 +24,9 @@ module axi_stream_packet_long_fifo #(
 assign axis_out.axis_tuser  = '0;
 
 //--->> NATIVE FIFO IP <<------------------------------
-// (* dont_touch = "true" *)
+(* dont_touch = "true" *)
 logic   data_fifo_full;
-// (* dont_touch = "true" *)
+(* dont_touch = "true" *)
 logic   data_fifo_empty;
 logic [axis_in.DSIZE-1:0]   stream_fifo_data;
 
@@ -70,9 +70,9 @@ endgenerate
 //---<< NATIVE FIFO IP >>------------------------------
 
 //--->> PACKET <<--------------------------------------
-// (* dont_touch = "true" *)
+(* dont_touch = "true" *)
 logic   packet_fifo_full;
-// (* dont_touch = "true" *)
+(* dont_touch = "true" *)
 logic   packet_fifo_empty;
 logic [15:0]      w_bytes_total;
 logic [15:0]      r_bytes_total;
@@ -212,6 +212,7 @@ initial begin
         wait(data_fifo_full);
         assert(packet_fifo_full == 1) else begin 
             $error("long fifo full ,data stream is too long");
+            #(100us);
             $stop;
         end
     end

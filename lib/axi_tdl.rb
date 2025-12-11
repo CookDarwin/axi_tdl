@@ -5,6 +5,7 @@ module AxiTdl
     AXI_PATH = File.expand_path(File.join(__dir__,"axi"))
     TDL_PATH = File.expand_path(File.join(__dir__,"tdl"))
     PUBLIC_ATOM_PATH = File.expand_path(File.join(__dir__,"public_atom_module"))
+    STREAM_TO_FILE_PKG_PATH = File.expand_path(File.join(__dir__,"stream-to-file-package"))
 end
 
 
@@ -25,8 +26,10 @@ add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/data_interface"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/data_interface/data_inf_c"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/techbench"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/platform_ip"))
+add_to_tdl_paths    File.expand_path(File.join(__dir__, "axi/xilinx_clock_reset"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "public_atom_module"))
 add_to_tdl_paths    File.expand_path(File.join(__dir__, "public_atom_module/sim"))
+add_to_tdl_paths    File.expand_path(File.join(__dir__, "stream-to-file-package"))
 ## base require 
 require_hdl 'axis_master_empty.sv'
 require_hdl 'axis_slaver_empty.sv'

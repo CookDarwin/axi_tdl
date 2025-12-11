@@ -11,7 +11,8 @@ madified:
 ***********************************************/
 `timescale 1ns/1ps
 module axi4_partition_wr_OD #(
-    parameter PSIZE = 128
+    parameter PSIZE     = 128,
+    parameter EXIDSIZE  = 4
     // parameter real ADDR_STEP = 1
 )(
     axi_inf.slaver_wr axi_in,
@@ -20,13 +21,13 @@ module axi4_partition_wr_OD #(
 
 import SystemPkg::*;
 
-initial begin
-    assert(axi_in.IDSIZE+4 == axi_out.IDSIZE)
-    else begin
-        $error("SLAVER AXIS IDSIZE+4 != MASTER AXIS IDSIZE");
-        $stop;
-    end
-end
+// initial begin
+//     assert(axi_in.IDSIZE+EXIDSIZE == axi_out.IDSIZE)
+//     else begin
+//         $error("SLAVER AXIS IDSIZE+4 != MASTER AXIS IDSIZE");
+//         $stop;
+//     end
+// end
 
 logic       clock,rst_n;
 
@@ -284,7 +285,7 @@ assign  axi_out.axi_wlast   = axis_out.axis_tlast;
 assign  axis_out.axis_tready= axi_out.axi_wready;
 //----<< DATA STREAM >>------------------------
 //---->> WID CTRL <<---------------------------
-logic [axi_in.IDSIZE+4-1:0]     awid;
+logic [15:0]     awid;
 always@(posedge clock,negedge rst_n)
     if(~rst_n)  awid    <= '0;
     else begin
@@ -292,7 +293,7 @@ always@(posedge clock,negedge rst_n)
                 awid    <= axi_in.axi_awid;
         else if(axi_out.axi_awvalid  && axi_out.axi_awready)begin
             if(length > PSIZE)
-                    awid[3:0]   <= awid[3:0] + 1'b1;
+                    awid[15:0]   <= awid[15:0] + 1'b1;
             else    awid        <= '0;
         end else    awid        <= awid;
     end

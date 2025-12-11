@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-creaded:
+created: 2025-11-23 20:52:34 +0800
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -21,18 +21,22 @@ module axi4_partition_rd_verb #(
 //-------- define ----------------------------------------------------------
 logic  clock;
 logic  rst_n;
-(* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_empty;
-(* MARK_DEBUG="true" *)(* dont_touch="true" *)logic fifo_full;
+logic fifo_empty;
+logic fifo_full;
 data_inf_c #(.DSIZE(long_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE),.FreqM(long_inf.FreqM)) pre_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
-data_inf_c #(.DSIZE(short_inf.IDSIZE+long_inf.LSIZE+long_inf.ASIZE),.FreqM(long_inf.FreqM)) post_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
+data_inf_c #(.DSIZE(short_inf.IDSIZE+short_inf.LSIZE+short_inf.ASIZE),.FreqM(long_inf.FreqM)) post_partition_data_inf (.clock(clock),.rst_n(rst_n)) ;
 data_inf_c #(.DSIZE(1),.FreqM(long_inf.FreqM)) partition_pulse_inf (.clock(clock),.rst_n(rst_n)) ;
 data_inf_c #(.DSIZE(1),.FreqM(long_inf.FreqM)) wait_last_inf (.clock(clock),.rst_n(rst_n)) ;
 //==========================================================================
 //-------- instance --------------------------------------------------------
-data_inf_partition #(
+data_inf_partition_A1 #(
     .PLEN      (PSIZE              ),
-    .LSIZE     (long_inf.LSIZE     ),
-    .IDSIZE    (long_inf.IDSIZE    ),
+    .IASIZE    (long_inf.ASIZE     ),
+    .ILSIZE    (long_inf.LSIZE     ),
+    .IIDSIZE   (long_inf.IDSIZE    ),
+    .OASIZE    (short_inf.ASIZE    ),
+    .OLSIZE    (short_inf.LSIZE    ),
+    .OIDSIZE   (short_inf.IDSIZE   ),
     .ADDR_STEP (long_inf.ADDR_STEP )
 )data_inf_partition_inst(
 /* data_inf_c.slaver */.data_in             (pre_partition_data_inf  ),
@@ -41,8 +45,8 @@ data_inf_partition #(
 /* data_inf_c.master */.wait_last_inf       (wait_last_inf           )
 );
 common_fifo #(
-    .DEPTH (6 ),
-    .DSIZE (1 )
+    .DEPTH          (6 ),
+    .DSIZE          (1 )
 )common_fifo_inst(
 /* input  */.clock (clock                                                             ),
 /* input  */.rst_n (rst_n                                                             ),

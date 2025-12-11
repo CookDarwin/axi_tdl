@@ -1,7 +1,8 @@
 require 'axi_tdl'
 require 'minitest/autorun'
 
-class TestAxisVerify < MiniTest::Unit::TestCase
+# class TestAxisVerify < MiniTest::Unit::TestCase
+class TestAxisVerify < Minitest::Test
   def setup
     @length = 100
     @itr = AxiTdl::AxisVerify::Iteration.new(length: @length, data: (0...100).to_a , vld_perc: 50,user:[0], keep:[1] , rand_seed: 0 ,dsize: 8, usize: 1)

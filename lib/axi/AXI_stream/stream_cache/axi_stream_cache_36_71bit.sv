@@ -56,7 +56,7 @@ FIFO_DUALCLOCK_MACRO  #(
     .RDERR          (),         // 1-bit output read error
     .WRCOUNT        (),         // Output write count, width determined by FIFO depth
     .WRERR          (),         // 1-bit output write error
-    .DI             ({ais_in.axis_tlast,axis_int.axis_tdata }    ),                 // Input data, width defined by DATA_WIDTH parameter
+    .DI             ({axis_out.axis_tlast,axis_int.axis_tdata }    ),                 // Input data, width defined by DATA_WIDTH parameter
     .RDCLK          (axis_out.aclk   ),                                             // 1-bit input read clock
     .RDEN           ((axis_out.axis_tready && axis_out.aclken)   ),                 // 1-bit input read enable
     .RST            (RST),                                                          // 1-bit input reset

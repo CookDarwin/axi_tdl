@@ -31,10 +31,12 @@ initial begin
     end
 end
 
+(* dont_touch="true" *)logic   packet_fifo_full;
+(* dont_touch="true" *)logic   packet_fifo_empty;
 
 //--->> NATIVE FIFO IP <<------------------------------
-logic   data_fifo_full;
-logic   data_fifo_empty;
+(* dont_touch="true" *)logic   data_fifo_full;
+(* dont_touch="true" *)logic   data_fifo_empty;
 
 fifo_36kb_long #(
     .DSIZE      (axis_out.DSIZE ),
@@ -45,8 +47,8 @@ fifo_36kb_long #(
 /*  input              */  .rd_clk      (axis_out.aclk      ),
 /*  input              */  .rd_rst      (~axis_out.aresetn  ),
 /*  input [DSIZE-1:0]  */  .din         (axis_in.axis_tdata ),
-/*  input              */  .wr_en       ((axis_in.axis_tvalid && !data_fifo_full && axis_in.axis_tready)             ),
-/*  input              */  .rd_en       ((axis_out.axis_tvalid && !data_fifo_empty && axis_out.axis_tready)          ),
+/*  input              */  .wr_en       ((axis_in.axis_tvalid && !data_fifo_full && axis_in.axis_tready && !packet_fifo_full)             ),
+/*  input              */  .rd_en       ((axis_out.axis_tvalid && !data_fifo_empty && axis_out.axis_tready )          ),
 /*  output [DSIZE-1:0] */  .dout        (axis_out.axis_tdata    ),
 /*  output             */  .full        (data_fifo_full         ),
 /*  output             */  .empty       (data_fifo_empty        )
@@ -54,8 +56,8 @@ fifo_36kb_long #(
 //---<< NATIVE FIFO IP >>------------------------------
 
 //--->> PACKET <<--------------------------------------
-logic   packet_fifo_full;
-logic   packet_fifo_empty;
+// logic   packet_fifo_full;
+// logic   packet_fifo_empty;
 logic [31:0]      w_bytes_total;
 logic [31:0]      r_bytes_total;
 logic             w_total_eq_1;
@@ -74,7 +76,7 @@ independent_clock_fifo #(
 /*    input                     */  .rd_clk     (axis_out.aclk       ),
 /*    input                     */  .rd_rst_n   (axis_out.aresetn    ),
 /*    input [DSIZE-1:0]         */  .wdata      ({w_total_eq_1,w_bytes_total}      ),
-/*    input                     */  .wr_en      ((axis_in.axis_tvalid && axis_in.axis_tlast && axis_in.axis_tready)      ),
+/*    input                     */  .wr_en      ((axis_in.axis_tvalid && axis_in.axis_tlast && axis_in.axis_tready && !data_fifo_full)      ),
 /*    output logic[DSIZE-1:0]   */  .rdata      ({r_total_eq_1,r_bytes_total}      ),
 /*    input                     */  .rd_en      ((axis_out.axis_tvalid && axis_out.axis_tlast && axis_out.axis_tready)    ),
 /*    output logic              */  .empty      (packet_fifo_empty   ),
