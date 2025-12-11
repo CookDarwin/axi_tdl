@@ -53,7 +53,7 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${RUBYGEMS_API_KEY}\n" > $HOME/.gem/credentials
           gem build *.gemspec
-          gem push *.gem
+          gem push *.gem --key rubygems --host https://rubygems.org
         env:
           GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
