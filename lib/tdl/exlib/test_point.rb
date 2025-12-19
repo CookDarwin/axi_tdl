@@ -164,7 +164,7 @@ class BaseElm
         else
             collects = ["$root.#{@belong_to_module.module_name}.#{@name}".to_nq]
         end
-        collects
+        collects.uniq
     end
     
 end
@@ -200,7 +200,7 @@ module TdlSpace
             else
                 collects = ["$root.#{@belong_to_module.module_name}.#{inst_name}".to_nq]
             end
-            collects
+            collects.uniq
         end
     end
 end
@@ -249,7 +249,7 @@ module ClassHDL
                     collects << new_name
                 end
             end
-            collects
+            collects.uniq
         end
     end
 end
@@ -289,7 +289,7 @@ module ClassHDL
             else
                 collects = ["$root.#{@belong_to_module.module_name}.#{self.to_s.to_nq}".to_nq]
             end
-            collects
+            collects.uniq
         end
     end
 end

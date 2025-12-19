@@ -5,7 +5,7 @@ _______________________________________
 descript:
 author : Cook.Darwin
 Version: VERA.0.0
-created: 2021-04-16 17:01:06 +0800
+creaded:
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -33,8 +33,8 @@ axis_insert_copy axis_insert_copy_inst(
 /* axi_stream_inf.master */.out_inf     (origin_inf_insert )
 );
 common_fifo #(
-    .DEPTH (4  ),
-    .DSIZE (16 )
+    .DEPTH          (4  ),
+    .DSIZE          (16 )
 )common_fifo_head_bytesx_inst(
 /* input  */.clock (clock                                                                                          ),
 /* input  */.rst_n (rst_n                                                                                          ),

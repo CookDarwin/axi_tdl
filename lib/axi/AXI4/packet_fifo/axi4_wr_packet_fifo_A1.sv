@@ -130,10 +130,18 @@ axi_stream_inf #(
 // /*    axi_stream_inf.master  */    .axis_out    (axis_valve_slaver   )
 // );
 
-axi_stream_packet_long_fifo #(
-    .DEPTH      (DEPTH),   //2-4
-    .BYTE_DEPTH (MAX_DATA_LEN)
-)axi_stream_packet_fifo_inst(
+// axi_stream_packet_long_fifo #(
+//     .DEPTH      (DEPTH),   //2-4
+//     .BYTE_DEPTH (MAX_DATA_LEN)
+// )axi_stream_packet_fifo_inst(
+// /*    axi_stream_inf.slaver  */    .axis_in     (axis_in    ),
+// /*    axi_stream_inf.master  */    .axis_out    (axis_valve_slaver   )
+// );
+
+axi_stream_long_fifo #(
+   .DEPTH          (DEPTH  ),
+   .BYTE_DEPTH     (MAX_DATA_LEN )
+)axi_stream_long_fifo_inst(
 /*    axi_stream_inf.slaver  */    .axis_in     (axis_in    ),
 /*    axi_stream_inf.master  */    .axis_out    (axis_valve_slaver   )
 );
