@@ -41,8 +41,8 @@ logic track_st5;
 //==========================================================================
 //-------- instance --------------------------------------------------------
 common_fifo #(
-    .DEPTH          (6              ),
-    .DSIZE          (data_out.DSIZE )
+    .DEPTH (6              ),
+    .DSIZE (data_out.DSIZE )
 )common_fifo_inst(
 /* input  */.clock (data_in.clock                    ),
 /* input  */.rst_n (data_in.rst_n                    ),

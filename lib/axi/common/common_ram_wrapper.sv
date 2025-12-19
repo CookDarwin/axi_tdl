@@ -4,8 +4,8 @@ ___________    Cook Darwin   __________
 _______________________________________
 descript:
 author : Cook.Darwin
-Version: VERA.0.0
-creaded:
+Version: 
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps

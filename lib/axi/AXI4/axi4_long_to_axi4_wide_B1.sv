@@ -20,7 +20,6 @@ madified:
 module axi4_long_to_axi4_wide_B1 #(
     parameter PIPE      = "OFF",
     parameter PARTITION = "ON",         //ON OFF
-    parameter MAX_DATA_LEN = 1024*2,    // LEN AT MASTER.DSIZE
     `parameter_string MODE  = "BOTH_to_BOTH",    //ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
     `parameter_string SLAVER_MODE  = "BOTH",    //
     `parameter_string MASTER_MODE  = "BOTH"   //
@@ -138,7 +137,7 @@ endgenerate
 axi4_packet_fifo_B1 #(             //
     .PIPE       (PIPE   ),
     .DEPTH      (4      ),
-    .MAX_DATA_LEN   (MAX_DATA_LEN),
+    .MAX_DATA_LEN   (1024*2),
     .SLAVER_MODE    (SLAVER_MODE ),    //
     .MASTER_MODE    (MASTER_MODE )   //
 )axi4_packet_fifo_inst(

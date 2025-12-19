@@ -60,16 +60,13 @@ class Axi4
     end
 
     def <<(*up_streams)
-        # require_shdl 'axi4_direct_algin_addr_step'
-        unless respond_to? :axi4_direct_algin_addr_step 
-            require_shdl 'axi4_direct_algin_addr_step'
-        end
+        require_shdl 'axi4_direct_algin_addr_step'
         up_streams.each do |up_stream|
             ## e is a Vector 
             if up_stream.is_a? Axi4
                 if up_stream.dimension && up_stream.dimension[0].is_a?(Integer) && up_stream.dimension[0] > 1
                     self.belong_to_module.instance_exec(self,up_stream) do |curr_axi4_inst,up_stream|
-                        _algin_addrs = up_stream.copy(
+                        up_stream.copy(
                             name: "#{up_stream.inst_name}_algin_addr",
                             addr_step: curr_axi4_inst.addr_step*up_stream.dsize/curr_axi4_inst.dsize,
                             dimension:up_stream.dimension)
@@ -83,16 +80,14 @@ class Axi4
                                 h.param.SLAVER_MODE     up_stream.mode    
                                 h.param.MASTER_MODE     up_stream.mode    
                                 h.port.axi_inf.slaver.slaver_inf     up_stream[kk]
-                                # h.port.axi_inf.master.master_inf     curr_axi4_inst.belong_to_module.signal("#{up_stream.inst_name}_algin_addr")[kk]
-                                h.port.axi_inf.master.master_inf     _algin_addrs[kk]
+                                h.port.axi_inf.master.master_inf     curr_axi4_inst.belong_to_module.signal("#{up_stream.inst_name}_algin_addr")[kk]
                             end
                         end
-                        # curr_axi4_inst.old_append( signal("#{up_stream.inst_name}_algin_addr") )
-                        curr_axi4_inst.old_append( _algin_addrs )
+                        curr_axi4_inst.old_append( signal("#{up_stream.inst_name}_algin_addr") )
                     end
                 else  
                     curr_axi4_inst = self
-                    up_stream_copy = up_stream.copy(
+                    up_stream.copy(
                         name: "#{up_stream.inst_name}_algin_addr",
                         addr_step: curr_axi4_inst.addr_step*up_stream.dsize/curr_axi4_inst.dsize)
 
@@ -103,15 +98,11 @@ class Axi4
                         h.param.MODE            "#{up_stream.mode}_to_#{up_stream.mode}"    #//ONLY_READ to BOTH,ONLY_WRITE to BOTH,BOTH to BOTH,BOTH to ONLY_READ,BOTH to ONLY_WRITE
                         h.param.SLAVER_MODE     up_stream.mode    
                         h.param.MASTER_MODE     up_stream.mode    
-                        # puts h.origin.module_name
-                        # puts h.port.axi_inf.slaver.origin.module_name
-                        # puts h.inst_port_hash
                         h.port.axi_inf.slaver.slaver_inf     up_stream
-                        # h.port.axi_inf.master.master_inf      self.belong_to_module.signal("#{up_stream.inst_name}_algin_addr")
-                        h.port.axi_inf.master.master_inf      up_stream_copy
+                        h.port.axi_inf.master.master_inf      self.belong_to_module.signal("#{up_stream.inst_name}_algin_addr")
+                    
                     end
-                    # curr_axi4_inst.old_append(  self.belong_to_module.signal("#{up_stream.inst_name}_algin_addr") )
-                    curr_axi4_inst.old_append(  up_stream_copy )
+                    curr_axi4_inst.old_append(  self.belong_to_module.signal("#{up_stream.inst_name}_algin_addr") )
                 end
             else 
                 self.old_append(up_stream)
@@ -248,14 +239,12 @@ class Axi4
                 TopModule.contain_hdl 'axi4_packet_fifo_B1.sv','axi4_rd_packet_fifo_A1.sv','axi4_wr_packet_fifo_A1.sv','axi_stream_packet_fifo_B1F.sv'
 
 
-                belong_to_module.Instance(:axi4_long_to_axi4_wide_B1,"axi4_long_to_axi4_wide_B1_#{index}_#{globle_random_name_flag('rand')}_inst") do |h|
+                belong_to_module.Instance(:axi4_long_to_axi4_wide_B1,"axi4_long_to_axi4_wide_B1_#{index}_inst") do |h|
                     h[:PARTITION]   = "ON"
                     h[:PIPE]        = (@interconnect_pipe ? "ON" : "OFF")
                     h[:MODE]        = "#{e.mode}_TO_#{new_master.mode}"
                     h[:SLAVER_MODE] = e.mode 
                     h[:MASTER_MODE] = new_master.mode
-                    # h[:MAX_DATA_LEN] = 2**(e.lsize+1)
-                    h[:MAX_DATA_LEN] = 2**(self.lsize+1)
                     h[:slaver_inf]      = e
                     h[:master_inf]      = new_master
                 end
@@ -281,8 +270,6 @@ class Axi4
                         h[:MODE]        = "#{e.mode}_to_#{new_master.mode}"
                         h[:SLAVER_MODE] = e.mode 
                         h[:MASTER_MODE] = new_master.mode
-                        # h[:MAX_DATA_LEN] = 2**(e.lsize+1)
-                        h[:MAX_DATA_LEN] = 2**(self.lsize+1)
                         h[:slaver_inf]      = e
                         h[:master_inf]      = new_master
                     end
@@ -410,8 +397,7 @@ class Axi4
         if @sub_num > 1
             str =
 "\naxi4_mix_interconnect_M2S #(
-    .NUM            (#{@sub_num}),
-    .MASTER_IDSIZE  (#{self.idsize})
+    .NUM    (#{@sub_num})
 )interconnect_#{name}_inst(
 /*  axi_inf.slaver */   .slaver     (sub_axi_#{name}_inf),    //[NUM-1:0],
 /*  axi_inf.master */   .master     (#{name})

@@ -36,9 +36,6 @@ class SdlModule
         return new_var
     end
 
-    def parse_pin_prop(prop=nil)
-        return [prop["pins"],prop["iostd"],prop["pulltype"]]
-    end
 
     private
 
@@ -52,6 +49,9 @@ class SdlModule
     end
     ## =========================================================================
 
+    def parse_pin_prop(prop=nil)
+        return [prop["pins"],prop["iostd"],prop["pulltype"]]
+    end
 
     def add_method_to_itgt(stringbanditegration,obj)
         StringBandItegration.add_method_to_itgt(stringbanditegration,obj)

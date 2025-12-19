@@ -1,6 +1,6 @@
 add_to_tdl_paths __dir__ 
 require_sdl 'data_inf_partition.rb'
-require_shdl 'data_inf_partition_A1'
+
 TdlBuild.axi4_partition_rd_verb(__dir__) do 
     parameter.PSIZE         128
     port.axi4.slaver_rd     - 'long_inf'
@@ -9,26 +9,17 @@ TdlBuild.axi4_partition_rd_verb(__dir__) do
     long_inf.clock_reset_taps('clock','rst_n')
 
     data_inf_c(clock: clock,reset: rst_n,dsize: "#{long_inf.IDSIZE}+#{long_inf.LSIZE}+#{long_inf.ASIZE}".to_nq)    - 'pre_partition_data_inf'
-    data_inf_c(clock: clock,reset: rst_n,dsize: "#{short_inf.IDSIZE}+#{short_inf.LSIZE}+#{short_inf.ASIZE}".to_nq)   - 'post_partition_data_inf'
+    data_inf_c(clock: clock,reset: rst_n,dsize: "#{short_inf.IDSIZE}+#{long_inf.LSIZE}+#{long_inf.ASIZE}".to_nq)   - 'post_partition_data_inf'
     data_inf_c(clock: clock,reset: rst_n,dsize: 1)    - 'partition_pulse_inf'
     data_inf_c(clock: clock,reset: rst_n,dsize: 1)    - 'wait_last_inf'
 
-    data_inf_partition_A1.data_inf_partition_inst do |h|
+    data_inf_partition.data_inf_partition_inst do |h|
         h.param.PLEN                        param.PSIZE 
-        # h.param.IDSIZE                      long_inf.IDSIZE
-        # h.param.LSIZE                       long_inf.LSIZE 
-
-        h.param.IASIZE         long_inf.ASIZE 
-        h.param.ILSIZE         long_inf.LSIZE 
-        h.param.IIDSIZE        long_inf.IDSIZE
-
-        h.param.OASIZE         short_inf.ASIZE 
-        h.param.OLSIZE         short_inf.LSIZE
-        h.param.OIDSIZE        short_inf.IDSIZE
-
+        h.param.IDSIZE                      long_inf.IDSIZE
+        h.param.LSIZE                       long_inf.LSIZE 
         h.param.ADDR_STEP                   long_inf.ADDR_STEP
-        h.port.data_inf_c.slaver.data_in                pre_partition_data_inf  #[in ID][ADDR...][LENGTH| LSIZE-1:0] length `0 mean 1
-        h.port.data_inf_c.master.data_out               post_partition_data_inf #[out ID][in ID..][LENGTH| LSIZE-1:0]
+        h.port.data_inf_c.slaver.data_in                pre_partition_data_inf  #[in ID..][ADDR...][LENGTH| LSIZE-1:0] length `0 mean 1
+        h.port.data_inf_c.master.data_out               post_partition_data_inf #[out ID 4bit][in ID..][LENGTH| LSIZE-1:0]
         h.port.data_inf_c.master.partition_pulse_inf    partition_pulse_inf  
         h.port.data_inf_c.master.wait_last_inf          wait_last_inf  
     end

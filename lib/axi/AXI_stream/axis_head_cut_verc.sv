@@ -4,8 +4,8 @@ ___________    Cook Darwin   __________
 _______________________________________
 descript:
 author : Cook.Darwin
-Version: VERA.0.0
-creaded:
+Version: VERC.0.0
+creaded: XXXX.XX.XX
 madified:
 ***********************************************/
 `timescale 1ns/1ps
@@ -65,8 +65,8 @@ axi_stream_interconnect_S2M #(
 /* axi_stream_inf.master */.m00  (sub_origin_inf  )
 );
 common_fifo #(
-    .DEPTH          (4 ),
-    .DSIZE          (4 )
+    .DEPTH (4 ),
+    .DSIZE (4 )
 )common_fifo_head_bytesx_inst(
 /* input  */.clock (clock                                                                                            ),
 /* input  */.rst_n (rst_n                                                                                            ),
@@ -98,8 +98,8 @@ axis_append_A1 #(
 /* axi_stream_inf.master */.append_out (origin_inf_ss_E0   )
 );
 common_fifo #(
-    .DEPTH          (4 ),
-    .DSIZE          (4 )
+    .DEPTH (4 ),
+    .DSIZE (4 )
 )common_fifo_head_nDx_inst(
 /* input  */.clock (clock                                                                                       ),
 /* input  */.rst_n (rst_n                                                                                       ),

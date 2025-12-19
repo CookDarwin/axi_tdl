@@ -82,17 +82,11 @@ logic[DSIZE-1:0]        mfifo_din    [KNUM-1:0];
 logic                   mfifo_empty  [KNUM-1:0];
 logic                   mfifo_full   [KNUM-1:0];
 
-logic[13-1:0]           WRCOUNT   [KNUM-1:0];
-
 logic                   mfifo_rd_en  [KNUM-1:0];
 logic                   mfifo_wr_en  [KNUM-1:0];
 
 logic                   mfifo_rd_clk  [KNUM-1:0];
 logic                   mfifo_wr_clk  [KNUM-1:0];
-
-(* dont_touch="true" *)logic[13-1:0]    wr_count;
-
-assign wr_count = WRCOUNT[0];
 
 genvar KK;
 generate
@@ -112,14 +106,14 @@ FIFO_DUALCLOCK_MACRO  #(
     .FULL           (mfifo_full [KK]  ),     // 1-bit output full
     .RDCOUNT        (),         // Output read count, width determined by FIFO depth
     .RDERR          (),         // 1-bit output read error
-    .WRCOUNT        (WRCOUNT[KK]      ),         // Output write count, width determined by FIFO depth
+    .WRCOUNT        (),         // Output write count, width determined by FIFO depth
     .WRERR          (),         // 1-bit output write error
     .DI             (mfifo_din[KK]    ),                 // Input data, width defined by DATA_WIDTH parameter
     .RDCLK          (mfifo_rd_clk[KK] ),                                             // 1-bit input read clock
-    .RDEN           (mfifo_rd_en[KK]  ),                 // 1-bit input read enable
+    .RDEN           (mfifo_rd_en[KK] && en_rd_en ),                 // 1-bit input read enable
     .RST            (RST),                                                          // 1-bit input reset
     .WRCLK          (mfifo_wr_clk[KK] ),                                             // 1-bit input write clock
-    .WREN           (mfifo_wr_en[KK]  )                  // 1-bit input write enable
+    .WREN           (mfifo_wr_en[KK] && en_wr_en )                  // 1-bit input write enable
 );
 
 if(KK==0)begin
@@ -127,7 +121,7 @@ if(KK==0)begin
     assign mfifo_din[KK]    = din;
     assign full             = mfifo_full[KK];
 end else begin
-    assign mfifo_wr_en[KK]  = !mfifo_empty[KK-1] & en_wr_en;
+    assign mfifo_wr_en[KK]  = !mfifo_empty[KK-1];
     assign mfifo_din[KK]    = mfifo_dout[KK-1];
 end
 
@@ -137,7 +131,7 @@ if(KK==KNUM-1)begin
     assign mfifo_rd_en[KK]  = rd_en;
     assign mfifo_rd_clk[KK] = rd_clk;
 end else begin
-    assign mfifo_rd_en[KK]  = !mfifo_full[KK+1] & en_rd_en;
+    assign mfifo_rd_en[KK]  = !mfifo_full[KK+1];
     assign mfifo_rd_clk[KK] = wr_clk;
 end
 

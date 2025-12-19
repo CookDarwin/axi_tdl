@@ -6,14 +6,14 @@ create_clock -period 8.0 -name sys_clock -waveform {0.000 4.0} [get_ports sys_cl
 ##-------------------------- PIN SET ---------------------------------- ##
 set_property PACKAGE_PIN C7 [get_ports sys_clock]
 set_property IOSTANDARD LVCMOS18 [get_ports sys_clock]
-set_property PACKAGE_PIN A1 [get_ports {odata[0]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {odata[0]}]
-set_property PACKAGE_PIN A3 [get_ports {odata[1]}]
-set_property IOSTANDARD LVCMOS18 [get_ports {odata[1]}]
-set_property PACKAGE_PIN B5 [get_ports {odata[2]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {odata[2]}]
-set_property PACKAGE_PIN C6 [get_ports {odata[3]}]
-set_property IOSTANDARD LVCMOS33 [get_ports {odata[3]}]
+set_property PACKAGE_PIN A1 [get_ports odata[0]]
+set_property IOSTANDARD LVCMOS18 [get_ports odata[0]]
+set_property PACKAGE_PIN A3 [get_ports odata[1]]
+set_property IOSTANDARD LVCMOS18 [get_ports odata[1]]
+set_property PACKAGE_PIN B5 [get_ports odata[2]]
+set_property IOSTANDARD LVCMOS25 [get_ports odata[2]]
+set_property PACKAGE_PIN C6 [get_ports odata[3]]
+set_property IOSTANDARD LVCMOS33 [get_ports odata[3]]
 ##========================== PIN SET ================================== ##
 
 ## -------------------------- FALSE PATH SET ---------------------------------- ##

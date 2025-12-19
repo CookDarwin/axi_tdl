@@ -24,9 +24,8 @@ module axi_stream_long_fifo #(
 
 
 //--->> NATIVE FIFO IP <<------------------------------
-(* dont_touch="true" *)logic   data_fifo_full;
-(* dont_touch="true" *)logic   data_fifo_empty;
-logic   wren_pkt;
+logic   data_fifo_full;
+logic   data_fifo_empty;
 
 long_fifo_verb #(
 // long_fifo #(
@@ -38,7 +37,7 @@ long_fifo_verb #(
 /*  input               */ .rd_clk       (axis_out.aclk         ),
 /*  input               */ .rd_rst       (!axis_out.aresetn     ),
 /*  input [DSIZE-1:0]   */ .din          (axis_in.axis_tdata    ),
-/*  input               */ .wr_en        ((axis_in.axis_tvalid && axis_in.axis_tready && wren_pkt)  ),
+/*  input               */ .wr_en        ((axis_in.axis_tvalid && axis_in.axis_tready)  ),
 /*  input               */ .rd_en        ((axis_out.axis_tvalid && axis_out.axis_tready)),
 /*  output [DSIZE-1:0]  */ .dout         (axis_out.axis_tdata   ),
 /*  output              */ .full         (data_fifo_full        ),
@@ -47,8 +46,8 @@ long_fifo_verb #(
 //---<< NATIVE FIFO IP >>------------------------------
 
 //--->> PACKET <<--------------------------------------
-(* dont_touch="true" *)logic   packet_fifo_full;
-(* dont_touch="true" *)logic   packet_fifo_empty;
+logic   packet_fifo_full;
+logic   packet_fifo_empty;
 logic [31:0]      w_bytes_total;
 logic [31:0]      r_bytes_total;
 logic             w_total_eq_1;
@@ -73,8 +72,6 @@ independent_clock_fifo #(
 /*    output logic              */  .empty      (packet_fifo_empty   ),
 /*    output logic              */  .full       (packet_fifo_full    )
 );
-
-assign wren_pkt = !packet_fifo_full;
 
 assign axis_in.axis_tready  = !packet_fifo_full && !data_fifo_full;
 assign axis_out.axis_tvalid = !packet_fifo_empty && !data_fifo_empty;

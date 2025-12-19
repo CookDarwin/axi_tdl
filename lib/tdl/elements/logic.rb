@@ -78,6 +78,8 @@ class Logic < SignalElm
         if b.is_a? ClassHDL::OpertorChain
             b.slaver = true
         end
+
+        
         ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do 
             TdlSpace::ArrayChain.create(obj: self,lchain: a, end_slice: b, belong_to_module: belong_to_module)
         end

@@ -459,7 +459,7 @@ module ClassHDL
         end
 
         def self.with_rollback_opertors(use_op,&block)
-            # puts use_op
+           
             case(use_op)
             when :new
                 rels = with_new_opertor(&block)
@@ -705,23 +705,6 @@ end
 
 class Integer
     include ClassHDL::AssignDefOpertor
-    ## redefine times 
-    alias_method :__old_times,:times
-
-    def times(*args,&block)
-        if ClassHDL::AssignDefOpertor.curr_opertor_stack.last.eql? :old
-            __old_times(*args, &block)
-        else
-            new_block = Proc.new do |x| 
-                ClassHDL::AssignDefOpertor.with_rollback_opertors(:new) do
-                    block.call(x) 
-                end
-            end
-            ClassHDL::AssignDefOpertor.with_rollback_opertors(:old) do
-                rel = __old_times(*args, &new_block)
-            end
-        end
-    end
 end
 
 module TdlSpace

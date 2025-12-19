@@ -273,7 +273,6 @@ class ItegrationVerb
     attr_accessor :names_pool,:nickname,:pins_map
     attr_accessor :init_inst
     attr_accessor :inst_index
-    attr_accessor :force_link_maps  ## hash 用于强制匹配 link_itgt
 
 
     def child_inst_itgt
@@ -357,7 +356,6 @@ class ItegrationVerb
         ## 为child module 生成方法
         # init_children_modules()
         # init_children_modules_post()
-        @force_link_maps = {} ## hash 用于强制匹配 link_itgt
     end
 
     # def init_children_modules
@@ -435,7 +433,6 @@ class ItegrationVerb
         ## 执行单元测试
         ## 改到 运行 top_module _exec_add_test_unit 那边执行
         # test_unit_inst()
-        test_unit_inst_verb()
     end
 
     def tb_inst
@@ -460,60 +457,10 @@ class ItegrationVerb
         ItegrationVerb.curr_itgt_pop
     end
 
-    @@test_unit_inst_verb_procs = []
-    ## 测试用例 实例化
-    def test_unit_inst_verb
-        @@test_unit_inst_verb_procs << Proc.new do |filter_block|
-            
-            blocks = self.class.instance_variable_get("@_inst_test_unitx_blocks_")
-            # return unless blocks
-            # return if blocks.empty?
-            
-            if blocks && blocks.any? 
-                ItegrationVerb.curr_itgt_push self
-
-                blocks.each do |key,valueItgtTU|
-
-                    if SdlModule.exist_module? "tu_#{self.class}_#{nickname}#{key}" 
-                        next
-                    end
-
-                    if filter_block.call(key)
-                        # @top_module.techbench.instance_exec(self,&b.clone)
-                        sdlm = TestUnitModule.new(name: "tu_#{self.class}_#{nickname}#{key}",out_sv_path: valueItgtTU[:path])
-                        $_implicit_curr_itgt_.with_none_itgt do 
-                            sdlm.input - "from_up_pass"
-                            sdlm.output.logic - "to_down_pass"
-                        end
-                        sdlm.instance_exec(self,&valueItgtTU[:block])
-
-                        if valueItgtTU[:path] && File.exist?(valueItgtTU[:path])
-                            sdlm.gen_sv_module
-                            Tdl.Puts "[warnning]   #{key} path error !!!"
-                        else 
-                            sdlm.origin_sv = true 
-                        end
-                    end
-
-                end
-
-                ItegrationVerb.curr_itgt_pop
-            end
-        end
-    end
-
-    def self.test_unit_inst_verb(&filter_block)
-        @@test_unit_inst_verb_procs.each do |e| 
-            e.call( filter_block )
-        end
-    end
-
     ## 测试用例 实例化
     def test_unit_inst
 
-        blocks = self.class.class_variable_get("@@_inst_test_unit_blocks_")
-        # puts blocks 
-        # raise " -----"
+        blocks = self.class.instance_variable_get("@_inst_test_unit_blocks_")
         return unless blocks
         return if blocks.empty?
         ItegrationVerb.curr_itgt_push self
@@ -525,11 +472,7 @@ class ItegrationVerb
 
         blocks.each do |key,valueItgtTU|
             # @top_module.techbench.instance_exec(self,&b.clone)
-            if SdlModule.exist_module? "tu_#{key}" 
-                next
-            end
-            
-            sdlm = TestUnitModule.new(name: "tu_#{key}",out_sv_path: valueItgtTU.path)
+            sdlm = TestUnitModule.new(name: key ,out_sv_path: valueItgtTU.path )
             $_implicit_curr_itgt_.with_none_itgt do 
                 sdlm.input - "from_up_pass"
                 sdlm.output.logic - "to_down_pass"
@@ -553,9 +496,9 @@ class ItegrationVerb
         return unless blocks
         return if blocks.empty?
         return unless TopModule.sim
-        
+
         ItegrationVerb.curr_itgt_push nil
-        
+
         blocks.each do |key,valueItgtTU|
             # @top_module.techbench.instance_exec(self,&b.clone)
             if !(block_given?) || filter_block.call(valueItgtTU)
@@ -564,9 +507,7 @@ class ItegrationVerb
                     sdlm.input - "from_up_pass"
                     sdlm.output.logic - "to_down_pass"
                 end
-                # sdlm.instance_exec(nil,&valueItgtTU.block)
-
-                sdlm.instance_exec(valueItgtTU,&valueItgtTU.block)
+                sdlm.instance_exec(nil,&valueItgtTU.block)
 
                 if valueItgtTU.path && File.exist?(valueItgtTU.path)
                     sdlm.gen_sv_module
@@ -694,31 +635,9 @@ class ItegrationVerb
         #生成link 数组便是 当前 itgt引用
         container = self.class.get_itgt_var('itegration_link_collect')
         container.each do |e|
-
             container_attrs = self.class.get_itgt_var('itegration_link_hash')[e]
             flag_attrs = self.class.get_itgt_var('itegration_flag_hash',{})[e]
             mark = false
-
-            ## 先查看 force link maps 
-            if @force_link_maps[e]
-                i = @force_link_maps[e]
-                explort_attrs = i.class.get_itgt_var('itegration_explort_collect')
-                if ((explort_attrs & container_attrs).sort == container_attrs.sort  &&  i.flag_match(flag_attrs))
-                    unless self.respond_to? e
-                        define_singleton_method(e) do
-                            ## 如果从其他模块调用则出发 dynac_active
-                            ItegrationVerbAgent.new(i)
-                        end
-                        i.link_eval
-                        i.child_inst_itgt << self
-                    end
-                else
-                   puts "Dont container `#{container_attrs.sort - (explort_attrs & container_attrs).sort }` !!!"
-                   raise "itegration `#{self.class}` `force_link_maps[#{e}]` done match `#{i.class}`" 
-                end
-            end 
-
-            
             ## 先从 top_module 显式加入的itgt搜索
             @top_module.itgt_collect.each do |i|
                 explort_attrs = i.class.get_itgt_var('itegration_explort_collect')
@@ -857,55 +776,20 @@ class ItegrationVerb
     end
 
     ## 添加测试用例
-    # @@_inst_test_unit_blocks_ = {}
-    # def self.def_test_unit(name,path,&block)
-    #     @@_inst_test_unit_blocks_ ||= {}
-    #     # @@_inst_test_unit_blocks_ << [name.to_s, path, block]
-    #     itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: self)
-    #     @@_inst_test_unit_blocks_["#{self}_#{name.to_s}"] = itgt_testunit
-
-    #     self.define_singleton_method(name.to_s) do 
-    #         itgt_testunit
-    #     end
-
-    #     @@_inst_test_unit_blocks_
-    # end
-
-    # @@_inst_test_unit_blocks_ = {}
+    @@_inst_test_unit_blocks_ = {}
     def self.def_test_unit(name,path,&block)
-        # @@_inst_test_unit_blocks_ ||= {}
-        # # @@_inst_test_unit_blocks_ << [name.to_s, path, block]
-        # itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: nil)
-        # @@_inst_test_unit_blocks_["#{self}_#{name.to_s}"] = itgt_testunit
+        @@_inst_test_unit_blocks_ ||= {}
+        # @@_inst_test_unit_blocks_ << [name.to_s, path, block]
+        itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: self)
+        @@_inst_test_unit_blocks_["#{self}_#{name.to_s}"] = itgt_testunit
 
-        # self.define_singleton_method(name.to_s) do 
-        #     itgt_testunit
-        # end
-        ## 创建 实例变量
-        define_method name.to_s do 
-            ## 此时的 self 是实例
-            if self.instance_variable_get("@_#{name.to_s}_")
-                return self.instance_variable_get("@_#{name.to_s}_")
-            else
-                itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: self)
-                self.instance_variable_set("@_#{name.to_s}_", itgt_testunit)
-                return itgt_testunit
-            end    
-            # itgt_testunit.itgt = self
-            # itgt_testunit = ItegrationTestUnit.new(name:name,path:path, block: block, itgt: self)
-            # itgt_testunit
+        self.define_singleton_method(name.to_s) do 
+            itgt_testunit
         end
-        # @@_inst_test_unit_blocks_
 
-
-        _inst_tb_blocks_ = instance_variable_get("@_inst_test_unitx_blocks_")
-        _inst_tb_blocks_ ||= {}
-        _inst_tb_blocks_[name] = {:path => path, :block => block}
-        instance_variable_set("@_inst_test_unitx_blocks_",_inst_tb_blocks_)
+        @@_inst_test_unit_blocks_
     end
 
-
-    
     ## 生成 itgt内的模块,
     # def self.has_module(dir,*names)
     #     unless File.exist? dir

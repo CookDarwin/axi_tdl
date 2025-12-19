@@ -58,7 +58,7 @@ class ConstraintsVerb
         head_str = "##-------------------------- PIN SET ---------------------------------- ##\n"
         end_str  = "##========================== PIN SET ================================== ##\n"
         pstr = @package_pin_and_IOSTANDARD.map do |ar|
-            if ar[0].to_s =~ /\[.*\]$/
+            if ar[0] =~ /\[.*\]$/
                 qstr = "{#{ar[0]}}"
             else
                 qstr = ar[0]
@@ -211,9 +211,9 @@ set_false_path -from [get_pins -hier -regexp .*vactive_reg.*] -to [all_registers
 
     define_const(:add_fifo_const) do
 "
-set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/data_array.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/rdata.*] 40.000
-set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/rd_flag.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/full.*] 40.000
-set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/wr_flag.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/data_array_empty.*] 40.000
+set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/data_array.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/rdata.*] 20.000
+set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/rd_flag.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/full.*] 20.000
+set_max_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/wr_flag.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/data_array_empty.*] 20.000
 
 set_min_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/data_array.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/rdata.*] -3.000
 set_min_delay -from [get_pins -hier -regexp .*independent_clock_fifo.*/rd_flag.*] -to [get_pins -hier -regexp .*independent_clock_fifo.*/full.*] -3.000

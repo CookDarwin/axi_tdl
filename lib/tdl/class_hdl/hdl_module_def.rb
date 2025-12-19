@@ -335,26 +335,10 @@ module ClassHDL
             elsif @reset_active
                 @sdlm.Reset(method,port: :output,active: @reset_active,pin:args[:pin]||[],iostd:args[:iostd]||[],dsize:args[:dsize]||1,pin_prop:args[:pin_prop])
             else 
-                # if !args[:pin] && !args[:pin_prop] && @sdlm.is_a?(TopModule)
-                #     @sdlm.Def.logic(name: method,dsize: args[:dsize] || 1 ,port:false, dimension:args[:dimension]||[])
-                # else
-                # puts @sdlm
-                # puts @sdlm.parse_pin_prop(args[:pin_prop])
-                # raise("-----")
-                
-                if args && args[:pin_prop] && args[:pin_prop]["pins"]
-                    pin = args[:pin_prop]["pins"]
-                    if  (["LOGIC","WIRE","TRI0","TRI1"].include? pin.to_s.upcase)
-                        a = @sdlm.Def.logic(name:method,dsize:args[:dsize]||1,dimension:args[:dimension] || [] )
-                        return a
-                    end
-                end
-                
                 rel = @sdlm.Output(method,dsize:args[:dsize] || 1,dimension:args[:dimension]||[],pin:args[:pin]||[],iostd:args[:iostd]||[],pin_prop:args[:pin_prop])
                 rel.type = @speciel_type
                 add_struct_method(rel)
                 rel
-                
             end
         end
         

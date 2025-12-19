@@ -96,6 +96,7 @@ assign s_wcmd_inf.data        = s00.axi_awaddr;
 assign s00.axi_awready        = s_wcmd_inf.ready;
 
 data_pipe_interconnect_S2M_verb #(
+    .DSIZE      (s00.ASIZE-NSIZE      ),
     .NUM        (NUM        )
 )wr_cmd_pipe_interconnect_S2M_inst(
 /*    input           */    .clock              (clock                          ),
@@ -123,7 +124,7 @@ assign s_wlock_inf.data        = s00.axi_awlock;
 // assign s00.axi_awready        = s_wlock_inf.ready;
 
 data_pipe_interconnect_S2M_verb #(
-    // .DSIZE      (1      ),
+    .DSIZE      (1      ),
     .NUM        (NUM        )
 )wr_lock_pipe_interconnect_S2M_inst(
 /*    input           */    .clock              (clock                          ),
@@ -153,7 +154,7 @@ assign s00.axi_arready        = s_rcmd_inf.ready;
 
 
 data_pipe_interconnect_S2M_verb #(
-    // .DSIZE      (s00.ASIZE-NSIZE      ),
+    .DSIZE      (s00.ASIZE-NSIZE      ),
     .NUM        (NUM        )
 )rd_cmd_pipe_interconnect_S2M_inst(
 /*    input           */    .clock              (clock                          ),
@@ -181,7 +182,7 @@ assign s_rlock_inf.data        = s00.axi_arlock;
 // assign s00.axi_awready        = s_wlock_inf.ready;
 
 data_pipe_interconnect_S2M_verb #(
-    // .DSIZE      (1      ),
+    .DSIZE      (1      ),
     .NUM        (NUM        )
 )rd_lock_pipe_interconnect_S2M_inst(
 /*    input           */    .clock              (clock                          ),
@@ -211,7 +212,7 @@ assign s_wdata_inf.data      = s00.axi_wdata;
 assign s00.axi_wready        = s_wdata_inf.ready;
 
 data_pipe_interconnect_S2M_verb #(
-    // .DSIZE      (s00.DSIZE      ),
+    .DSIZE      (s00.DSIZE      ),
     .NUM        (NUM        )
 )wr_data_pipe_interconnect_S2M_inst(
 /*    input           */    .clock              (clock                          ),

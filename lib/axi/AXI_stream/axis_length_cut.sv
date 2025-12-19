@@ -50,7 +50,7 @@ always@(posedge clock,negedge rst_n)
 
 assign axis_pre.axis_tvalid = axis_in.axis_tvalid && !mark_tail;
 assign axis_pre.axis_tdata  = axis_in.axis_tdata;
-assign axis_pre.axis_tlast  = new_last || (!mark_tail && axis_in.axis_tlast) || (length==1);
+assign axis_pre.axis_tlast  = new_last || (!mark_tail && axis_in.axis_tlast);
 assign axis_pre.axis_tkeep  = axis_in.axis_tkeep;
 assign axis_pre.axis_tuser  = axis_in.axis_tuser;
 

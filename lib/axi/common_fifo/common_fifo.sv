@@ -13,7 +13,6 @@ madified:
 module common_fifo #(
     parameter DEPTH     = 4,
     parameter DSIZE     = 8,
-    parameter DEFAULT_VALUES = 0,
     //(* show = "false" *)
     parameter PSIZE     = $clog2(DEPTH),
     parameter CSIZE     = $clog2(DEPTH+1)
@@ -140,7 +139,7 @@ always@(posedge clock,negedge rst_n)
     end
 
 always@(posedge clock,negedge rst_n)
-    if(~rst_n)  rdata   <= (DSIZE > 32) ? DEFAULT_VALUES : DEFAULT_VALUES[DSIZE-1:0];
+    if(~rst_n)  rdata   <= '0;
     else begin
         if(tap_req_rd_en && !data_array_empty)
                 rdata   <= data_array[rpoint];

@@ -13,7 +13,7 @@ madified:
 `timescale 1ns/1ps
 module axi4_partition_OD #(
     parameter PSIZE = 128,          //master side
-    parameter EXIDSIZE  = 4,
+    // parameter real ADDR_STEP = 1
     parameter FORCE_MODE = 99  // 0: BOTH ,1: WRITE, 2: READ
 )(
     axi_inf.slaver slaver,
@@ -44,8 +44,7 @@ end
 generate
 if((FORCE_MODE>2 && (slaver.MODE=="BOTH" || slaver.MODE=="ONLY_WRITE")) || FORCE_MODE==0 || FORCE_MODE==1)
 axi4_partition_wr_OD #(
-    .PSIZE      (PSIZE      ),
-    .EXIDSIZE   (EXIDSIZE   )
+    .PSIZE      (PSIZE      )
     // .ADDR_STEP  (ADDR_STEP  )
 )axi4_partition_wr_inst(
 /*    axi_inf.slaver_wr */  .axi_in      (`slaver_vcs_cptWrite        ),

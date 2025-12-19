@@ -1,3 +1,3 @@
 module AxiTdl
-  VERSION = "0.2.6"
+  VERSION = "0.2.5"
 end
